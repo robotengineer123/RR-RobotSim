@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="rr_tool_adapter">
+  <xacro:macro name="tool_adapter_macro" params="name:=tool_adapter parent_link">
+    <link name="${name}">
+      <inertial>
+        <origin
+          xyz="0.02883 0.016356 0.020893"
+          rpy="0 0 0" />
+        <mass value="1.4111" />
+        <inertia
+          ixx="0.00092275"
+          ixy="-0.00085642"
+          ixz="0.0001456"
+          iyy="0.0020383"
+          iyz="5.6501E-05"
+          izz="0.0021049" />
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://rr_robot_description/include/tool_adapter/meshes/visual.STL" />
+        </geometry>
+        <material name="">
+          <color rgba="0.89804 0.91765 0.92941 1" />
+        </material>
+      </visual>
+      <collision>
+        <origin xyz="-0.0225 -0.1 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://rr_robot_description/include/tool_adapter/meshes/collision.STL" />
+        </geometry>
+      </collision>
+    </link>
+    <joint name="${parent_link}_to_${name}" type="fixed">
+      <parent link="${parent_link}"/>
+      <child link="${name}" />
+      <origin xyz="0 0 0" rpy="0 0 ${pi}" />
+    </joint>
+    <link
+      name="acp" />
+    <joint name="${name}_to_acp" type="fixed">
+      <origin
+        xyz="0 0 0.0665"
+        rpy="2.0464E-16 1.3198E-17 -1.0472" />
+      <parent link="${name}" />
+      <child link="acp" />
+      <axis xyz="0 0 0" />
+    </joint>
+  </xacro:macro>
+</robot>
