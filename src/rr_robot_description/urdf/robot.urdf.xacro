@@ -1,0 +1,118 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="rr_robot">
+
+  <!-- ********************************* Arguments ********************************** -->
+  <xacro:arg name="active_tool" default="none" />
+  <xacro:arg name="th0_tool" default="none" />
+  <xacro:arg name="th1_tool" default="none" />
+  <xacro:arg name="th2_tool" default="none" />
+  <xacro:arg name="th3_tool" default="none" />
+  <xacro:arg name="th4_tool" default="none" />
+  <xacro:arg name="th5_tool" default="none" />
+  <xacro:arg name="th6_tool" default="none" />
+  <xacro:arg name="th7_tool" default="none" />
+
+  <!-- *********************************** Basics *********************************** -->
+  <xacro:property name="robot_name" value="rr" />
+  <xacro:property name="arm_x_offset" value="0" />
+  <xacro:property name="arm_y_offset" value="0" />
+  <xacro:property name="arm_z_offset" value="0" />
+
+  <!-- world base link -->
+  <link name="world">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </link>
+
+  <!-- *********************************** chassis *********************************** -->
+  <xacro:include filename="$(find rr_robot_description)/include/chassis/urdf/chassis.xacro" />
+  <xacro:chassis_macro name="${robot_name}_chassis"
+                       parent_link="world"
+                       x_offset="-${arm_x_offset}"
+                       y_offset="-${arm_y_offset}"
+                       z_offset="-${arm_z_offset}"
+  />
+
+  <!-- ************************************ ur10 ************************************ -->
+  <xacro:arg name="kinematics_config" default="$(find ur_description)/config/ur10_default.yaml"/>
+  <xacro:arg name="transmission_hw_interface" default="hardware_interface/PositionJointInterface"/>
+  <xacro:include filename="$(find ur_description)/urdf/ur10.xacro" />
+
+  <link name="tcp0" />
+  <joint name="tool0_to_tcp0" type="fixed" >
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <parent link="tool0"/>
+      <child link="tcp0"/>
+  </joint>
+
+  <!-- visualize tool cog -->
+  <link name="cog" />
+  <joint name="tool0_cog" type="fixed" >
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <parent link="tool0"/>
+    <child link="cog"/>
+  </joint>
+
+  <!-- tool changer -->
+  <link name="tool_changer" />
+  <joint name="tool0_to_tool_changer" type="fixed">
+    <origin xyz="0 0 0.067" rpy="0 0 2.0943951023931953" />
+    <parent link="tool0" />
+    <child link="tool_changer" />
+  </joint>
+
+  <!-- laser -->
+  <link name="laser" />
+  <joint name="tool0_to_laser" type="fixed">
+    <origin xyz="-0.08086 -0.00732 0.06900" rpy="0.00264 0.00686 -1.06525" />
+    <parent link="tool0" />
+    <child link="laser" />
+  </joint>
+
+  <!-- tool camera -->
+  <link name="tool_camera" />
+  <joint name="tool0_to_tool_camera" type="fixed">
+    <origin xyz="-0.09133 -0.08568 0.07735" rpy="0 0.01053 -1.05842" />
+    <parent link="tool0" />
+    <child link="tool_camera" />
+  </joint>
+
+  <!-- connect arm to chassis -->
+  <joint name="chassis_to_arm" type="fixed">
+      <parent link="${robot_name}_chassis" />
+      <child link="base_link" />
+      <origin xyz="${arm_x_offset} ${arm_y_offset} ${arm_z_offset}" rpy="0 0 ${pi}" />
+  </joint>
+
+
+  <!-- ******************************** Tool adapter ******************************** -->
+  <xacro:include filename="$(find rr_robot_description)/include/tool_adapter/urdf/tool_adapter.xacro" />
+  <xacro:tool_adapter_macro name="${robot_name}_tool_adapter" parent_link="tcp0"/>
+
+  <!-- ************************************ Tools *********************************** -->
+  <xacro:include filename="$(find rr_robot_description)/urdf/attach_tool.xacro" />
+
+  <xacro:attach_tool_macro toolholder="acp" tool="$(arg active_tool)" active="true"/>
+
+  <xacro:attach_tool_macro toolholder="th0" tool="$(arg th0_tool)" prefix="th0_"/>
+
+  <xacro:attach_tool_macro toolholder="th1" tool="$(arg th1_tool)" prefix="th1_"/>
+
+  <xacro:attach_tool_macro toolholder="th2" tool="$(arg th2_tool)" prefix="th2_"/>
+
+  <xacro:attach_tool_macro toolholder="th3" tool="$(arg th3_tool)" prefix="th3_"/>
+
+  <xacro:attach_tool_macro toolholder="th4" tool="$(arg th4_tool)" prefix="th4_"/>
+
+  <xacro:attach_tool_macro toolholder="th5" tool="$(arg th5_tool)" prefix="th5_"/>
+
+  <xacro:attach_tool_macro toolholder="th6" tool="$(arg th6_tool)" prefix="th6_"/>
+
+  <xacro:attach_tool_macro toolholder="th7" tool="$(arg th7_tool)" prefix="th7_"/>
+  <!-- ******************************** Tranmissions ******************************** -->
+  <xacro:include filename="$(find rr_robot_description)/urdf/transmissions.xacro" />
+
+  <!-- *********************************** Gazebo *********************************** -->
+  <xacro:include filename="$(find rr_robot_description)/urdf/robot.gazebo" />
+  
+
+</robot>

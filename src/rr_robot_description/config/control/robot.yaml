@@ -1,0 +1,25 @@
+rr_robot:
+  # Joint state controller publisher
+  joint_state_controller:
+    type: joint_state_controller/JointStateController
+    publish_rate: 50
+
+  rope_drive_le_joint_controller:
+    type: effort_controllers/JointEffortController
+    joint: rope_drive_le_joint
+    pid: {p: 100.0, d: 0.0, i: 0.0}
+
+  rope_drive_te_joint_controller:
+    type: effort_controllers/JointEffortController
+    joint: rope_drive_te_joint
+    pid: {p: 100.0, d: 0.0, i: 0.0}
+
+  top_wheel_le_joint_controller:
+    type: effort_controllers/JointEffortController
+    joint: top_wheel_le_joint
+    pid: {p: 100.0, d: 0.0, i: 0.0}
+    
+  top_wheel_te_joint_cotnroller:
+    type: effort_controllers/JointEffortController
+    joint: top_wheel_te_joint
+    pid: {p: 100.0, d: 0.0, i: 0.0}

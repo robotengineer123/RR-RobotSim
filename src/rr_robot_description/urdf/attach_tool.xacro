@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="attach_tool">
+    <xacro:macro name="attach_tool_macro" params="toolholder tool prefix:='' active:='false'" >
+        <xacro:if value="${tool == 'none' and active}" >
+            <link name="tcp" />
+            <joint name="tcp_attach" type="fixed">
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <parent link="acp" />
+                <child link="tcp" />
+            </joint>
+        </xacro:if>
+        <xacro:if value="${tool != 'none'}" >
+            <xacro:include filename="$(find rr_robot_description)/include/${tool}/urdf/${tool}.xacro" />
+            <xacro:tool_macro name="${prefix}${tool}" active="${active}" />
+            <joint name="${toolholder}_to_${prefix}${tool}_rap" type="fixed" >
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <parent link="${toolholder}" />
+                <xacro:if value="${active}" >
+                    <child link="${prefix}${tool}_rap" />
+                    <link name="tcp" />
+                    <joint name="tcp_attach" type="fixed">
+                        <origin xyz="0 0 0" rpy="0 0 0" />
+                        <parent link="${prefix}${tool}_tcp" />
+                        <child link="tcp" />
+                    </joint>
+                </xacro:if>
+                <xacro:unless value="${active}" >
+                    <child link="${prefix}${tool}_thp" />
+                </xacro:unless>
+            </joint>
+        </xacro:if>
+    </xacro:macro>
+</robot>

@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+    <xacro:macro name="EffortJointMacro" params="joint_name">
+        <transmission name="${joint_name}_simple_trans">
+            <type>transmission_interface/SimpleTransmission</type>
+            <joint name="${joint_name}">
+                <hardwareInterface>EffortJointInterface</hardwareInterface>
+            </joint>
+            <actuator name="${joint_name}_motor">
+                <mechanicalReduction>1</mechanicalReduction>
+            </actuator>
+        </transmission>
+    </xacro:macro>
+
+    <xacro:EffortJointMacro joint_name="rope_drive_le_joint"/>
+    <xacro:EffortJointMacro joint_name="rope_drive_te_joint"/>
+    <xacro:EffortJointMacro joint_name="top_wheel_le_joint"/>
+    <xacro:EffortJointMacro joint_name="top_wheel_te_joint"/>
+</robot>
