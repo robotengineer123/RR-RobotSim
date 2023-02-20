@@ -1,0 +1,9 @@
+<launch>
+
+    <arg name="transmission_hw_interface" default="hardware_interface/PositionJointInterface" />
+    <arg name="kinematics_config" default="$(find ur_description)/config/ur10_default.yaml"/>
+
+    <param
+      name="robot_description"
+      command="$(find xacro)/xacro $(find rr_robot_description)/urdf/robot.urdf.xacro" />
+</launch>
