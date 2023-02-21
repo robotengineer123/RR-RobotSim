@@ -19,14 +19,15 @@
   <xacro:property name="arm_z_offset" value="0" />
 
   <!-- world base link -->
-  <link name="world">
+  <!-- If name="world" the robot wil be fixed in the world -->
+  <link name="dummy">
     <origin xyz="0 0 0" rpy="0 0 0"/>
   </link>
 
   <!-- *********************************** chassis *********************************** -->
   <xacro:include filename="$(find rr_robot_description)/include/chassis/urdf/chassis.xacro" />
   <xacro:chassis_macro name="${robot_name}_chassis"
-                       parent_link="world"
+                       parent_link="dummy"
                        x_offset="-${arm_x_offset}"
                        y_offset="-${arm_y_offset}"
                        z_offset="-${arm_z_offset}"
