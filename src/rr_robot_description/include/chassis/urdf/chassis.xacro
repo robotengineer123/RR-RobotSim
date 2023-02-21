@@ -259,12 +259,13 @@
           <color rgba="0.2 0.2 0.2 1" />
         </material>
       </visual>
-      <collision>
+      <!-- Collision of vacuum sheet is neglected -->
+      <!--<collision>
         <origin xyz="0 0 0" rpy="0 0 0" />
         <geometry>
           <mesh filename="package://rr_robot_description/include/chassis/meshes/VacuumSheet/collision.STL" />
         </geometry>
-      </collision>
+      </collision> -->
     </link>
     <joint name="vacuum_sheet_joint" type="fixed">
       <origin xyz="0.55919 0. -0.145" rpy="0. 0. 1.5708" />
