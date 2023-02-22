@@ -66,7 +66,7 @@ public:
             this->model->GetLink("dummy")->SetForce(ignition::math::Vector3d(-F_res.X(), -F_res.Y(), -N));
         } 
         else {
-            this->model->GetLink("dummy")->SetForce(ignition::math::Vector3d(F*F_res.X()/F_res_plane, F*F_res.Y()/F_res_plane, -N));
+            this->model->GetLink("dummy")->SetForce(ignition::math::Vector3d(-F*F_res.X()/F_res_plane, -F*F_res.Y()/F_res_plane, -N));
         }
     }
 
