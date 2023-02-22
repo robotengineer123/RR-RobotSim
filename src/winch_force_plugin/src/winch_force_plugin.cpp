@@ -45,7 +45,7 @@ public:
         winch_link = model_->GetLink(winch);
 
         init_dist = fixed_pos.Distance(winch_link->WorldCoGPose().Pos());
-        prev_rot = CurrentRot(winch_link, rot_axis);
+        prev_rot = CurrentRot();
         unwinded_rope_l = init_dist;
         ROS_WARN("Winch plugin loaded to model: %s on link: %s", model_->GetName().c_str(), winch.c_str());
         // Listen to the update event. This event is broadcast every
@@ -58,7 +58,7 @@ public:
     void OnUpdate() 
     {
         ignition::math::Vector3d winch_pos = winch_link->WorldCoGPose().Pos();
-        ignition::math::v6::Quaterniond winch_rot = winch_link->Rot();
+        ignition::math::v6::Quaterniond winch_rot = winch_link->WorldCoGPose().Rot();
         double dist = fixed_pos.Distance(winch_pos);
         ignition::math::Vector3d direction = (fixed_pos-winch_pos).Normalize();
 
@@ -69,15 +69,11 @@ public:
         {
             force = (dist-unwinded_rope_l)*stiffness*direction;
         }
-        ignition::math::Vector3d torque_arm();
-        ignition::math::Vector3d torque = force.Cross();
-
-        physics::Joint_V joint = winch_link->GetParentJoints().front()
 
 
-        winch_link->SetForceAtRelativePosition(force);
+        //winch_link->SetForceAtRelativePosition(force);
 
-        winch_link->SetTorque(ignition::math::Vector3d(1000000.0, 1000.0, 0.0));
+        //winch_link->SetTorque(ignition::math::Vector3d(1000000.0, 1000.0, 0.0));
     }
 
     
