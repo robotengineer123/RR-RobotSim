@@ -7,12 +7,9 @@
 namespace gazebo {
 class VacuumPlugin : public ModelPlugin {
 
-float N = 10000.0;
-float mu = 1.0;
-float F;
-
 public:
-    void Load(physics::ModelPtr _parent, sdf::ElementPtr /*_sdf*/) {
+    void Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf) {
+
         // Store the pointer to the model
         this->model = _parent;
         // Listen to the update event. This event is broadcast every
@@ -21,20 +18,24 @@ public:
             std::bind(&VacuumPlugin::OnUpdate, this));
     }
 
-// Called by the world update start event
-public:
+    // Called by the world update start event
     void OnUpdate() {
         F = N*mu;
-        this->model->GetLink("dummy")->SetForce(ignition::math::Vector3d(0., 0., 0.));
+        this->model->GetLink("dummy")->SetForce(ignition::math::Vector3d(F, 0., -F));
     }
 
-// Pointer to the model
 private:
+    // Pointer to the model
     physics::ModelPtr model;
 
-// Pointer to the update event connection
-private:
+    // Pointer to the update event connection
     event::ConnectionPtr updateConnection;
+
+    // Member variables
+    float N = 10000.0;
+    float mu = 1.0;
+    float F;
+
 };
 
 // Register this plugin with the simulator
