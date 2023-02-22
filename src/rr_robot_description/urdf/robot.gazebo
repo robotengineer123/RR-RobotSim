@@ -264,9 +264,12 @@
             <winch_link>rope_radius</winch_link>
         </plugin>
     </gazebo>
-    <!-- Vacuum plugin -->
+    <!-- Vacuum plugin, set parameters true/false -->
     <gazebo>
-        <plugin name="vacuum_plugin" filename="libvacuum_plugin.so"/>
+        <plugin name="vacuum_plugin" filename="libvacuum_plugin.so">
+            <vacuum_inner>true</vacuum_inner>
+            <vacuum_outer>true</vacuum_outer> 
+        </plugin>
     </gazebo>
 
 </robot>
