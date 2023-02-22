@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(rr_robot_description)
+project(winch_force_plugin)
 add_compile_options(-std=c++11)
-
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -10,11 +9,10 @@ add_compile_options(-std=c++11)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  controller_manager
+  gazebo
+  gazebo_plugins
   gazebo_ros
-  joint_state_controller
-  robot_state_publisher
-  xacro
+  roscpp
 )
 
 ## System dependencies are found with CMake's conventions
@@ -108,8 +106,8 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES rr_robot_description
-#  CATKIN_DEPENDS controller_manager gazebo_ros joint_state_controller robot_state_publisher xacro
+#  LIBRARIES winch_force_plugin
+#  CATKIN_DEPENDS gazebo gazebo_plugins gazebo_ros roscpp
 #  DEPENDS system_lib
 )
 
@@ -123,10 +121,15 @@ include_directories(
 # include
   ${catkin_INCLUDE_DIRS}
 )
+include_directories(${GAZEBO_INCLUDE_DIRS})
+link_directories(${GAZEBO_LIBRARY_DIRS})
+
+add_library(winch_force_plugin SHARED src/winch_force_plugin.cpp)
+target_link_libraries(winch_force_plugin ${GAZEBO_LIBRARIES} ${catkin_LIBRARIES})
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/rr_robot_description.cpp
+#   src/${PROJECT_NAME}/winch_force_plugin.cpp
 # )
 
 ## Add cmake target dependencies of the library
@@ -137,7 +140,7 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-# add_executable(${PROJECT_NAME}_node src/rr_robot_description_node.cpp)
+# add_executable(${PROJECT_NAME}_node src/winch_force_plugin_node.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -201,7 +204,7 @@ include_directories(
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_rr_robot_description.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_winch_force_plugin.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()

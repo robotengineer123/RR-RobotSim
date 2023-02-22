@@ -255,6 +255,15 @@
         </plugin>
     </gazebo>
 
+    <gazebo>
+        <plugin name="winch_force_plugin" filename="libwinch_force_plugin.so">
+            <spring_stiffness>1</spring_stiffness>
+            <rot_axis>y</rot_axis>
+            <rope_fixture>1 1 1</rope_fixture>
+            <winch_link>rope_drive_le</winch_link>
+            <winch_link>rope_radius</winch_link>
+        </plugin>
+    </gazebo>
     <!-- Vacuum plugin -->
     <gazebo>
         <plugin name="vacuum_plugin" filename="libvacuum_plugin.so"/>
