@@ -255,4 +255,9 @@
         </plugin>
     </gazebo>
 
+    <!-- Vacuum plugin -->
+    <gazebo>
+        <plugin name="vacuum_plugin" filename="libvacuum_plugin.so"/>
+    </gazebo>
+
 </robot>
