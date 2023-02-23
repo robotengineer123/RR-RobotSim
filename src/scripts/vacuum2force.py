@@ -1,4 +1,3 @@
-@staticmethod
 def vac_in_newton(center_vac_pct, edge_vac_pct):
     # type: (float, float) -> float
     """ Force calculation from generated vacuum

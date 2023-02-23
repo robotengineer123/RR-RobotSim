@@ -78,24 +78,29 @@ private:
     event::ConnectionPtr updateConnection;
 
     // Member variables
-    // Friction coefficient between vacuum sheet and blade
-    double mu = 1.0;
-    // Stiffness of vacuum sheet (v) and suspension (s)
-    double k_v = 1.0;
-    double k_s = 2.0;
-    // Compression of vacuum sheet (v) and suspension (s)
-    double d_v = 0.05;
     // Normal force on from vacuum sheet, suspension onto blade and total
     double N_v;
     double N_s;
     double N;
+    
     // Friction force between vacuum sheet and blade
     double F;
+    
     // Resultant force in the plane
     double F_res_plane;
+    
     // Whether vacuum is on or off
     bool vacuum_inner = true;
     bool vacuum_outer = true;
+    
+    // Constants
+    double edge = 0.076674;  // Combined area of side cells in foam [m2]
+    double center = 0.121469; // Combined area of center cells in foam [m2]
+    double mu = 1.0; // Friction coefficient between vacuum sheet and blade
+    double k_v = 1.0; // Stiffness of vacuum sheet (v) and suspension (s)
+    double k_s = 2.0;
+    double d_v = 0.05; // Compression of vacuum sheet (v) and suspension (s)
+    double d_s = 0.05;
 
 };
 
