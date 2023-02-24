@@ -13,13 +13,13 @@ public:
     void Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf) {
         
         // If vacuum values are specified in .gazebo file
-        if (_sdf->HasElement("vacuum_inner"))
+        if (_sdf->HasElement("center_vac"))
         {
-            vacuum_inner = _sdf->Get<bool>("vacuum_inner");
+            center_vac = _sdf->Get<bool>("center_vac");
         }
-        if (_sdf->HasElement("vacuum_inner"))
+        if (_sdf->HasElement("edge_vac"))
         {
-            vacuum_outer = _sdf->Get<bool>("vacuum_outer");
+            edge_vac = _sdf->Get<bool>("edge_vac");
         }
 
         // Store the pointer to the model
@@ -38,12 +38,12 @@ public:
         N_s = 0.0;
         
         // Add normal forces if vacuum is on
-        if (vacuum_inner)
+        if (center_vac)
         {
             N_v = k_v*d_v;
             N_s += 10000;
         }
-        if (vacuum_outer)
+        if (edge_vac)
         {
             N_v = k_v*d_v;
             N_s += 20000;
@@ -59,7 +59,7 @@ public:
         // Check if all vacuum is off -> set forces to zero
         // Check if resultant force in plane is below the friction force -> Stand still
         F_res_plane = std::sqrt(std::pow(F_res.X(), 2) + std::pow(F_res.Y(), 2));
-        if ((not vacuum_inner) && (not vacuum_outer)) {
+        if ((not center_vac) && (not edge_vac)) {
             this->model->GetLink("dummy")->SetForce(ignition::math::Vector3d(0, 0, 0));
         }
         else if (F_res_plane < F) {
@@ -90,13 +90,13 @@ private:
     double F_res_plane;
     
     // Whether vacuum is on or off
-    bool vacuum_inner = true;
-    bool vacuum_outer = true;
+    bool center_vac = true;
+    bool edge_vac = true;
     
     // Constants
     double edge = 0.076674;  // Combined area of side cells in foam [m2]
     double center = 0.121469; // Combined area of center cells in foam [m2]
-    double mu = 1.0; // Friction coefficient between vacuum sheet and blade
+    double mu = 0.2; // Friction coefficient between vacuum sheet and blade
     double k_v = 1.0; // Stiffness of vacuum sheet (v) and suspension (s)
     double k_s = 2.0;
     double d_v = 0.05; // Compression of vacuum sheet (v) and suspension (s)

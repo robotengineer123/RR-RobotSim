@@ -267,8 +267,8 @@
     <!-- Vacuum plugin, set parameters true/false -->
     <gazebo>
         <plugin name="vacuum_plugin" filename="libvacuum_plugin.so">
-            <vacuum_inner>true</vacuum_inner>
-            <vacuum_outer>true</vacuum_outer> 
+            <center_vac>true</center_vac>
+            <edge_vac>true</edge_vac> 
         </plugin>
     </gazebo>
 
