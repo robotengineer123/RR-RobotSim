@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="rope_macro">
+  <xacro:macro name="chassis_macro" params="parent_link">
+    <link name="rope_link">
+        <inertial>
+          <origin xyz="0.45171 -1.9114E-06 -0.0060107" rpy="0 0 0" />
+          <mass value="0.01" />
+          <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.01" />
+        </inertial>
+        <visual>
+          <origin xyz="0 0 0" rpy="0 0 0" />
+          <geometry>
+            <empty></empty>
+          </geometry>
+        </visual>
+        <collision>
+          <origin xyz="0 0 0" rpy="0 0 0" />
+          <geometry>
+            <empty></empty>
+          </geometry>
+        </collision>
+      </link>
+
+      <joint name="${parent_link}_to_rope" type="floating">
+        <parent link="${parent_link}"/>
+        <child link="rope_link" />
+      </joint>
+  </xacro:macro>
+</robot>

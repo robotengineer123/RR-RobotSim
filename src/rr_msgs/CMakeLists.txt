@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(winch_force_plugin)
-add_compile_options(-std=c++11)
+project(rr_msgs)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -9,11 +8,9 @@ add_compile_options(-std=c++11)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  gazebo
-  gazebo_plugins
-  gazebo_ros
-  roscpp
   std_msgs
+  geometry_msgs
+  message_generation
 )
 
 ## System dependencies are found with CMake's conventions
@@ -50,11 +47,11 @@ find_package(catkin REQUIRED COMPONENTS
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-# add_message_files(
-#   FILES
-#   Message1.msg
-#   Message2.msg
-# )
+add_message_files(
+  FILES
+  MotorState.msg
+  WheelStatus.msg
+)
 
 ## Generate services in the 'srv' folder
 # add_service_files(
@@ -71,10 +68,11 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 ## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   std_msgs  # Or other packages containing msgs
-# )
+generate_messages(
+  DEPENDENCIES
+  std_msgs
+  geometry_msgs
+)
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -107,8 +105,8 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES winch_force_plugin
-#  CATKIN_DEPENDS gazebo gazebo_plugins gazebo_ros roscpp
+#  LIBRARIES rr_msgs
+ CATKIN_DEPENDS std_msgs geometry_msgs
 #  DEPENDS system_lib
 )
 
@@ -122,15 +120,10 @@ include_directories(
 # include
   ${catkin_INCLUDE_DIRS}
 )
-include_directories(${GAZEBO_INCLUDE_DIRS})
-link_directories(${GAZEBO_LIBRARY_DIRS})
-
-add_library(winch_force_plugin SHARED src/winch_force_plugin.cpp)
-target_link_libraries(winch_force_plugin ${GAZEBO_LIBRARIES} ${catkin_LIBRARIES})
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/winch_force_plugin.cpp
+#   src/${PROJECT_NAME}/rr_msgs.cpp
 # )
 
 ## Add cmake target dependencies of the library
@@ -141,7 +134,7 @@ target_link_libraries(winch_force_plugin ${GAZEBO_LIBRARIES} ${catkin_LIBRARIES}
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-# add_executable(${PROJECT_NAME}_node src/winch_force_plugin_node.cpp)
+# add_executable(${PROJECT_NAME}_node src/rr_msgs_node.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -205,7 +198,7 @@ target_link_libraries(winch_force_plugin ${GAZEBO_LIBRARIES} ${catkin_LIBRARIES}
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_winch_force_plugin.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_rr_msgs.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
