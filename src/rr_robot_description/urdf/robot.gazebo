@@ -256,12 +256,24 @@
     </gazebo>
 
     <gazebo>
-        <plugin name="winch_force_plugin" filename="libwinch_force_plugin.so">
+        <plugin name="winch_force_plugin_le" filename="libwinch_force_plugin.so">
             <spring_stiffness>1</spring_stiffness>
             <rot_axis>y</rot_axis>
-            <rope_fixture>1 1 1</rope_fixture>
+            <rope_fixture>10 0 0</rope_fixture>
             <winch_link>rope_drive_le</winch_link>
-            <winch_link>rope_radius</winch_link>
+            <radius_topic>rope_drive/current_drive_radius</radius_topic>
+            <one_meter_stiffness>1000000</one_meter_stiffness>  <!--normalized_stifness/length = stifness-->
+        </plugin>
+    </gazebo>
+
+    <gazebo>
+        <plugin name="winch_force_plugin_te" filename="libwinch_force_plugin.so">
+            <spring_stiffness>1</spring_stiffness>
+            <rot_axis>y</rot_axis>
+            <rope_fixture>10 0 0</rope_fixture>
+            <winch_link>rope_drive_te</winch_link>
+            <radius_topic>rope_drive/current_drive_radius</radius_topic>
+            <one_meter_stiffness>1000000</one_meter_stiffness>  <!--normalized_stifness/length = stifness-->
         </plugin>
     </gazebo>
     <!-- Vacuum plugin, set parameters true/false -->
