@@ -240,6 +240,8 @@
       <child link="top_wheel_te" />
     </joint>
 
+    <!--  -->
+
     <!-- ********************* Vacuum Sheet ********************* -->
 
     <!-- TODO: add mass and inertia -->
