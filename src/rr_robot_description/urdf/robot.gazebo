@@ -279,8 +279,13 @@
     <!-- Vacuum plugin, set parameters true/false -->
     <gazebo>
         <plugin name="vacuum_plugin" filename="libvacuum_plugin.so">
-            <vacuum_inner>true</vacuum_inner>
-            <vacuum_outer>true</vacuum_outer> 
+            <!-- Combined areas of vacuum cells, edge and center [m2] -->
+            <edge>0.076674</edge>
+            <center>0.121469</center>
+            <!-- Friction coefficient between vacuum sheet and blade -->
+            <mu>0.2</mu>
+            <!-- Force to compress vacuum sheet until wheel contact -->
+            <N_v>368.93</N_v>
         </plugin>
     </gazebo>
 
