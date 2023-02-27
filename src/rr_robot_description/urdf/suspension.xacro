@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://ros.org/wiki/xacro" name="suspension">
-    <xacro:macro name="attach_tool_macro" params="parent">
+    <xacro:macro name="suspension_macro" params="parent">
         <link name="rope_drive_te">
             <inertial>
               <mass value="1" />
