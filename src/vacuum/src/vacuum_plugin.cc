@@ -33,25 +33,26 @@ public:
 
     // Called by the world update start event
     void OnUpdate() {
-        // Initialize normal forces
-        N_v = 0.0;
-        N_s = 0.0;
-        
         // Add normal forces if vacuum is on
         if (center_vac)
         {
-            N_v = k_v*d_v;
-            N_s += 10000;
+            center_vac_pct = vac_pct;
         }
         if (edge_vac)
         {
-            N_v = k_v*d_v;
-            N_s += 20000;
+            edge_vac_pct = vac_pct;
         }
         
-        // Compute total normal force and friction force
-        N = N_v + N_s;
-        F = N_v*mu;
+        // [% vacuum] converted to [Pa] and multiplied to Area [m2] to obtain [N]
+        N_center = (center_vac_pct*1013)*center;
+        N_side = (edge_vac_pct*1013)*edge;
+        N = N_center + N_side;
+
+        // Force compressing suspension
+        N_s = N - N_v;
+
+        // Friction force
+        F = mu*N_v;
         
         // Get resultant force on robot with no friction force
         ignition::math::Vector3d F_res = this->model->GetLink("dummy")->RelativeForce();
@@ -78,29 +79,31 @@ private:
     event::ConnectionPtr updateConnection;
 
     // Member variables
-    // Normal force on from vacuum sheet, suspension onto blade and total
-    double N_v;
+    // Force compressing suspension
     double N_s;
+    // Total normal force
     double N;
-    
+    // Normal forces from center and edge vacuum
+    double N_side;
+    double N_center;
     // Friction force between vacuum sheet and blade
     double F;
-    
     // Resultant force in the plane
     double F_res_plane;
     
     // Whether vacuum is on or off
     bool center_vac = true;
     bool edge_vac = true;
+    double vac_pct = 10;
+    double edge_vac_pct;
+    double center_vac_pct;
     
     // Constants
     double edge = 0.076674;  // Combined area of side cells in foam [m2]
     double center = 0.121469; // Combined area of center cells in foam [m2]
     double mu = 0.2; // Friction coefficient between vacuum sheet and blade
-    double k_v = 1.0; // Stiffness of vacuum sheet (v) and suspension (s)
-    double k_s = 2.0;
-    double d_v = 0.05; // Compression of vacuum sheet (v) and suspension (s)
-    double d_s = 0.05;
+    // Force to compress vacuum sheet until wheel contact (using 25 % compression)
+    double N_v = 368.93;
 
 };
 
