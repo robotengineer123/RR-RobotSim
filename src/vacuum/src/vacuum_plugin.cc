@@ -12,18 +12,18 @@ class VacuumPlugin : public ModelPlugin {
 public:
     void Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf) {
         
-        // If vacuum values are specified in .gazebo file
-        if (_sdf->HasElement("center_vac"))
-        {
-            center_vac = _sdf->Get<bool>("center_vac");
-        }
-        if (_sdf->HasElement("edge_vac"))
-        {
-            edge_vac = _sdf->Get<bool>("edge_vac");
-        }
-
         // Store the pointer to the model
         this->model = _parent;
+
+        // Load values specified in robot.gazebo file
+        edge = _sdf->Get<double>("edge");
+        center = _sdf->Get<double>("center");
+        mu = _sdf->Get<double>("mu");
+        N_v = _sdf->Get<double>("N_v");
+
+        // Start plugin node
+        StartNode()
+        ROS_INFO("Vacuum plugin loaded for model: %s", model->GetName().c_str());
 
         // Listen to the update event. This event is broadcast every
         // simulation iteration.
@@ -72,6 +72,16 @@ public:
     }
 
 private:
+
+    void StartNode()
+    {
+        // initialize Ros node
+        int argc = 0;
+        char **argv = NULL;
+        ros::init(argc, argv, "vacuum plugin", ros::init_options::AnonymousName);
+        nh = std::make_unique<ros::NodeHandle>();  
+    }
+
     // Pointer to the model
     physics::ModelPtr model;
 
@@ -97,13 +107,6 @@ private:
     double vac_pct = 10;
     double edge_vac_pct;
     double center_vac_pct;
-    
-    // Constants
-    double edge = 0.076674;  // Combined area of side cells in foam [m2]
-    double center = 0.121469; // Combined area of center cells in foam [m2]
-    double mu = 0.2; // Friction coefficient between vacuum sheet and blade
-    // Force to compress vacuum sheet until wheel contact (using 25 % compression)
-    double N_v = 368.93;
 
 };
 
