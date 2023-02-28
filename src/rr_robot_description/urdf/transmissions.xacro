@@ -14,6 +14,6 @@
 
     <xacro:EffortJointMacro joint_name="rope_drive_le_joint"/>
     <xacro:EffortJointMacro joint_name="rope_drive_te_joint"/>
-    <xacro:EffortJointMacro joint_name="top_wheel_le_joint"/>
-    <xacro:EffortJointMacro joint_name="top_wheel_te_joint"/>
+    <xacro:EffortJointMacro joint_name="top_wheel_yaw_joint_te"/>
+    <xacro:EffortJointMacro joint_name="top_wheel_yaw_joint_le"/>
 </robot>

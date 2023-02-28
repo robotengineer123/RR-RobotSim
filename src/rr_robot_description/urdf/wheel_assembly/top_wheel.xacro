@@ -35,6 +35,7 @@
               <limit lower="${-range}" upper="${range}" effort="1000" velocity="1000"/>
               <parent link="${parent}" />
               <child link="top_wheel_mount_${postfix}"/>
+              <dynamics damping="1" />
           </joint>
           
           <link name="yaw_link_${postfix}">
@@ -52,6 +53,7 @@
               <joint_properties damping="1.0" friction="1.0" />
               <parent link="top_wheel_mount_${postfix}" />
               <child link="yaw_link_${postfix}" />
+              <dynamics damping="1" />
           </joint>
           
           <link name="top_wheel_${postfix}">
@@ -81,6 +83,7 @@
             <axis xyz="1 0 0" />
             <parent link="yaw_link_${postfix}" />
             <child link="top_wheel_${postfix}" />
+            <dynamics damping="1" />
           </joint>
         </xacro:macro>
         

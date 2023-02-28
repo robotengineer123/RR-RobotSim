@@ -294,24 +294,24 @@
     <gazebo reference="bottom_pivot_joint_le">
         <implicitSpringDamper>true</implicitSpringDamper>
         <springStiffness>50</springStiffness>
-        <springReference>0.8</springReference>
+        <springReference>-0.174533</springReference>
     </gazebo>
 
     <gazebo reference="bottom_pivot_joint_te">
         <implicitSpringDamper>true</implicitSpringDamper>
         <springStiffness>50</springStiffness>
-        <springReference>0.8</springReference>
+        <springReference>-0.174533</springReference>
     </gazebo>
 
     <gazebo reference="top_pivot_joint_le">
         <implicitSpringDamper>true</implicitSpringDamper>
         <springStiffness>50</springStiffness>
-        <springReference>0.8</springReference>
+        <springReference>0.0</springReference>
     </gazebo>
 
     <gazebo reference="top_pivot_joint_te">
         <implicitSpringDamper>true</implicitSpringDamper>
         <springStiffness>50</springStiffness>
-        <springReference>0.8</springReference>
+        <springReference>0.0</springReference>
     </gazebo>
 </robot>
