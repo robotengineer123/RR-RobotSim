@@ -109,7 +109,7 @@
   <xacro:attach_tool_macro toolholder="th6" tool="$(arg th6_tool)" prefix="th6_"/>
 
   <xacro:attach_tool_macro toolholder="th7" tool="$(arg th7_tool)" prefix="th7_"/>
-  <!-- ******************************** Tranmissions ******************************** -->
+  <!-- ******************************** wheels ******************************** -->
   <xacro:include filename="$(find rr_robot_description)/urdf/wheel_assembly/bottom_wheel.xacro" />
 
   <xacro:bottom_wheels_macro parent="${robot_name}_chassis"
@@ -128,5 +128,4 @@
   <!-- *********************************** Gazebo *********************************** -->
   <xacro:include filename="$(find rr_robot_description)/urdf/robot.gazebo" />
   
-
 </robot>
