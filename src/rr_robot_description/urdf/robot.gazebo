@@ -265,7 +265,7 @@
             <one_meter_stiffness>1000000</one_meter_stiffness>  <!--normalized_stifness/length = stifness-->
         </plugin>
     </gazebo>
-
+    
     <gazebo>
         <plugin name="winch_force_plugin_te" filename="libwinch_force_plugin.so">
             <spring_stiffness>1</spring_stiffness>
@@ -277,14 +277,13 @@
         </plugin>
     </gazebo>
 
-    <!-- Vacuum plugin, set parameters true/false -->
-    <!--<gazebo>
+    <gazebo>
         <plugin name="vacuum_plugin" filename="libvacuum_plugin.so">
             <edge>0.076674</edge>
             <center>0.121469</center>
             <mu>0.2</mu>
             <N_v>368.93</N_v>
         </plugin>
-    </gazebo> -->
+    </gazebo>
 
 </robot>
