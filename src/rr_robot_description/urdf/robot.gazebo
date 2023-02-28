@@ -283,7 +283,8 @@
             <mu>0.2</mu>
             <N_v>368.93</N_v>
         </plugin>
-    </gazebo> -->
+    </gazebo>
+    
     <!-- Attach rotational spring-->
     <gazebo reference="bottom_pivot_joint_le">
         <implicitSpringDamper>true</implicitSpringDamper>
