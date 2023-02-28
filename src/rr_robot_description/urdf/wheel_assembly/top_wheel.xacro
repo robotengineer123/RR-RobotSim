@@ -5,6 +5,7 @@
 <robot xmlns:xacro="http://ros.org/wiki/xacro" name="top_wheel">
     <xacro:property name="range" value="0.174533" />
     <xacro:macro name="top_wheel_macro" params="parent x y z postfix">
+        
         <link name="top_wheel_mount_${postfix}">
             <inertial>
                 <mass value="0.001" />
@@ -17,7 +18,7 @@
             </visual>
         </link>
         <joint name="top_pivot_joint_${postfix}" type="revolute">
-            <origin xyz="${x+0.06343} ${y} ${z+0.01419}" rpy="0 0 0" />
+            <origin xyz="${x-0.10581} ${y-41} ${z-0.01217}" rpy="0 0 0" />
             <axis xyz="0 1 0" />
             <limit lower="${-range}" upper="${range}" effort="1000" velocity="1000"/>
             <parent link="${parent}" />
@@ -33,15 +34,14 @@
         </link>
         
         <joint name="top_wheel_yaw_joint_${postfix}" type="revolute">
-            <origin xyz="1.13039 0.12962 -0.1344" rpy="0. 0. 1.5708" />
-            <axis rpy="0 0 0" xyz="0 0 1" />
+            <origin xyz="0.10581 0 0.01217" rpy="0. 0. 1.5708" />
+            <axis xyz="0 0 1" />
             <limit lower="-0.20" upper="0.20" effort="10000" velocity="1000" />
             <joint_properties damping="1.0" friction="1.0" />
             <parent link="top_wheel_mount_${postfix}" />
             <child link="yaw_link_${postfix}" />
         </joint>
         
-
         <link name="top_wheel_${postfix}">
             <inertial>
               <mass value="1" />
@@ -65,7 +65,7 @@
             </collision>
           </link>
           <joint name="top_wheel_le_joint" type="continuous">
-            <origin xyz="1.13039 0.12962 -0.1344" rpy="0. 0. 1.5708" />
+            <origin xyz="0 41 0" />
             <axis rpy="0 0 0" xyz="0 1 0" />
             <parent link="yaw_link_${postfix}" />
             <child link="top_wheel_${postfix}" />

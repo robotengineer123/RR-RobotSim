@@ -297,4 +297,16 @@
         <springStiffness>50</springStiffness>
         <springReference>0.8</springReference>
     </gazebo>
+
+    <gazebo reference="top_pivot_joint_le">
+        <implicitSpringDamper>true</implicitSpringDamper>
+        <springStiffness>50</springStiffness>
+        <springReference>0.8</springReference>
+    </gazebo>
+
+    <gazebo reference="top_pivot_joint_te">
+        <implicitSpringDamper>true</implicitSpringDamper>
+        <springStiffness>50</springStiffness>
+        <springReference>0.8</springReference>
+    </gazebo>
 </robot>
