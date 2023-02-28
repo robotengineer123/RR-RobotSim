@@ -5,6 +5,12 @@
 #include <ignition/math/Vector3.hh>
 #include <string>
 #include <math.h>
+#include <iostream>
+#include <sstream>
+#include <std_msgs/String.h>
+#include <ros/ros.h>
+#include <stdio.h>
+#include <vector>
 
 namespace gazebo {
 class VacuumPlugin : public ModelPlugin {
@@ -22,7 +28,12 @@ public:
         N_v = _sdf->Get<double>("N_v");
 
         // Start plugin node
-        StartNode()
+        StartNode();
+
+        // Listen to topic
+        vac_sub = nh->subscribe("/vacuum_system/status_string", 1, &VacuumPlugin::VacuumSystemCallback, this);
+        ros::spinOnce();
+
         ROS_INFO("Vacuum plugin loaded for model: %s", model->GetName().c_str());
 
         // Listen to the update event. This event is broadcast every
@@ -33,19 +44,18 @@ public:
 
     // Called by the world update start event
     void OnUpdate() {
-        // Add normal forces if vacuum is on
-        if (center_vac)
-        {
-            center_vac_pct = vac_pct;
-        }
-        if (edge_vac)
-        {
-            edge_vac_pct = vac_pct;
-        }
+
+        ros::spinOnce();
+
+        // Get vacuum percentage of edge and center vacuum
+        vac = extractFloatWords(vacuum_system);
         
+        edge_vac = vac[0];
+        center_vac = vac[1];
+
         // [% vacuum] converted to [Pa] and multiplied to Area [m2] to obtain [N]
-        N_center = (center_vac_pct*1013)*center;
-        N_side = (edge_vac_pct*1013)*edge;
+        N_center = (center_vac*1013)*center;
+        N_side = (edge_vac*1013)*edge;
         N = N_center + N_side;
 
         // Force compressing suspension
@@ -71,6 +81,35 @@ public:
         }
     }
 
+    void VacuumSystemCallback(const std_msgs::StringConstPtr &msg)
+    {
+        vacuum_system = msg->data;
+    }
+
+    // Function to find two doubles in a string
+    std::vector<double> extractFloatWords(std::string str)
+    {
+        std::stringstream ss;
+    
+        /* Storing the whole string into string stream */
+        ss << str;
+    
+        /* Running loop till the end of the stream */
+        std::string temp;
+        double found;
+        std::vector<double> arr;
+        while (!ss.eof() && arr.size() < 2) {
+    
+            /* extracting word by word from stream */
+            ss >> temp;
+    
+            /* Checking the given word is integer or not */
+            if (std::stringstream(temp) >> found)
+                arr.push_back(found);
+            }
+        return arr;
+    }
+
 private:
 
     void StartNode()
@@ -88,8 +127,16 @@ private:
     // Pointer to the update event connection
     event::ConnectionPtr updateConnection;
 
+    // Node handle, subscriber and string for topic to subscribe to
+    std::unique_ptr<ros::NodeHandle> nh;
+    ros::Subscriber vac_sub;
+
     // Member variables
-    // Force compressing suspension
+    // Vacuum percentage array
+    std::vector<double> vac;
+    // Normal force compressing vacuum
+    double N_v;
+    // Normal force compressing suspension
     double N_s;
     // Total normal force
     double N;
@@ -100,13 +147,17 @@ private:
     double F;
     // Resultant force in the plane
     double F_res_plane;
-    
-    // Whether vacuum is on or off
-    bool center_vac = true;
-    bool edge_vac = true;
-    double vac_pct = 10;
-    double edge_vac_pct;
-    double center_vac_pct;
+    // Vacuum percent
+    double edge_vac;
+    double center_vac;
+    // Edge and center vacuum cell areas
+    double edge;
+    double center;
+    // Friction coefficient between vacuum sheet and blade
+    double mu;
+    // Vacuum topic message
+    std::string vacuum_system;
+
 
 };
 
