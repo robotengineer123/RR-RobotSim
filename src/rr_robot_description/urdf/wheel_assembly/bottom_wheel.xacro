@@ -34,6 +34,7 @@
                 <limit lower="${-range}" upper="${range}" effort="1000" velocity="1000"/>
                 <parent link="${parent}" />
                 <child link="bottom_wheel_mount_${postfix}"/>
+                <dynamics damping="1" />
             </joint>
 
         <!-- Wheel -->
@@ -64,6 +65,7 @@
                 <axis xyz="1 0 0"/>
                 <parent link="bottom_wheel_mount_${postfix}" />
                 <child link="bottom_wheel_${postfix}" />
+                <dynamics damping="1" />
             </joint>
         </xacro:macro>
 
