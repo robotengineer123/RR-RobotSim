@@ -1,0 +1,127 @@
+<!-- ********************* Bottom Wheels ******************** -->
+
+    <!-- TODO: add mass and inertia -->
+
+    <link name="bot_wheel_le">
+        <inertial>
+          <mass value="1" />
+          <origin xyz="0 0 0" rpy="0 0 0" />
+          <inertia ixx="0.002526666666667" ixy="0" ixz="0" iyy="0.002526666666667" iyz="0" izz="0.005"/>
+        </inertial>
+        <visual>
+          <origin xyz="0 0 0" rpy="0 0 0" />
+          <geometry>
+            <mesh filename="package://rr_robot_description/include/chassis/meshes/BottomWheels/visual.STL" />
+          </geometry>
+          <material name="grey">
+            <color rgba="0.4 0.4 0.4 1" />
+          </material>
+        </visual>
+        <collision>
+          <origin xyz="0 0 0" rpy="0 0 0" />
+          <geometry>
+            <mesh filename="package://rr_robot_description/include/chassis/meshes/BottomWheels/collision.STL" />
+          </geometry>
+        </collision>
+      </link>
+      <joint name="bot_wheel_le_joint" type="fixed">
+        <origin xyz="-0.0251 0.1615 -0.11818" rpy="0. 0. 1.5708" />
+        <parent link="${name}" />
+        <child link="bot_wheel_le" />
+      </joint>
+  
+      <link name="bot_wheel_te">
+        <inertial>
+          <mass value="1" />
+          <origin xyz="0 0 0" rpy="0 0 0" />
+          <inertia ixx="0.002526666666667" ixy="0" ixz="0" iyy="0.002526666666667" iyz="0" izz="0.005"/>
+        </inertial>
+        <visual>
+          <origin xyz="0 0 0" rpy="0 0 0" />
+          <geometry>
+            <mesh filename="package://rr_robot_description/include/chassis/meshes/BottomWheels/visual.STL" />
+          </geometry>
+          <material name="grey">
+            <color rgba="0.4 0.4 0.4 1" />
+          </material>
+        </visual>
+        <collision>
+          <origin xyz="0 0 0" rpy="0 0 0" />
+          <geometry>
+            <mesh filename="package://rr_robot_description/include/chassis/meshes/BottomWheels/collision.STL" />
+          </geometry>
+        </collision>
+      </link>
+      <joint name="bot_wheel_te_joint" type="fixed">
+        <origin xyz="-0.0251 -0.1615 -0.11818" rpy="0. 0. -1.5708" />
+        <parent link="${name}" />
+        <child link="bot_wheel_te" />
+      </joint>
+  
+      <!-- ********************* Top Wheels *********************** -->
+  
+      <!-- TODO: add mass and inertia -->
+  
+      <link name="top_wheel_le">
+        <inertial>
+          <mass value="1" />
+          <origin xyz="0 0 0" rpy="0 0 0" />
+          <inertia ixx="0.002526666666667" ixy="0" ixz="0" iyy="0.002526666666667" iyz="0" izz="0.005"/>
+        </inertial>
+        <visual>
+          <origin xyz="0 0 0" rpy="0 0 0" />
+          <geometry>
+            <mesh filename="package://rr_robot_description/include/chassis/meshes/TopWheels/visual.STL" />
+          </geometry>
+          <material name="grey">
+            <color rgba="0.4 0.4 0.4 1" />
+          </material>
+        </visual>
+        <collision>
+          <origin xyz="0 0 0" rpy="0 0 0" />
+          <geometry>
+            <mesh filename="package://rr_robot_description/include/chassis/meshes/TopWheels/collision.STL" />
+          </geometry>
+        </collision>
+      </link>
+      <joint name="top_wheel_le_joint" type="revolute">
+        <origin xyz="1.13039 0.12962 -0.1344" rpy="0. 0. 1.5708" />
+        <axis rpy="0 0 0" xyz="0 0 1" />
+        <limit lower="-0.20" upper="0.20" effort="10000" velocity="1000" />
+        <joint_properties damping="1.0" friction="1.0" />
+        <parent link="${name}" />
+        <child link="top_wheel_le" />
+      </joint>
+  
+      <link name="top_wheel_te">
+        <inertial>
+          <mass value="1" />
+          <origin xyz="0 0 0" rpy="0 0 0" />
+          <inertia ixx="0.002526666666667" ixy="0" ixz="0" iyy="0.002526666666667" iyz="0" izz="0.005"/>
+        </inertial>
+        <visual>
+          <origin xyz="0 0 0" rpy="0 0 0" />
+          <geometry>
+            <mesh filename="package://rr_robot_description/include/chassis/meshes/TopWheels/visual.STL" />
+          </geometry>
+          <material name="grey">
+            <color rgba="0.4 0.4 0.4 1" />
+          </material>
+        </visual>
+        <collision>
+          <origin xyz="0 0 0" rpy="0 0 0" />
+          <geometry>
+            <mesh filename="package://rr_robot_description/include/chassis/meshes/TopWheels/collision.STL" />
+          </geometry>
+        </collision>
+      </link>
+      <joint name="top_wheel_te_joint" type="revolute">
+        <origin xyz="1.13039 -0.12962 -0.1344" rpy="0. 0. -1.5708" />
+        <axis rpy="0 0 0" xyz="0 0 1" />
+        <limit lower="-0.20" upper="0.20" effort="10000" velocity="1000" />
+        <joint_properties damping="1.0" friction="1.0" />
+        <parent link="${name}" />
+        <child link="top_wheel_te" />
+      </joint>
+  
+      <!--  -->

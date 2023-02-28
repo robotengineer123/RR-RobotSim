@@ -4,56 +4,70 @@
     the range of motion is small -->
 <robot xmlns:xacro="http://ros.org/wiki/xacro" name="bot_wheel">
     <xacro:property name="range" value="0.174533" />
-    <xacro:macro name="bottom_wheel_macro" params="parent x y z postfix">
-    <!-- Wheel mount -->
-        <link name="bottom_wheel_mount_${postfix}">
-            <inertial>
-                <mass value="0.001" />
-                <inertia ixx="0.002526666666667" ixy="0" ixz="0" iyy="0.002526666666667" iyz="0" izz="0.005"/>
-            </inertial>
-            <visual>
+    <xacro:macro name="bottom_wheels_macro" params="parent x z wspan">
+
+        <xacro:macro name="make_bottom_wheel" params="te='true'">
+            <xacro:if value="${te}">
+                <xacro:property name="postfix" value="te" />
+                <xacro:property name="y" value="${-wspan/2}" />
+            </xacro:if>
+            <xacro:unless value="${te}">
+                <xacro:property name="postfix" value="le" />
+                <xacro:property name="y" value="${wspan/2}" />
+            </xacro:unless>
+        <!-- Wheel mount -->
+            <link name="bottom_wheel_mount_${postfix}">
+                <inertial>
+                    <mass value="0.001" />
+                    <inertia ixx="0.002526666666667" ixy="0" ixz="0" iyy="0.002526666666667" iyz="0" izz="0.005"/>
+                </inertial>
+                <visual>
+                    <geometry>
+                        <box size="0.05 0.01 0.01"/>
+                    </geometry>
+                </visual>
+            </link>
+            
+            <joint name="bottom_pivot_joint_${postfix}" type="revolute">
+                <origin xyz="${x+0.06343} ${y} ${z+0.01419}" rpy="0 0 0" />
+                <axis xyz="0 1 0" />
+                <limit lower="${-range}" upper="${range}" effort="1000" velocity="1000"/>
+                <parent link="${parent}" />
+                <child link="bottom_wheel_mount_${postfix}"/>
+            </joint>
+
+        <!-- Wheel -->
+            <link name="bottom_wheel_${postfix}">
+                <inertial>
+                    <mass value="1" />
+                    <inertia ixx="0.002526666666667" ixy="0" ixz="0" iyy="0.002526666666667" iyz="0" izz="0.005"/>
+                </inertial>
+                <visual>
+                    <origin xyz="0 0 0" rpy="0 0 0" />
+                    <geometry>
+                        <mesh filename="package://rr_robot_description/include/chassis/meshes/BottomWheels/visual.STL" />
+                    </geometry>
+                    <material name="grey">
+                        <color rgba="0.4 0.4 0.4 1" />
+                    </material>
+                </visual>
+                <collision>
+                <origin xyz="0 0 0" rpy="0 0 0" />
                 <geometry>
-                    <box size="0.05 0.01 0.01"/>
+                    <mesh filename="package://rr_robot_description/include/chassis/meshes/BottomWheels/collision.STL" />
                 </geometry>
-            </visual>
-        </link>
-        
-        <joint name="bottom_pivot_joint_${postfix}" type="revolute">
-            <origin xyz="${x+0.06343} ${y} ${z+0.01419}" rpy="0 0 0" />
-            <axis xyz="0 1 0" />
-            <limit lower="${-range}" upper="${range}" effort="1000" velocity="1000"/>
-            <parent link="${parent}" />
-            <child link="bottom_wheel_mount_${postfix}"/>
-        </joint>
+                </collision>
+            </link>
 
-    <!-- Wheel -->
-        <link name="bottom_wheel_${postfix}">
-            <inertial>
-                <mass value="1" />
-                <inertia ixx="0.002526666666667" ixy="0" ixz="0" iyy="0.002526666666667" iyz="0" izz="0.005"/>
-            </inertial>
-            <visual>
-              <origin xyz="0 0 0" rpy="0 0 0" />
-              <geometry>
-                <mesh filename="package://rr_robot_description/include/chassis/meshes/BottomWheels/visual.STL" />
-              </geometry>
-              <material name="grey">
-                <color rgba="0.4 0.4 0.4 1" />
-              </material>
-            </visual>
-            <collision>
-              <origin xyz="0 0 0" rpy="0 0 0" />
-              <geometry>
-                <mesh filename="package://rr_robot_description/include/chassis/meshes/BottomWheels/collision.STL" />
-              </geometry>
-            </collision>
-        </link>
+            <joint name="bottom_wheel_joint_${postfix}" type="continuous">
+                <origin xyz="-0.06343 0 -0.01419" rpy="0 0 1.5708" />
+                <axis xyz="1 0 0"/>
+                <parent link="bottom_wheel_mount_${postfix}" />
+                <child link="bottom_wheel_${postfix}" />
+            </joint>
+        </xacro:macro>
 
-        <joint name="bottom_wheel_joint_${postfix}" type="continuous">
-            <origin xyz="-0.06343 0 -0.01419" rpy="0 0 0" />
-            <axis xyz="0 1 0"/>
-            <parent link="bottom_wheel_mount_${postfix}" />
-            <child link="bottom_wheel_${postfix}" />
-        </joint>
+        <xacro:make_bottom_wheel te="true" />
+        <xacro:make_bottom_wheel te="false" />
     </xacro:macro>
 </robot>
