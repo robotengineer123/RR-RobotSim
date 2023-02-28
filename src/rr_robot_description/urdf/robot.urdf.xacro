@@ -116,6 +116,25 @@
                             y= "0.1615" 
                             z= "-0.11818"
                             postfix="le" />
+
+  <xacro:bottom_wheel_macro parent="${robot_name}_chassis"
+                            x= "-0.0251"
+                            y= "-0.1615" 
+                            z= "-0.11818"
+                            postfix="te" />
+  
+  <xacro:include filename="$(find rr_robot_description)/urdf/wheel_assembly/top_wheel.xacro" />
+  <xacro:top_wheel_macro parent="${robot_name}_chassis"
+                            x= "1.13039"  
+                            y= "0.12962" 
+                            z= "-0.1344"
+                            postfix="le" />
+
+  <xacro:top_wheel_macro parent="${robot_name}_chassis"
+                            x= "1.13039"  
+                            y= "-0.12962" 
+                            z= "-0.1344"
+                            postfix="te" />
   <!-- ******************************** Tranmissions ******************************** -->
   <xacro:include filename="$(find rr_robot_description)/urdf/transmissions.xacro" />
 

@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
 <robot>
-
     <!-- Gazebo materials-->
     <gazebo reference="rr_chassis">
         <material>Gazebo/SkyBlue</material>
@@ -284,6 +283,29 @@
             <mu>0.2</mu>
             <N_v>368.93</N_v>
         </plugin>
+    </gazebo> -->
+    <!-- Attach rotational spring-->
+    <gazebo reference="bottom_pivot_joint_le">
+        <implicitSpringDamper>true</implicitSpringDamper>
+        <springStiffness>50</springStiffness>
+        <springReference>0.8</springReference>
     </gazebo>
 
+    <gazebo reference="bottom_pivot_joint_te">
+        <implicitSpringDamper>true</implicitSpringDamper>
+        <springStiffness>50</springStiffness>
+        <springReference>0.8</springReference>
+    </gazebo>
+
+    <gazebo reference="top_pivot_joint_le">
+        <implicitSpringDamper>true</implicitSpringDamper>
+        <springStiffness>50</springStiffness>
+        <springReference>0.8</springReference>
+    </gazebo>
+
+    <gazebo reference="top_pivot_joint_te">
+        <implicitSpringDamper>true</implicitSpringDamper>
+        <springStiffness>50</springStiffness>
+        <springReference>0.8</springReference>
+    </gazebo>
 </robot>

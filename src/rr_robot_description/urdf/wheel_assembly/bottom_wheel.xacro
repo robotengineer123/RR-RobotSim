@@ -1,5 +1,8 @@
 <?xml version="1.0"?>
-<robot xmlns:xacro="http://ros.org/wiki/xacro" name="suspension">
+<!-- because closed loops are not allowed in URDF, the suspension is simplified to a torsional spring
+    at the wheel mount revolute joint. This can approximate the more complicated suspension as long as
+    the range of motion is small -->
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="bot_wheel">
     <xacro:property name="range" value="0.174533" />
     <xacro:macro name="bottom_wheel_macro" params="parent x y z postfix">
     <!-- Wheel mount -->
@@ -15,10 +18,10 @@
             </visual>
         </link>
         
-        <joint name="bottom_wheel_mount_${postfix}_joint" type="revolute">
-            <origin xyz="${x+0.06343} 0 ${z+0.01419}" rpy="0 0 0" />
+        <joint name="bottom_pivot_joint_${postfix}" type="revolute">
+            <origin xyz="${x+0.06343} ${y} ${z+0.01419}" rpy="0 0 0" />
             <axis xyz="0 1 0" />
-            <limit lower="${range}" upper="${range}" effort="1000" velocity="1000"/>
+            <limit lower="${-range}" upper="${range}" effort="1000" velocity="1000"/>
             <parent link="${parent}" />
             <child link="bottom_wheel_mount_${postfix}"/>
         </joint>
@@ -26,70 +29,31 @@
     <!-- Wheel -->
         <link name="bottom_wheel_${postfix}">
             <inertial>
-                <mass value="0.001" />
+                <mass value="1" />
                 <inertia ixx="0.002526666666667" ixy="0" ixz="0" iyy="0.002526666666667" iyz="0" izz="0.005"/>
             </inertial>
             <visual>
-                <geometry>
-                    <box size="0.05 0.01 0.01"/>
-                </geometry>
+              <origin xyz="0 0 0" rpy="0 0 0" />
+              <geometry>
+                <mesh filename="package://rr_robot_description/include/chassis/meshes/BottomWheels/visual.STL" />
+              </geometry>
+              <material name="grey">
+                <color rgba="0.4 0.4 0.4 1" />
+              </material>
             </visual>
+            <collision>
+              <origin xyz="0 0 0" rpy="0 0 0" />
+              <geometry>
+                <mesh filename="package://rr_robot_description/include/chassis/meshes/BottomWheels/collision.STL" />
+              </geometry>
+            </collision>
         </link>
 
-        <joint name="bottom_wheel_${postfix}_joint" type="continuous">
-            <origin xyz="${x-0.06343} 0 ${z-0.01419}" rpy="0 0 0" />
+        <joint name="bottom_wheel_joint_${postfix}" type="continuous">
+            <origin xyz="-0.06343 0 -0.01419" rpy="0 0 0" />
             <axis xyz="0 1 0"/>
             <parent link="bottom_wheel_mount_${postfix}" />
             <child link="bottom_wheel_${postfix}" />
-        </joint>
-
-    <!-- spring revolute joint link TODO: finish this -->
-    <!--TODO: finish this-->
-        <link name="pitch_link_${postfix}">
-            <inertial>
-                <mass value="0.001" />
-                <inertia ixx="0.002526666666667" ixy="0" ixz="0" iyy="0.002526666666667" iyz="0" izz="0.005"/>
-            </inertial>
-            <visual>
-                <geometry>
-                    <box size="0.05 0.01 0.01"/>
-                </geometry>
-            </visual>
-        </link>
-
-        <joint name="pitch_link_spring_${postfix}_joint" type="prismatic">
-            <origin xyz="0 0 0" rpy="0 0 0" />
-            <axis xyz="1 0 0" />
-            <parent link="pitch_link_${postfix}" />
-            <child link="spring_mount_${postfix}" />
-            <limit lower="0" upper="0.150" effort="1000" velocity="1000"/>
-        </joint>
-
-        <joint name="pitch_link_mount_${postfix}_joint" type="continuous">
-            <origin xyz="${x-0.012} 0 ${z-0.05367}" rpy="0 0 0" />
-            <axis xyz="0 1 0" />
-            <parent link="bottom_wheel_mount_${postfix}" />
-            <child link="pitch_link_${postfix}" />
-        </joint>
-
-    <!-- Spring mount -->
-        <link name="spring_mount_${postfix}">
-            <inertial>
-                <mass value="0.001" />
-                <inertia ixx="0.002526666666667" ixy="0" ixz="0" iyy="0.002526666666667" iyz="0" izz="0.005"/>
-            </inertial>
-            <visual>
-                <geometry>
-                    <box size="0.05 0.01 0.01"/>
-                </geometry>
-            </visual>
-        </link>
-
-        <joint name="spring_mount_${postfix}_joint" type="continuous">
-            <origin xyz="${x+0.17805} 0 ${z+0.01519}" rpy="0 0 0" />
-            <axis xyz="0 1 0"/>
-            <parent link="${parent}" />
-            <child link="spring_mount_${postfix}"/>
         </joint>
     </xacro:macro>
 </robot>
