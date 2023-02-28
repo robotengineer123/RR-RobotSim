@@ -2,43 +2,43 @@
 <robot xmlns:xacro="http://ros.org/wiki/xacro" name="suspension">
     <xacro:macro name="suspension_macro" params="parent">
         <link name="rope_drive_te">
-            <inertial>
-              <mass value="1" />
-              <origin xyz="0 0 0" rpy="0 0 0" />
-              <inertia ixx="0.002526666666667" ixy="0" ixz="0" iyy="0.002526666666667" iyz="0" izz="0.005"/>
-            </inertial>
-            <visual>
-              <origin xyz="0 0 0" rpy="0 0 0" />
-              <geometry>
-                <mesh filename="package://rr_robot_description/include/chassis/meshes/RopeDrives/visual.STL" />
-              </geometry>
-              <material name="grey">
-                <color rgba="0.4 0.4 0.4 1" />
-              </material>
-            </visual>
-            <visual>
-              <origin rpy="${pi/2} 0 0" xyz="0.035 0 0" />
-              <geometry>
-                <box size="0.005 0.10 0.005" />
-              </geometry>
-              <material name="Grey">
-                <color rgba="0.6 0.6 0.6 1" />
-              </material>
-            </visual>
-            <collision>
-              <origin xyz="0 0 0" rpy="0 0 0" />
-              <geometry>
-                <mesh filename="package://rr_robot_description/include/chassis/meshes/RopeDrives/collision.STL" />
-              </geometry>
-            </collision>
-          </link>
-          <joint name="rope_drive_te_joint" type="continuous">
-            <origin xyz="0.92999 -0.24067 -0.0269" rpy="0.09857 0.09857 1.64405" />
-            <axis rpy="0 0 0" xyz="1 0 0" />
-            <limit effort="10000" velocity="1000" />
-            <joint_properties damping="1.0" friction="1.0" />
-            <parent link="${name}" />
-            <child link="rope_drive_te" />
-          </joint>
+          <inertial>
+            <mass value="1" />
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <inertia ixx="0.002526666666667" ixy="0" ixz="0" iyy="0.002526666666667" iyz="0" izz="0.005"/>
+          </inertial>
+          <visual>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+              <mesh filename="package://rr_robot_description/include/chassis/meshes/RopeDrives/visual.STL" />
+            </geometry>
+            <material name="grey">
+              <color rgba="0.4 0.4 0.4 1" />
+            </material>
+          </visual>
+          <visual>
+            <origin rpy="${pi/2} 0 0" xyz="0.035 0 0" />
+            <geometry>
+              <box size="0.005 0.10 0.005" />
+            </geometry>
+            <material name="Grey">
+              <color rgba="0.6 0.6 0.6 1" />
+            </material>
+          </visual>
+          <collision>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <geometry>
+              <mesh filename="package://rr_robot_description/include/chassis/meshes/RopeDrives/collision.STL" />
+            </geometry>
+          </collision>
+        </link>
+        <joint name="rope_drive_te_joint" type="continuous">
+          <origin xyz="0.92999 -0.24067 -0.0269" rpy="0.09857 0.09857 1.64405" />
+          <axis rpy="0 0 0" xyz="1 0 0" />
+          <limit effort="10000" velocity="1000" />
+          <joint_properties damping="1.0" friction="1.0" />
+          <parent link="${name}" />
+          <child link="rope_drive_te" />
+        </joint>
     </xacro:macro>
 </robot>
