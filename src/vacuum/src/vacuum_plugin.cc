@@ -19,7 +19,7 @@ public:
     void Load(physics::ModelPtr _parent, sdf::ElementPtr _sdf) {
         
         // Store the pointer to the model
-        this->model = _parent;
+        model = _parent;
 
         // Load values specified in robot.gazebo file
         edge = _sdf->Get<double>("edge");
@@ -38,7 +38,7 @@ public:
 
         // Listen to the update event. This event is broadcast every
         // simulation iteration.
-        this->updateConnection = event::Events::ConnectWorldUpdateBegin(
+        updateConnection = event::Events::ConnectWorldUpdateBegin(
             std::bind(&VacuumPlugin::OnUpdate, this));
     }
 
@@ -118,7 +118,7 @@ private:
         int argc = 0;
         char **argv = NULL;
         ros::init(argc, argv, "vacuum plugin", ros::init_options::AnonymousName);
-        nh = std::make_unique<ros::NodeHandle>();  
+        nh = std::make_unique<ros::NodeHandle>();
     }
 
     // Pointer to the model
@@ -156,7 +156,7 @@ private:
     // Friction coefficient between vacuum sheet and blade
     double mu;
     // Vacuum topic message
-    std::string vacuum_system;
+    std::string vacuum_system = "\n  edge_vacuum: VAC 10.8%\n  center_vacuum: VAC 6.8%";
 
 
 };
