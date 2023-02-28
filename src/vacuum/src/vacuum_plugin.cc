@@ -1,5 +1,4 @@
 #include <functional>
-#include <gazebo/common/common.hh>
 #include <gazebo/gazebo.hh>
 #include <gazebo/physics/physics.hh>
 #include <ignition/math/Vector3.hh>
@@ -65,19 +64,19 @@ public:
         F = mu*N_v;
         
         // Get resultant force on robot with no friction force
-        ignition::math::Vector3d F_res = this->model->GetLink("dummy")->RelativeForce();
+        ignition::math::Vector3d F_res = model->GetLink("dummy")->RelativeForce();
         
         // Check if all vacuum is off -> set forces to zero
         // Check if resultant force in plane is below the friction force -> Stand still
         F_res_plane = std::sqrt(std::pow(F_res.X(), 2) + std::pow(F_res.Y(), 2));
         if ((not center_vac) && (not edge_vac)) {
-            this->model->GetLink("dummy")->SetForce(ignition::math::Vector3d(0, 0, 0));
+            model->GetLink("dummy")->SetForce(ignition::math::Vector3d(0, 0, 0));
         }
         else if (F_res_plane < F) {
-            this->model->GetLink("dummy")->SetForce(ignition::math::Vector3d(-F_res.X(), -F_res.Y(), -N));
+            model->GetLink("dummy")->SetForce(ignition::math::Vector3d(-F_res.X(), -F_res.Y(), -N));
         } 
         else {
-            this->model->GetLink("dummy")->SetForce(ignition::math::Vector3d(-F*F_res.X()/F_res_plane, -F*F_res.Y()/F_res_plane, -N));
+            model->GetLink("dummy")->SetForce(ignition::math::Vector3d(-F*F_res.X()/F_res_plane, -F*F_res.Y()/F_res_plane, -N));
         }
     }
 
