@@ -1,0 +1,25 @@
+rr_robot:
+
+  joint_state_controller:
+    type: joint_state_controller/JointStateController
+    publish_rate: 50
+
+  top_wheel_le_joint_controller:
+    type: effort_controllers/JointPositionController
+    joint: top_wheel_le_joint
+    pid: {p: 100.0, i: 0.0, d: 0.0}
+
+  top_wheel_te_joint_controller:
+    type: effort_controllers/JointPositionController
+    joint: top_wheel_te_joint
+    pid: {p: 100.0, i: 0.0, d: 0.0}
+
+  rope_drive_le_joint_controller:
+    type: velocity_controllers/JointVelocityController
+    joint: rope_drive_le_joint
+    pid: {p: 100.0, i: 0.0, d: 0.0}
+
+  rope_drive_te_joint_controller:
+    type: velocity_controllers/JointVelocityController
+    joint: rope_drive_te_joint
+    pid: {p: 100.0, i: 0.0, d: 0.0}
