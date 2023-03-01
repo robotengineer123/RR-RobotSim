@@ -253,60 +253,64 @@
             <robotNamespace>/rr_robot</robotNamespace>
         </plugin>
     </gazebo>
-
-    <gazebo>
-        <plugin name="winch_force_plugin_le" filename="libwinch_force_plugin.so">
-            <spring_stiffness>1</spring_stiffness>
-            <rot_axis>y</rot_axis>
-            <rope_fixture>10 0 0</rope_fixture>
-            <winch_link>rope_drive_le</winch_link>
-            <radius_topic>rope_drive/current_drive_radius</radius_topic>
-            <one_meter_stiffness>1000000</one_meter_stiffness>  <!--normalized_stifness/length = stifness-->
-        </plugin>
-    </gazebo>
     
     <gazebo>
         <plugin name="winch_force_plugin_te" filename="libwinch_force_plugin.so">
-            <spring_stiffness>1</spring_stiffness>
-            <rot_axis>y</rot_axis>
             <rope_fixture>10 0 0</rope_fixture>
-            <winch_link>rope_drive_te</winch_link>
+            <rope_joint>rope_springed_joint_te</rope_joint>
             <radius_topic>rope_drive/current_drive_radius</radius_topic>
-            <one_meter_stiffness>1000000</one_meter_stiffness> 
+            <torque_topic>left_motor/torque_procd</torque_topic>
+            <one_meter_stiffness>100000</one_meter_stiffness> 
         </plugin>
     </gazebo>
 
     <gazebo>
+        <plugin name="winch_force_plugin_le" filename="libwinch_force_plugin.so">
+            <rope_fixture>10 0 0</rope_fixture>
+            <rope_joint>rope_springed_joint_le</rope_joint>
+            <radius_topic>rope_drive/current_drive_radius</radius_topic>
+            <torque_topic>right_motor/torque_procd</torque_topic>
+            <one_meter_stiffness>100000</one_meter_stiffness> 
+        </plugin>
+    </gazebo>
+
+    <!-- <gazebo>
         <plugin name="vacuum_plugin" filename="libvacuum_plugin.so">
             <edge>0.076674</edge>
             <center>0.121469</center>
-            <mu>0.2</mu>
+            <mu>0.00001</mu>
             <N_v>368.93</N_v>
         </plugin>
-    </gazebo>
+    </gazebo> -->
     
-    <!-- Attach rotational spring-->
-    <gazebo reference="bottom_pivot_joint_le">
-        <implicitSpringDamper>true</implicitSpringDamper>
+    <!-- Attach rotational spring to suspension-->
+    <gazebo reference="bot_pivot_joint_le">
         <springStiffness>50</springStiffness>
         <springReference>-0.174533</springReference>
     </gazebo>
 
-    <gazebo reference="bottom_pivot_joint_te">
-        <implicitSpringDamper>true</implicitSpringDamper>
+    <gazebo reference="bot_pivot_joint_te">
         <springStiffness>50</springStiffness>
         <springReference>-0.174533</springReference>
     </gazebo>
 
     <gazebo reference="top_pivot_joint_le">
-        <implicitSpringDamper>true</implicitSpringDamper>
         <springStiffness>50</springStiffness>
-        <springReference>0.0</springReference>
+        <springReference>1.0</springReference>
     </gazebo>
 
     <gazebo reference="top_pivot_joint_te">
-        <implicitSpringDamper>true</implicitSpringDamper>
         <springStiffness>50</springStiffness>
+        <springReference>1.0</springReference>
+    </gazebo>
+
+    <!-- Attach spring to rope prismatic joing -->
+    <gazebo reference="rope_springed_joint_te">
+        <springStiffness>500</springStiffness>
+        <springReference>0.0</springReference>
+    </gazebo>
+    <gazebo reference="rope_springed_joint_le">
+        <springStiffness>500</springStiffness>
         <springReference>0.0</springReference>
     </gazebo>
 </robot>

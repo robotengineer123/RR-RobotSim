@@ -2,7 +2,7 @@
 <sdf version="1.4">
     <world name="default">
         <!-- Gravity -->
-    <!--<gravity>-9.48 0 -2.54</gravity>-->
+        <gravity>0 0 -9.82</gravity><!--<gravity>-9.48 0 -2.54</gravity>-->
         <!-- Ground Plane -->
         <include>
             <uri>model://ground_plane</uri>

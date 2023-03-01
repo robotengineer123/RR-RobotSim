@@ -65,7 +65,7 @@
         </geometry>
       </collision>
     </link>
-    <joint name="rope_drive_le_joint" type="continuous">
+    <joint name="rope_drive_le_joint" type="fixed">
       <origin xyz="0.92999 0.24067 -0.0269" rpy="-0.09857 0.09857 -1.64405" />
       <axis rpy="0 0 0" xyz="1 0 0" />
       <limit effort="10000" velocity="1000" />
@@ -105,7 +105,7 @@
         </geometry>
       </collision>
     </link>
-    <joint name="rope_drive_te_joint" type="continuous">
+    <joint name="rope_drive_te_joint" type="fixed">
       <origin xyz="0.92999 -0.24067 -0.0269" rpy="0.09857 0.09857 1.64405" />
       <axis rpy="0 0 0" xyz="1 0 0" />
       <limit effort="10000" velocity="1000" />
