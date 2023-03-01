@@ -282,6 +282,11 @@
             <N_v>368.93</N_v>
         </plugin>
     </gazebo> -->
+
+    <gazebo>
+        <plugin name="winch_torque_plugin" filename="libwinch_torque_plugin.so">
+        </plugin>
+    </gazebo>
     
     <!-- Attach rotational spring to suspension-->
     <gazebo reference="bot_pivot_joint_le">

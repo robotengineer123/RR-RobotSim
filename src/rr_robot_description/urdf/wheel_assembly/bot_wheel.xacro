@@ -46,7 +46,7 @@
                 <visual>
                     <origin xyz="0 0 0" rpy="0 0 0" />
                     <geometry>
-                        <mesh filename="package://rr_robot_description/include/chassis/meshes/botWheels/visual.STL" />
+                        <mesh filename="package://rr_robot_description/include/chassis/meshes/BottomWheels/visual.STL" />
                     </geometry>
                     <material name="grey">
                         <color rgba="0.4 0.4 0.4 1" />
@@ -55,7 +55,7 @@
                 <collision>
                 <origin xyz="0 0 0" rpy="0 0 0" />
                 <geometry>
-                    <mesh filename="package://rr_robot_description/include/chassis/meshes/botWheels/collision.STL" />
+                    <mesh filename="package://rr_robot_description/include/chassis/meshes/BottomWheels/collision.STL" />
                 </geometry>
                 </collision>
             </link>
