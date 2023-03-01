@@ -7,6 +7,7 @@
 #include <array>
 #include <iostream>
 #include <ros/ros.h>
+#include <rr_msgs/MotorState.h>
 #include <math.h>
 #include <unordered_map>
 
@@ -59,9 +60,9 @@ namespace gazebo
             eff_radius_ = msg->data;
         }
 
-        void TorqueCallback(const std_msgs::Float64ConstPtr &msg)
+        void TorqueCallback(const rr_msgs::MotorStateConstPtr &msg)
         {
-            torque_= msg->data;
+            torque_= msg->effort;
         }
 
     private:
