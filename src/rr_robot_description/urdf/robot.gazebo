@@ -274,14 +274,14 @@
         </plugin>
     </gazebo>
 
-    <!-- <gazebo>
+    <gazebo>
         <plugin name="vacuum_plugin" filename="libvacuum_plugin.so">
             <edge>0.076674</edge>
             <center>0.121469</center>
             <mu>0.00001</mu>
             <N_v>368.93</N_v>
         </plugin>
-    </gazebo> -->
+    </gazebo>
 
     <gazebo>
         <plugin name="winch_torque_plugin" filename="libwinch_torque_plugin.so">
