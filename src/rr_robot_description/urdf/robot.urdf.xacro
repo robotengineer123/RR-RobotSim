@@ -110,9 +110,8 @@
 
   <xacro:attach_tool_macro toolholder="th7" tool="$(arg th7_tool)" prefix="th7_"/>
   <!-- ******************************** wheels ******************************** -->
-  <xacro:include filename="$(find rr_robot_description)/urdf/wheel_assembly/bottom_wheel.xacro" />
-
-  <xacro:bottom_wheels_macro parent="${robot_name}_chassis"
+  <xacro:include filename="$(find rr_robot_description)/urdf/wheel_assembly/bot_wheel.xacro" />
+  <xacro:bot_wheels_macro parent="${robot_name}_chassis"
                             x= "-0.0251"
                             wspan= "0.323"
                             z= "-0.11818"/>
@@ -127,6 +126,9 @@
 
   <!--***************************** Rope for winch plugin *****************************-->
   <xacro:include filename="$(find rr_robot_description)/urdf/rope.xacro" />
+  <xacro:rope_macro winch_name_no_postfix="rope_drive"
+                    rope_l="50"/>
+
 
   <!-- *********************************** Gazebo *********************************** -->
   <xacro:include filename="$(find rr_robot_description)/urdf/robot.gazebo" />

@@ -21,11 +21,12 @@ namespace gazebo
             sdf_ = _sdf;
 
             LoadSdfParams();
-
-            rope_length = fixed_pos.Distance(winch_link->WorldCoGPose().Pos());
+            winch_link = joint->GetParent();
+            rope_link = joint->GetChild();
 
             StartNode();
             eff_r_sub = nh->subscribe(eff_r_topic_, 1, &WinchForcePlugin::EffRadiusCallback, this);
+            torque_sub = nh->subscribe(torque_topic_, 1, &WinchForcePlugin::TorqueCallback, this);
             ros::spinOnce();
 
             ROS_INFO("Winch plugin loaded for model: %s", model_->GetName().c_str());
@@ -41,17 +42,14 @@ namespace gazebo
         {
             ros::spinOnce();
 
-            rope_length += UnwindStep();
-            ignition::math::Vector3d force = SpringForce();
+            ignition::math::Vector3d winch_pos = winch_link->WorldCoGPose().Pos();
+            rope_length = fixed_pos.Distance(winch_pos);
             
-            ignition::math::Quaterniond quat = model_->WorldPose().Rot();
-            ignition::math::Vector3d torque_arm = ignition::math::Vector3d(0, 0, 1);
-            torque_arm = quat.RotateVector(torque_arm);
+            joint->SetStiffness(1 ,normalized_stiffness/rope_length);
 
-            ignition::math::Vector3d torque = torque_arm.Cross(force);
+            ignition::math::Vector3d rope_force = GlobRopeForce();
 
-            winch_link->AddForceAtRelativePosition(force, {0, 0, 0});
-            winch_link->AddTorque(torque);
+            rope_link->AddForceAtRelativePosition(rope_force, {0, 0, 0});
             //ROS_INFO("Force is: %lf, %lf, %lf    torque is: %lf, %lf, %lf", force[0], force[1], force[2], torque[0], torque[1], torque[2]);
         }
 
@@ -59,6 +57,11 @@ namespace gazebo
         void EffRadiusCallback(const std_msgs::Float64ConstPtr &msg)
         {
             eff_radius_ = msg->data;
+        }
+
+        void TorqueCallback(const std_msgs::Float64ConstPtr &msg)
+        {
+            torque_= msg->data;
         }
 
     private:
@@ -75,17 +78,17 @@ namespace gazebo
         void LoadSdfParams()
         {
             normalized_stiffness = LoadParam<double>("one_meter_stiffness");
-            rot_axis = LoadParam<char>("rot_axis");
             fixed_pos = LoadParam<ignition::math::Vector3d>("rope_fixture");
             eff_r_topic_ = LoadParam<std::string>("radius_topic");
-            winch_link = model_->GetLink(
-                LoadParam<std::string>("winch_link"));
+            torque_topic_ = LoadParam<std::string>("torque_topic");
+            joint = model_->GetJoint(
+                LoadParam<std::string>("rope_joint"));
         }
 
         template <class T>
         T LoadParam(std::string par_name)
         {
-            if (not sdf_->HasElement("winch_link"))
+            if (not sdf_->HasElement(par_name))
             {
                 std::cerr << "Winch plugin needs " << par_name << " to be specified\n";
                 throw std::invalid_argument(par_name);
@@ -93,64 +96,16 @@ namespace gazebo
             return sdf_->Get<T>(par_name);
         }
 
-        ignition::math::Vector3d SpringForce()
+        ignition::math::Vector3d GlobRopeForce()
         {
             ignition::math::Vector3d winch_pos = winch_link->WorldCoGPose().Pos();
-            double dist = fixed_pos.Distance(winch_pos);
-            ignition::math::Vector3d direction = (fixed_pos - winch_pos).Normalize();
+            ignition::math::Quaterniond winch_quat = winch_link->WorldCoGPose().Rot();
 
-            double stiffness = normalized_stiffness / rope_length;
+            ignition::math::Vector3d rope_dir = (fixed_pos - winch_pos).Normalize();
 
-            ignition::math::Vector3d force(0, 0, 0);
-            if (rope_length < dist)
-            {
-                force = (dist - rope_length)*normalized_stiffness * direction;
-            }
-            
-            return force;
-        }
-
-        double UnwindStep()
-        {
-            double cur_rot = PosAngle(CurrentRot());
-            double angle_diff = cur_rot - prev_rot;
-            prev_rot = cur_rot;
-            if (std::abs(angle_diff) > M_PI) // then we wrapped around the circle
-            {
-                angle_diff = -std::abs(angle_diff) / angle_diff * (2 * M_PI - std::abs(angle_diff));
-            }
-            double unwind_l = angle_diff * eff_radius_;
-            return unwind_l;
-        }
-
-        double PosAngle(double angle)
-        {
-            if (angle < 0)
-                angle = 2 * M_PI - angle;
-            return angle;
-        }
-
-        double CurrentRot()
-        {
-            double rot;
-            switch (rot_axis)
-            {
-            case 'x':
-                rot = winch_link->WorldCoGPose().Pitch();
-                break;
-
-            case 'y':
-                rot = winch_link->WorldCoGPose().Roll();
-                break;
-
-            case 'z':
-                rot = winch_link->WorldCoGPose().Yaw();
-                break;
-
-            default:
-                std::cerr << "Invalid axis of rotation";
-            }
-            return rot;
+            double cos_angle = std::abs(winch_quat.RotateVector({0, 1, 0}).Dot(rope_dir));
+            ignition::math::Vector3d rope_force = rope_dir* (torque_*eff_radius_/cos_angle);
+            return rope_force;
         }
 
     private:
@@ -161,17 +116,22 @@ namespace gazebo
         std::unique_ptr<ros::NodeHandle> nh;
         
         ros::Subscriber eff_r_sub;
+        ros::Subscriber torque_sub;
         std::string eff_r_topic_;
+        std::string torque_topic_;
         double eff_radius_ = 0.2;
+        double torque_ = 0;
 
         double prev_rot;
 
-        ignition::math::Vector3d fixed_pos{0.0, 0.0, 0.0};
         physics::LinkPtr winch_link;
+        physics::LinkPtr rope_link;
+        physics::JointPtr joint;
+
+
+        ignition::math::Vector3d fixed_pos{0.0, 0.0, 0.0};
         double normalized_stiffness = 1;
-        char rot_axis;
-        double cur_torque;
-        double rope_length;
+        double rope_length = 0;
     };
 
     // Register this plugin with the simulator
