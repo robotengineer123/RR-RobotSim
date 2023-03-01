@@ -30,8 +30,8 @@ public:
         right_motor_sub = nh_R->subscribe("/right_motor/motor_state", 1, &WinchTorquePlugin::RightWinchTorqueCallback, this);
         
         // Publish to topics of the simulation
-        left_motor_pub = nh_L->advertise<std_msgs::Float64>("/rr_robot/rope_drive_le_joint_controller/command", 1);
-        right_motor_pub = nh_R->advertise<std_msgs::Float64>("/rr_robot/rope_drive_te_joint_controller/command", 1);
+        //left_motor_pub = nh_L->advertise<std_msgs::Float64>("/rr_robot/rope_drive_le_joint_controller/command", 1);
+        //right_motor_pub = nh_R->advertise<std_msgs::Float64>("/rr_robot/rope_drive_te_joint_controller/command", 1);
         
         ros::spinOnce();
 

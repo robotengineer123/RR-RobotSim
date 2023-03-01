@@ -25,7 +25,7 @@ public:
         center = _sdf->Get<double>("center");
         mu = _sdf->Get<double>("mu");
         N_v = _sdf->Get<double>("N_v");
-
+        
         // Start plugin node
         StartNode();
 
@@ -69,8 +69,12 @@ public:
         // Check if all vacuum is off -> set forces to zero
         // Check if resultant force in plane is below the friction force -> Stand still
         F_res_plane = std::sqrt(std::pow(F_res.X(), 2) + std::pow(F_res.Y(), 2));
-        if ((not center_vac) && (not edge_vac)) {
-            model->GetLink("dummy")->SetForce(ignition::math::Vector3d(0, 0, 0));
+
+        //if ((not center_vac) && (not edge_vac)) {
+        //    model->GetLink("dummy")->SetForce(ignition::math::Vector3d(0, 0, 0));
+        //}
+        if (F_res_plane == 0.0) {
+            model->GetLink("dummy")->SetForce(ignition::math::Vector3d(0, 0, -N));
         }
         else if (F_res_plane < F) {
             model->GetLink("dummy")->SetForce(ignition::math::Vector3d(-F_res.X(), -F_res.Y(), -N));
@@ -78,6 +82,7 @@ public:
         else {
             model->GetLink("dummy")->SetForce(ignition::math::Vector3d(-F*F_res.X()/F_res_plane, -F*F_res.Y()/F_res_plane, -N));
         }
+
     }
 
     void VacuumSystemCallback(const std_msgs::StringConstPtr &msg)
