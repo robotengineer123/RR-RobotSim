@@ -68,7 +68,6 @@
                 <dynamics damping="1" />
             </joint>
         </xacro:macro>
-
         <xacro:make_bot_wheel te="true" />
         <xacro:make_bot_wheel te="false" />
     </xacro:macro>

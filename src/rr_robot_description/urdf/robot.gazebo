@@ -259,8 +259,11 @@
             <rope_fixture>10 0 0</rope_fixture>
             <rope_joint>rope_springed_joint_te</rope_joint>
             <radius_topic>rope_drive/current_drive_radius</radius_topic>
-            <torque_topic>left_motor/torque_procd</torque_topic>
-            <one_meter_stiffness>100000</one_meter_stiffness> 
+            <motor_topic>/left_motor/motor_state</motor_topic>
+            <one_meter_stiffness>100000</one_meter_stiffness>
+            <kp>100</kp>
+            <kd>10</kd>
+            <ki>10</ki>
         </plugin>
     </gazebo>
 
@@ -269,8 +272,11 @@
             <rope_fixture>10 0 0</rope_fixture>
             <rope_joint>rope_springed_joint_le</rope_joint>
             <radius_topic>rope_drive/current_drive_radius</radius_topic>
-            <torque_topic>right_motor/torque_procd</torque_topic>
+            <motor_topic>/right_motor/motor_state</motor_topic>
             <one_meter_stiffness>100000</one_meter_stiffness> 
+            <kp>100</kp>
+            <kd>10</kd>
+            <ki>10</ki>
         </plugin>
     </gazebo>
 
