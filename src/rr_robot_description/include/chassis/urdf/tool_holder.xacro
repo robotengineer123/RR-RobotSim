@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="tool_holder">
+    <xacro:macro name="tool_holder_macro" params="name parent x_offset:=0 y_offset:=0 z_offset:=0 roll:=0 pitch:=0 yaw:=0">
+        <link name="${name}" >
+            <inertial>
+                <mass value="0.1911" />
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <inertia ixx="0.01880039566" ixy="-0.00288516792" ixz="0.00164510501" iyy="0.00519681040" iyz="-0.00798447007" izz="0.01485438661"/>
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="package://rr_robot_description/include/chassis/meshes/ToolHolder/visual.STL" />
+                </geometry>
+                <material name="black">
+                    <color rgba="0.2 0.2 0.2 1" />
+                </material>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry>
+                    <mesh filename="package://rr_robot_description/include/chassis/meshes/ToolHolder/collision.STL" />
+                </geometry>
+            </collision>
+        </link>
+        <joint name="${name}_joint" type="fixed">
+            <origin xyz="${x_offset} ${y_offset} ${z_offset}" rpy="${roll} ${pitch} ${yaw}" />
+            <parent link="${parent}" />
+            <child link="${name}" />
+        </joint>
+        <gazebo reference="${name}">
+            <material>Gazebo/DarkGrey</material>
+        </gazebo>
+    </xacro:macro>
+</robot>

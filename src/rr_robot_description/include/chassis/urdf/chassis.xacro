@@ -30,15 +30,44 @@
       <origin xyz="${x_offset} ${y_offset} ${z_offset}" rpy="0 0 0" />
     </joint>
 
-    <!-- ********************* Rope Drives ********************** -->
+    <!-- ******************** IMU ******************************* -->
 
-    <!-- TODO: add mass and inertia -->
+    <!-- imu link -->
+    <link name="imu_link">
+      <inertial>
+        <mass value="0.1" />
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/>
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <box size="0.03 0.03 0.03" />
+        </geometry>
+        <material name="grey">
+          <color rgba="0.4 0.4 0.4 1" />
+        </material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <box size="0.03 0.03 0.03" />
+        </geometry>
+      </collision>
+    </link>
+    <joint name="imu_joint" type="fixed">
+      <origin xyz="0.9 -0.035 0.093" rpy="0 ${pi} 0"/>
+      <parent link="${name}"/>
+      <child link="imu_link"/>
+    </joint>
+
+    <!-- ********************* Rope Drives ********************** -->
 
     <link name="rope_drive_le">
       <inertial>
-        <mass value="1" />
-        <origin xyz="0 0 0" rpy="0 0 0" />
-        <inertia ixx="0.002526666666667" ixy="0" ixz="0" iyy="0.002526666666667" iyz="0" izz="0.005"/>
+        <mass value="2.206" />
+        <origin xyz="0.01032 0 0" rpy="0 0 0" />
+        <inertia ixx="0.00699387" ixy="0" ixz="0" iyy="0.0044146" iyz="0" izz="0.0044146"/>
       </inertial>
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0" />
@@ -47,15 +76,6 @@
         </geometry>
         <material name="grey">
           <color rgba="0.4 0.4 0.4 1" />
-        </material>
-      </visual>
-      <visual>
-        <origin rpy="${pi/2} 0 0" xyz="0.035 0 0" />
-        <geometry>
-          <box size="0.005 0.10 0.005" />
-        </geometry>
-        <material name="Grey">
-          <color rgba="0.6 0.6 0.6 1" />
         </material>
       </visual>
       <collision>
@@ -76,9 +96,9 @@
 
     <link name="rope_drive_te">
       <inertial>
-        <mass value="1" />
+        <mass value="2.206" />
         <origin xyz="0 0 0" rpy="0 0 0" />
-        <inertia ixx="0.002526666666667" ixy="0" ixz="0" iyy="0.002526666666667" iyz="0" izz="0.005"/>
+        <inertia ixx="0.00699387" ixy="0" ixz="0" iyy="0.0044146" iyz="0" izz="0.0044146"/>
       </inertial>
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0" />
@@ -87,15 +107,6 @@
         </geometry>
         <material name="grey">
           <color rgba="0.4 0.4 0.4 1" />
-        </material>
-      </visual>
-      <visual>
-        <origin rpy="${pi/2} 0 0" xyz="0.035 0 0" />
-        <geometry>
-          <box size="0.005 0.10 0.005" />
-        </geometry>
-        <material name="Grey">
-          <color rgba="0.6 0.6 0.6 1" />
         </material>
       </visual>
       <collision>
@@ -116,13 +127,11 @@
 
     <!-- ********************* Vacuum Sheet ********************* -->
 
-    <!-- TODO: add mass and inertia -->
-
     <link name="vacuum_sheet">
       <inertial>
-        <mass value="1" />
+        <mass value="0.6" />
         <origin xyz="0 0 0" rpy="0 0 0" />
-        <inertia ixx="0.002526666666667" ixy="0" ixz="0" iyy="0.002526666666667" iyz="0" izz="0.005"/>
+        <inertia ixx="0.0025275579" ixy="0" ixz="0" iyy="0.00001388" iyz="0" izz="0.04124286"/>
       </inertial>
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0" />
@@ -174,240 +183,15 @@
     </joint>
 
     <!-- ********************* Tool holders ********************* -->
-    <link name="th0" >
-      <inertial>
-        <mass value="0.1911" />
-        <origin xyz="0 0 0" rpy="0 0 0" />
-        <inertia ixx="0.01880039566" ixy="-0.00288516792" ixz="0.00164510501" iyy="0.00519681040" iyz="-0.00798447007" izz="0.01485438661"/>
-      </inertial>
-      <visual>
-        <origin xyz="0 0 0" rpy="0 0 0" />
-        <geometry>
-          <mesh filename="package://rr_robot_description/include/chassis/meshes/ToolHolder/visual.STL" />
-        </geometry>
-        <material name="black">
-          <color rgba="0.2 0.2 0.2 1" />
-        </material>
-      </visual>
-      <collision>
-        <origin xyz="0 0 0" rpy="0 0 0" />
-        <geometry>
-          <mesh filename="package://rr_robot_description/include/chassis/meshes/ToolHolder/collision.STL" />
-        </geometry>
-      </collision>
-    </link>
-    <joint name="th0_joint" type="fixed">
-      <origin
-        xyz="0.95394 0.0875 0.12783"
-        rpy="-1.0611E-15 7.6478E-16 1.5708" />
-      <parent link="${name}" />
-      <child link="th0" />
-    </joint>
-    <link name="th1" >
-      <inertial>
-        <mass value="0.1911" />
-        <origin xyz="0 0 0" rpy="0 0 0" />
-        <inertia ixx="0.01880039566" ixy="-0.00288516792" ixz="0.00164510501" iyy="0.00519681040" iyz="-0.00798447007" izz="0.01485438661"/>
-      </inertial>
-      <visual>
-        <origin xyz="0 0 0" rpy="0 0 0" />
-        <geometry>
-          <mesh filename="package://rr_robot_description/include/chassis/meshes/ToolHolder/visual.STL" />
-        </geometry>
-        <material name="black">
-          <color rgba="0.2 0.2 0.2 1" />
-        </material>
-      </visual>
-      <collision>
-        <origin xyz="0 0 0" rpy="0 0 0" />
-        <geometry>
-          <mesh filename="package://rr_robot_description/include/chassis/meshes/ToolHolder/collision.STL" />
-        </geometry>
-      </collision>
-    </link>
-    <joint name="th1_joint" type="fixed">
-      <origin
-        xyz="0.95394 -0.0875 0.12783"
-        rpy="-1.0611E-15 7.6478E-16 1.5708" />
-      <parent link="${name}" />
-      <child link="th1" />
-    </joint>
-    <link name="th2" >
-      <inertial>
-        <mass value="0.1911" />
-        <origin xyz="0 0 0" rpy="0 0 0" />
-        <inertia ixx="0.01880039566" ixy="-0.00288516792" ixz="0.00164510501" iyy="0.00519681040" iyz="-0.00798447007" izz="0.01485438661"/>
-      </inertial>
-      <visual>
-        <origin xyz="0 0 0" rpy="0 0 0" />
-        <geometry>
-          <mesh filename="package://rr_robot_description/include/chassis/meshes/ToolHolder/visual.STL" />
-        </geometry>
-        <material name="black">
-          <color rgba="0.2 0.2 0.2 1" />
-        </material>
-      </visual>
-      <collision>
-        <origin xyz="0 0 0" rpy="0 0 0" />
-        <geometry>
-          <mesh filename="package://rr_robot_description/include/chassis/meshes/ToolHolder/collision.STL" />
-        </geometry>
-      </collision>
-    </link>
-    <joint name="th2_joint" type="fixed">
-      <origin
-        xyz="0.67894 0.175 0.12783"
-        rpy="-1.0611E-15 7.6478E-16 1.5708" />
-      <parent link="${name}" />
-      <child link="th2" />
-    </joint>
-    <link name="th3" >
-      <inertial>
-        <mass value="0.1911" />
-        <origin xyz="0 0 0" rpy="0 0 0" />
-        <inertia ixx="0.01880039566" ixy="-0.00288516792" ixz="0.00164510501" iyy="0.00519681040" iyz="-0.00798447007" izz="0.01485438661"/>
-      </inertial>
-      <visual>
-        <origin xyz="0 0 0" rpy="0 0 0" />
-        <geometry>
-          <mesh filename="package://rr_robot_description/include/chassis/meshes/ToolHolder/visual.STL" />
-        </geometry>
-        <material name="black">
-          <color rgba="0.2 0.2 0.2 1" />
-        </material>
-      </visual>
-      <collision>
-        <origin xyz="0 0 0" rpy="0 0 0" />
-        <geometry>
-          <mesh filename="package://rr_robot_description/include/chassis/meshes/ToolHolder/collision.STL" />
-        </geometry>
-      </collision>
-    </link>
-    <joint name="th3_joint" type="fixed">
-      <origin
-        xyz="0.67894 0 0.12783"
-        rpy="-1.0611E-15 7.6478E-16 1.5708" />
-      <parent link="${name}" />
-      <child link="th3" />
-    </joint>
-    <link name="th4" >
-      <inertial>
-        <mass value="0.1911" />
-        <origin xyz="0 0 0" rpy="0 0 0" />
-        <inertia ixx="0.01880039566" ixy="-0.00288516792" ixz="0.00164510501" iyy="0.00519681040" iyz="-0.00798447007" izz="0.01485438661"/>
-      </inertial>
-      <visual>
-        <origin xyz="0 0 0" rpy="0 0 0" />
-        <geometry>
-          <mesh filename="package://rr_robot_description/include/chassis/meshes/ToolHolder/visual.STL" />
-        </geometry>
-        <material name="black">
-          <color rgba="0.2 0.2 0.2 1" />
-        </material>
-      </visual>
-      <collision>
-        <origin xyz="0 0 0" rpy="0 0 0" />
-        <geometry>
-          <mesh filename="package://rr_robot_description/include/chassis/meshes/ToolHolder/collision.STL" />
-        </geometry>
-      </collision>
-    </link>
-    <joint name="th4_joint" type="fixed">
-      <origin
-        xyz="0.67894 -0.175 0.12783"
-        rpy="-1.0611E-15 7.6478E-16 1.5708" />
-      <parent
-        link="${name}" />
-      <child
-        link="th4" />
-    </joint>
-    <link name="th5" >
-      <inertial>
-        <mass value="0.1911" />
-        <origin xyz="0 0 0" rpy="0 0 0" />
-        <inertia ixx="0.01880039566" ixy="-0.00288516792" ixz="0.00164510501" iyy="0.00519681040" iyz="-0.00798447007" izz="0.01485438661"/>
-      </inertial>
-      <visual>
-        <origin xyz="0 0 0" rpy="0 0 0" />
-        <geometry>
-          <mesh filename="package://rr_robot_description/include/chassis/meshes/ToolHolder/visual.STL" />
-        </geometry>
-        <material name="black">
-          <color rgba="0.2 0.2 0.2 1" />
-        </material>
-      </visual>
-      <collision>
-        <origin xyz="0 0 0" rpy="0 0 0" />
-        <geometry>
-          <mesh filename="package://rr_robot_description/include/chassis/meshes/ToolHolder/collision.STL" />
-        </geometry>
-      </collision>
-    </link>
-    <joint name="th5_joint" type="fixed">
-      <origin
-        xyz="0.40394 0.175 0.12783"
-        rpy="-1.0611E-15 7.6478E-16 1.5708" />
-      <parent link="${name}" />
-      <child link="th5" />
-    </joint>
-    <link name="th6" >
-      <inertial>
-        <mass value="0.1911" />
-        <origin xyz="0 0 0" rpy="0 0 0" />
-        <inertia ixx="0.01880039566" ixy="-0.00288516792" ixz="0.00164510501" iyy="0.00519681040" iyz="-0.00798447007" izz="0.01485438661"/>
-      </inertial>
-      <visual>
-        <origin xyz="0 0 0" rpy="0 0 0" />
-        <geometry>
-          <mesh filename="package://rr_robot_description/include/chassis/meshes/ToolHolder/visual.STL" />
-        </geometry>
-        <material name="black">
-          <color rgba="0.2 0.2 0.2 1" />
-        </material>
-      </visual>
-      <collision>
-        <origin xyz="0 0 0" rpy="0 0 0" />
-        <geometry>
-          <mesh filename="package://rr_robot_description/include/chassis/meshes/ToolHolder/collision.STL" />
-        </geometry>
-      </collision>
-    </link>
-    <joint name="th6_joint" type="fixed">
-      <origin
-        xyz="0.40394 0 0.12783"
-        rpy="-1.0611E-15 7.6478E-16 1.5708" />
-      <parent link="${name}" />
-      <child link="th6" />
-    </joint>
-    <link name="th7" >
-      <inertial>
-        <mass value="0.1911" />
-        <origin xyz="0 0 0" rpy="0 0 0" />
-        <inertia ixx="0.01880039566" ixy="-0.00288516792" ixz="0.00164510501" iyy="0.00519681040" iyz="-0.00798447007" izz="0.01485438661"/>
-      </inertial>
-      <visual>
-        <origin xyz="0 0 0" rpy="0 0 0" />
-        <geometry>
-          <mesh filename="package://rr_robot_description/include/chassis/meshes/ToolHolder/visual.STL" />
-        </geometry>
-        <material name="black">
-          <color rgba="0.2 0.2 0.2 1" />
-        </material>
-      </visual>
-      <collision>
-        <origin xyz="0 0 0" rpy="0 0 0" />
-        <geometry>
-          <mesh filename="package://rr_robot_description/include/chassis/meshes/ToolHolder/collision.STL" />
-        </geometry>
-      </collision>
-    </link>
-    <joint name="th7_joint" type="fixed">
-      <origin
-        xyz="0.40394 -0.175 0.12783"
-        rpy="-1.0611E-15 7.6478E-16 1.5708" />
-      <parent link="${name}" />
-      <child link="th7" />
-    </joint>
+    <xacro:include filename="$(find rr_robot_description)/include/chassis/urdf/tool_holder.xacro"/>
+    <xacro:tool_holder_macro name="th0" parent="${name}" x_offset="0.95394" y_offset="0.0875" z_offset="0.12783" yaw="1.5708"/>
+    <xacro:tool_holder_macro name="th1" parent="${name}" x_offset="0.95394" y_offset="-0.0875" z_offset="0.12783" yaw="1.5708"/>
+    <xacro:tool_holder_macro name="th2" parent="${name}" x_offset="0.67894" y_offset="0.175" z_offset="0.12783" yaw="1.5708"/>
+    <xacro:tool_holder_macro name="th3" parent="${name}" x_offset="0.67894" y_offset="0." z_offset="0.12783" yaw="1.5708"/>
+    <xacro:tool_holder_macro name="th4" parent="${name}" x_offset="0.67894" y_offset="-0.175" z_offset="0.12783" yaw="1.5708"/>
+    <xacro:tool_holder_macro name="th5" parent="${name}" x_offset="0.40394" y_offset="0.175" z_offset="0.12783" yaw="1.5708"/>
+    <xacro:tool_holder_macro name="th6" parent="${name}" x_offset="0.40394" y_offset="0." z_offset="0.12783" yaw="1.5708"/>
+    <xacro:tool_holder_macro name="th7" parent="${name}" x_offset="0.40394" y_offset="-0.175" z_offset="0.12783" yaw="1.5708"/>
 
   </xacro:macro>
 </robot>

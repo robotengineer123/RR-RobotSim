@@ -7,6 +7,7 @@
 #include <array>
 #include <iostream>
 #include <ros/ros.h>
+#include <rr_msgs/MotorState.h>
 #include <math.h>
 #include <unordered_map>
 #include <rr_msgs/MotorState.h>
