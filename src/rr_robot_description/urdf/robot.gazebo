@@ -262,8 +262,9 @@
             <motor_topic>/left_motor/motor_state</motor_topic>
             <one_meter_stiffness>100000</one_meter_stiffness>
             <kp>100</kp>
-            <kd>10</kd>
+            <kd>0</kd>
             <ki>10</ki>
+            <move_down_pos_encoder>false</move_down_pos_encoder>
         </plugin>
     </gazebo>
 
@@ -275,8 +276,9 @@
             <motor_topic>/right_motor/motor_state</motor_topic>
             <one_meter_stiffness>100000</one_meter_stiffness> 
             <kp>100</kp>
-            <kd>10</kd>
+            <kd>0</kd>
             <ki>10</ki>
+            <move_down_pos_encoder>true</move_down_pos_encoder>
         </plugin>
     </gazebo>
 
@@ -313,15 +315,5 @@
     <gazebo reference="top_pivot_joint_te">
         <springStiffness>50</springStiffness>
         <springReference>1.0</springReference>
-    </gazebo>
-
-    <!-- Attach spring to rope prismatic joing -->
-    <gazebo reference="rope_springed_joint_te">
-        <springStiffness>500</springStiffness>
-        <springReference>0.0</springReference>
-    </gazebo>
-    <gazebo reference="rope_springed_joint_le">
-        <springStiffness>500</springStiffness>
-        <springReference>0.0</springReference>
     </gazebo>
 </robot>

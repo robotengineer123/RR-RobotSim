@@ -7,7 +7,6 @@
 #include <array>
 #include <iostream>
 #include <ros/ros.h>
-#include <rr_msgs/MotorState.h>
 #include <math.h>
 #include <unordered_map>
 #include <rr_msgs/MotorState.h>
@@ -25,6 +24,10 @@ namespace gazebo
             LoadSdfParams();
             winch_link = joint->GetParent();
             rope_link = joint->GetChild();
+            if (reel_in_is_pos)
+                winch_dir = -1;
+            else
+                winch_dir = 1;
 
             StartNode();
             eff_r_sub = nh->subscribe(eff_r_topic_, 1, &WinchForcePlugin::EffRadiusCallback, this);
@@ -50,8 +53,9 @@ namespace gazebo
 
         void MotorCallback(const rr_msgs::MotorStateConstPtr &msg)
         {
-            encoder_pos_ = msg->position;
-            encoder_vel_ = msg->velocity;
+            prev_encoder_pos_ = encoder_pos_;
+            encoder_pos_ = msg->position * winch_dir;
+            encoder_vel_ = msg->velocity * winch_dir;
         }
 
     private:
@@ -70,10 +74,11 @@ namespace gazebo
             fixed_pos = LoadParam<ignition::math::Vector3d>("rope_fixture");
             eff_r_topic_ = LoadParam<std::string>("radius_topic");
             motor_topic = LoadParam<std::string>("motor_topic");
+            reel_in_is_pos = LoadParam<bool>("move_down_pos_encoder");
 
-            kp = LoadParam<std::string>("kp");
-            kd = LoadParam<std::string>("kd");
-            ki = LoadParam<std::string>("ki");
+            kp = LoadParam<double>("kp");
+            kd = LoadParam<double>("kd");
+            ki = LoadParam<double>("ki");
 
             joint = model_->GetJoint(
                 LoadParam<std::string>("rope_joint"));
@@ -112,8 +117,8 @@ namespace gazebo
             double sim_pos = fixed_pos.Distance(rope_link->WorldCoGPose().Pos());
             double sim_vel = rope_link->WorldLinearVel().Length();
             
-            pos_error_ =  real_pos_ - sim_pos;
-            vel_error_ = real_vel - sim_vel; 
+            pos_error_ =  sim_pos - real_pos_;
+            vel_error_ = sim_vel - real_vel; 
             integral_term_ += ki*pos_error_;
 
             double pid_output = pos_error_*kp + vel_error_*kd + integral_term_;
@@ -151,12 +156,12 @@ namespace gazebo
         double eff_radius_ = 0.2;
         double encoder_pos_ = 0;
         double prev_encoder_pos_;
+        bool reel_in_is_pos = true;
+        int winch_dir;
 
         double encoder_vel_ = 0;
         double acceleration_ = 0;
 
-        double prev_time;
-        double init_dist;
         double real_pos_ = 0;
         double sim_pos = 0;
         double sim_vel = 0;
