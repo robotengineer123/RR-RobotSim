@@ -1,0 +1,4 @@
+[35m[1mScanning dependencies of target winch_force_plugin[0m
+[ 50%] [32mBuilding CXX object CMakeFiles/winch_force_plugin.dir/src/winch_force_plugin.cpp.o[0m
+[100%] [32m[1mLinking CXX shared library /home/rr/dev/RR-RobotSim/devel/.private/winch_force_plugin/lib/libwinch_force_plugin.so[0m
+[100%] Built target winch_force_plugin

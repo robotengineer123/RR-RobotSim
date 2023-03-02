@@ -1,0 +1,7 @@
+[01m[K/home/rr/dev/RR-RobotSim/src/winch_force_plugin/src/winch_force_plugin.cpp:2:10:[m[K [01;31m[Kfatal error: [m[Kgazebo/common/common.hh: No such file or directory
+    2 | #include [01;31m[K<gazebo/common/common.hh>[m[K
+      |          [01;31m[K^~~~~~~~~~~~~~~~~~~~~~~~~[m[K
+compilation terminated.
+make[2]: *** [CMakeFiles/winch_force_plugin.dir/build.make:63: CMakeFiles/winch_force_plugin.dir/src/winch_force_plugin.cpp.o] Error 1
+make[1]: *** [CMakeFiles/Makefile2:234: CMakeFiles/winch_force_plugin.dir/all] Error 2
+make: *** [Makefile:141: all] Error 2

@@ -9,5 +9,8 @@
 
     <node name="rr_robot_spawn" pkg="gazebo_ros" type="spawn_model" output="screen"
           args="-urdf -param robot_description -model $(arg model_name) -x $(arg x) -y $(arg y) -z $(arg z)" />
+    
+    <!-- Load the gazebo params -->
+    <include file="$(find rr_robot_description)/launch/control.launch"/>
 
 </launch>

@@ -1,6 +1,5 @@
 controller_list:
 
-
 - name: "rr_robot"
   action_ns: /pos_joint_traj_controller/follow_joint_trajectory
   type: FollowJointTrajectory

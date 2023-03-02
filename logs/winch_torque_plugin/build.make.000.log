@@ -1,0 +1,40 @@
+[35m[1mScanning dependencies of target winch_torque_plugin[0m
+[35m[1mScanning dependencies of target std_msgs_generate_messages_eus[0m
+[  0%] Built target std_msgs_generate_messages_eus
+[35m[1mScanning dependencies of target _winch_torque_plugin_generate_messages_check_deps_MotorState[0m
+[ 11%] [32mBuilding CXX object CMakeFiles/winch_torque_plugin.dir/src/winch_torque_plugin.cc.o[0m
+[ 11%] Built target _winch_torque_plugin_generate_messages_check_deps_MotorState
+[35m[1mScanning dependencies of target std_msgs_generate_messages_py[0m
+[ 11%] Built target std_msgs_generate_messages_py
+[35m[1mScanning dependencies of target std_msgs_generate_messages_nodejs[0m
+[ 11%] Built target std_msgs_generate_messages_nodejs
+[35m[1mScanning dependencies of target std_msgs_generate_messages_lisp[0m
+[ 11%] Built target std_msgs_generate_messages_lisp
+[35m[1mScanning dependencies of target std_msgs_generate_messages_cpp[0m
+[ 11%] Built target std_msgs_generate_messages_cpp
+[35m[1mScanning dependencies of target winch_torque_plugin_generate_messages_eus[0m
+[ 22%] [34m[1mGenerating EusLisp code from winch_torque_plugin/MotorState.msg[0m
+[ 33%] [34m[1mGenerating EusLisp manifest code for winch_torque_plugin[0m
+[ 33%] Built target winch_torque_plugin_generate_messages_eus
+[35m[1mScanning dependencies of target winch_torque_plugin_generate_messages_py[0m
+[ 44%] [34m[1mGenerating Python from MSG winch_torque_plugin/MotorState[0m
+[ 55%] [34m[1mGenerating Python msg __init__.py for winch_torque_plugin[0m
+[ 55%] Built target winch_torque_plugin_generate_messages_py
+[35m[1mScanning dependencies of target winch_torque_plugin_generate_messages_nodejs[0m
+[ 66%] [34m[1mGenerating Javascript code from winch_torque_plugin/MotorState.msg[0m
+[ 66%] Built target winch_torque_plugin_generate_messages_nodejs
+[35m[1mScanning dependencies of target winch_torque_plugin_generate_messages_lisp[0m
+[ 77%] [34m[1mGenerating Lisp code from winch_torque_plugin/MotorState.msg[0m
+[ 77%] Built target winch_torque_plugin_generate_messages_lisp
+[35m[1mScanning dependencies of target winch_torque_plugin_generate_messages_cpp[0m
+[ 88%] [34m[1mGenerating C++ code from winch_torque_plugin/MotorState.msg[0m
+[ 88%] Built target winch_torque_plugin_generate_messages_cpp
+[35m[1mScanning dependencies of target winch_torque_plugin_generate_messages[0m
+[ 88%] Built target winch_torque_plugin_generate_messages
+[01m[K/home/rr/dev/RR-RobotSim/src/winch_torque_plugin/src/winch_torque_plugin.cc:11:10:[m[K [01;31m[Kfatal error: [m[Krr_msgs/MotorState.h: No such file or directory
+   11 | #include [01;31m[K<rr_msgs/MotorState.h>[m[K
+      |          [01;31m[K^~~~~~~~~~~~~~~~~~~~~~[m[K
+compilation terminated.
+make[2]: *** [CMakeFiles/winch_torque_plugin.dir/build.make:63: CMakeFiles/winch_torque_plugin.dir/src/winch_torque_plugin.cc.o] Error 1
+make[1]: *** [CMakeFiles/Makefile2:242: CMakeFiles/winch_torque_plugin.dir/all] Error 2
+make: *** [Makefile:141: all] Error 2

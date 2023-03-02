@@ -1,0 +1,13 @@
+[  0%] Built target std_msgs_generate_messages_eus
+[ 22%] Built target winch_torque_plugin
+[ 22%] Built target std_msgs_generate_messages_py
+[ 22%] Built target _winch_torque_plugin_generate_messages_check_deps_MotorState
+[ 22%] Built target std_msgs_generate_messages_nodejs
+[ 22%] Built target std_msgs_generate_messages_lisp
+[ 22%] Built target std_msgs_generate_messages_cpp
+[ 44%] Built target winch_torque_plugin_generate_messages_eus
+[ 66%] Built target winch_torque_plugin_generate_messages_py
+[ 77%] Built target winch_torque_plugin_generate_messages_nodejs
+[ 88%] Built target winch_torque_plugin_generate_messages_lisp
+[100%] Built target winch_torque_plugin_generate_messages_cpp
+[100%] Built target winch_torque_plugin_generate_messages

@@ -39,19 +39,19 @@
     </include>
 
     <!-- Stomp -->
-    <include ns="stomp" file="$(dirname)/planning_pipeline.launch.xml">
+    <!-- <include ns="stomp" file="$(dirname)/planning_pipeline.launch.xml">
       <arg name="pipeline" value="stomp" />
-    </include>
+    </include> -->
 
     <!-- Pilz Industrial Motion -->
     <include ns="pilz_industrial_motion_planner" file="$(dirname)/planning_pipeline.launch.xml">
       <arg name="pipeline" value="pilz_industrial_motion_planner" />
     </include>
 
-    <!-- Ompl Stomp -->
+    <!-- Ompl Stomp
     <include ns="ompl_stomp" file="$(dirname)/planning_pipeline.launch.xml">
       <arg name="pipeline" value="ompl-stomp" />
-    </include>
+    </include> -->
 
     <!-- Ompl Chomp -->
     <include ns="ompl_chomp" file="$(dirname)/planning_pipeline.launch.xml">
