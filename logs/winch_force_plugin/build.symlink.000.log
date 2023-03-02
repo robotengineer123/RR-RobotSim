@@ -1,4 +1,0 @@
-Symlinking /home/rr/dev/RR-RobotSim/devel/lib/libwinch_force_plugin.so
-Symlinking /home/rr/dev/RR-RobotSim/devel/lib/pkgconfig/winch_force_plugin.pc
-Symlinking /home/rr/dev/RR-RobotSim/devel/share/winch_force_plugin/cmake/winch_force_pluginConfig.cmake
-Symlinking /home/rr/dev/RR-RobotSim/devel/share/winch_force_plugin/cmake/winch_force_pluginConfig-version.cmake

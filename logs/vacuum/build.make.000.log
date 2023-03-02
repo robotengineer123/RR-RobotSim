@@ -1,4 +1,0 @@
-[35m[1mScanning dependencies of target vacuum_plugin[0m
-[ 50%] [32mBuilding CXX object CMakeFiles/vacuum_plugin.dir/src/vacuum_plugin.cc.o[0m
-[100%] [32m[1mLinking CXX shared library /home/rr/dev/RR-RobotSim/devel/.private/vacuum/lib/libvacuum_plugin.so[0m
-[100%] Built target vacuum_plugin
