@@ -286,27 +286,37 @@
     </gazebo>
     
     <!-- Attach rotational spring-->
+    <!-- We are approximating the suspension mechanism as a revolute joint
+    with a rotational spring instead of the linkage mechanism. This should be fine
+    for small ranges of motion. 
+    Spring stiffness is calculated by transforming it to an equivalent torque at
+    the revolute joint.
+    bottom wheels arm is: 0.04626071
+    top wheels arm is: 0.10789946
+    The spring stiffness is: 7050-->
+        <xacro:property name="torque_arm" value="0.04626071" /> <!-- The torque arm of the suspension spring (approximately)-->
+    <xacro:property name="spring_stiffness" value="0.04626071" /> <!-- stiffness of the suspension spring (on real model)-->
     <gazebo reference="bottom_pivot_joint_le">
         <implicitSpringDamper>true</implicitSpringDamper>
-        <springStiffness>50</springStiffness>
+        <springStiffness>326.138</springStiffness>
         <springReference>-0.174533</springReference>
     </gazebo>
 
     <gazebo reference="bottom_pivot_joint_te">
         <implicitSpringDamper>true</implicitSpringDamper>
-        <springStiffness>50</springStiffness>
+        <springStiffness>326.138</springStiffness>
         <springReference>-0.174533</springReference>
     </gazebo>
 
     <gazebo reference="top_pivot_joint_le">
         <implicitSpringDamper>true</implicitSpringDamper>
-        <springStiffness>50</springStiffness>
+        <springStiffness>760.69</springStiffness>
         <springReference>0.0</springReference>
     </gazebo>
 
     <gazebo reference="top_pivot_joint_te">
         <implicitSpringDamper>true</implicitSpringDamper>
-        <springStiffness>50</springStiffness>
+        <springStiffness>760.69</springStiffness>
         <springReference>0.0</springReference>
     </gazebo>
 </robot>
