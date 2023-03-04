@@ -253,26 +253,24 @@
             <robotNamespace>/rr_robot</robotNamespace>
         </plugin>
     </gazebo>
-
-    <gazebo>
-        <plugin name="winch_force_plugin_le" filename="libwinch_force_plugin.so">
-            <spring_stiffness>1</spring_stiffness>
-            <rot_axis>y</rot_axis>
-            <rope_fixture>10 0 0</rope_fixture>
-            <winch_link>rope_drive_le</winch_link>
-            <radius_topic>rope_drive/current_drive_radius</radius_topic>
-            <one_meter_stiffness>1000000</one_meter_stiffness>  <!--normalized_stifness/length = stifness-->
-        </plugin>
-    </gazebo>
     
     <gazebo>
         <plugin name="winch_force_plugin_te" filename="libwinch_force_plugin.so">
-            <spring_stiffness>1</spring_stiffness>
-            <rot_axis>y</rot_axis>
             <rope_fixture>10 0 0</rope_fixture>
-            <winch_link>rope_drive_te</winch_link>
+            <rope_joint>rope_springed_joint_te</rope_joint>
             <radius_topic>rope_drive/current_drive_radius</radius_topic>
-            <one_meter_stiffness>1000000</one_meter_stiffness> 
+            <torque_topic>right_motor/motor_state</torque_topic>
+            <one_meter_stiffness>100000</one_meter_stiffness> 
+        </plugin>
+    </gazebo>
+
+    <gazebo>
+        <plugin name="winch_force_plugin_le" filename="libwinch_force_plugin.so">
+            <rope_fixture>10 0 0</rope_fixture>
+            <rope_joint>rope_springed_joint_le</rope_joint>
+            <radius_topic>rope_drive/current_drive_radius</radius_topic>
+            <torque_topic>left_motor/motor_state</torque_topic>
+            <one_meter_stiffness>100000</one_meter_stiffness> 
         </plugin>
     </gazebo>
 
@@ -284,8 +282,13 @@
             <N_v>368.93</N_v>
         </plugin>
     </gazebo>
+
+    <gazebo>
+        <plugin name="winch_torque_plugin" filename="libwinch_torque_plugin.so">
+        </plugin>
+    </gazebo>
     
-    <!-- Attach rotational spring-->
+    <!-- Attach rotational spring to suspension-->
     <!-- We are approximating the suspension mechanism as a revolute joint
     with a rotational spring instead of the linkage mechanism. This should be fine
     for small ranges of motion. 
@@ -294,29 +297,33 @@
     bottom wheels arm is: 0.04626071
     top wheels arm is: 0.10789946
     The spring stiffness is: 7050-->
-        <xacro:property name="torque_arm" value="0.04626071" /> <!-- The torque arm of the suspension spring (approximately)-->
-    <xacro:property name="spring_stiffness" value="0.04626071" /> <!-- stiffness of the suspension spring (on real model)-->
-    <gazebo reference="bottom_pivot_joint_le">
-        <implicitSpringDamper>true</implicitSpringDamper>
+    <gazebo reference="bot_pivot_joint_le">
         <springStiffness>326.138</springStiffness>
         <springReference>-0.174533</springReference>
     </gazebo>
 
-    <gazebo reference="bottom_pivot_joint_te">
-        <implicitSpringDamper>true</implicitSpringDamper>
+    <gazebo reference="bot_pivot_joint_te">
         <springStiffness>326.138</springStiffness>
         <springReference>-0.174533</springReference>
     </gazebo>
 
     <gazebo reference="top_pivot_joint_le">
-        <implicitSpringDamper>true</implicitSpringDamper>
         <springStiffness>760.69</springStiffness>
         <springReference>0.0</springReference>
     </gazebo>
 
     <gazebo reference="top_pivot_joint_te">
-        <implicitSpringDamper>true</implicitSpringDamper>
         <springStiffness>760.69</springStiffness>
+        <springReference>0.0</springReference>
+    </gazebo>
+
+    <!-- Attach spring to rope prismatic joing -->
+    <gazebo reference="rope_springed_joint_te">
+        <springStiffness>500</springStiffness>
+        <springReference>0.0</springReference>
+    </gazebo>
+    <gazebo reference="rope_springed_joint_le">
+        <springStiffness>500</springStiffness>
         <springReference>0.0</springReference>
     </gazebo>
 </robot>
