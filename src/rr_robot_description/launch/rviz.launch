@@ -1,15 +1,36 @@
 <?xml version="1.0"?>
 <launch>
 
+    <arg name="start_joint_state_publisher" default="false"/>
+    <arg name="moveit_controllers" default="$(find rr_robot_description)/config/control/moveit_controllers.yaml"/>
+
     <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find rr_robot_description)/urdf/robot.urdf.xacro'"/>
 
-    <!-- send fake joint values -->
-    <node name="joint_state_publisher_gui" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui" />
+    <!-- Send fake joint values -->
+    <node name="joint_state_publisher_gui" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui" if="$(arg start_joint_state_publisher)"/>
 
-    <!-- Combine joint values -->
-    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
+    <!-- Robot state publisher -->
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen">
+        <remap from="/joint_states" to="/rr_robot/joint_states" />
+    </node>
 
-    <!-- Show in Rviz   -->
+    <!-- Show in Rviz -->
     <node name="rviz" pkg="rviz" type="rviz" args="-d $(find rr_robot_description)/config/rviz/robot.rviz" />
+
+    <!-- MoveIt -->
+    <group>
+        <remap from="/joint_states" to="/rr_robot/joint_states" />
+        <include file="$(find rr_moveit_configuration)/launch/planning_context.launch">
+            <arg name="load_robot_description" value="true"/>
+        </include>
+        <include file="$(find rr_moveit_configuration)/launch/move_group.launch">
+            <arg name="moveit_controllers" value="$(arg moveit_controllers)" />
+            <arg name="allow_trajectory_execution" value="true"/>
+            <arg name="fake_execution" value="false" />
+            <arg name="info" value="false"/>
+            <arg name="debug" value="false"/>
+            <arg name="pipeline" value="ompl"/>
+        </include>
+    </group>
 
 </launch>

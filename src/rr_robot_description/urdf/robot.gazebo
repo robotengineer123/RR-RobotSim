@@ -303,23 +303,31 @@
     </gazebo>
     
     <!-- Attach rotational spring to suspension-->
+    <!-- We are approximating the suspension mechanism as a revolute joint
+    with a rotational spring instead of the linkage mechanism. This should be fine
+    for small ranges of motion. 
+    Spring stiffness is calculated by transforming it to an equivalent torque at
+    the revolute joint.
+    bottom wheels arm is: 0.04626071
+    top wheels arm is: 0.10789946
+    The spring stiffness is: 7050-->
     <gazebo reference="bot_pivot_joint_le">
-        <springStiffness>50</springStiffness>
+        <springStiffness>326.138</springStiffness>
         <springReference>-0.174533</springReference>
     </gazebo>
 
     <gazebo reference="bot_pivot_joint_te">
-        <springStiffness>50</springStiffness>
+        <springStiffness>326.138</springStiffness>
         <springReference>-0.174533</springReference>
     </gazebo>
 
     <gazebo reference="top_pivot_joint_le">
-        <springStiffness>50</springStiffness>
-        <springReference>1.0</springReference>
+        <springStiffness>760.69</springStiffness>
+        <springReference>0.0</springReference>
     </gazebo>
 
     <gazebo reference="top_pivot_joint_te">
-        <springStiffness>50</springStiffness>
-        <springReference>1.0</springReference>
+        <springStiffness>760.69</springStiffness>
+        <springReference>0.0</springReference>
     </gazebo>
 </robot>
