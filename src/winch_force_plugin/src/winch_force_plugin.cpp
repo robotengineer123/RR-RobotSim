@@ -22,8 +22,8 @@ namespace gazebo
             sdf_ = _sdf;
 
             LoadSdfParams();
-            winch_link = joint->GetParent();
-            rope_link = joint->GetChild();
+            winch_link_ = joint_->GetParent();
+            rope_link_ = joint_->GetChild();
             if (reel_in_is_pos)
                 winch_dir = -1;
             else
@@ -34,8 +34,8 @@ namespace gazebo
             motor_sub = nh->subscribe(motor_topic, 1, &WinchForcePlugin::MotorCallback, this);
             ros::spinOnce();
             
-            sim_pos = fixed_pos.Distance(rope_link->WorldCoGPose().Pos());
-            real_pos_ = sim_pos;
+            sim_rope_len_ = fixed_pos.Distance(rope_link_->WorldCoGPose().Pos());
+            real_rope_len_ = sim_rope_len_;
             prev_encoder_pos_ = encoder_pos_;
 
             ROS_INFO("Winch plugin loaded for model: %s", model_->GetName().c_str());
@@ -70,17 +70,18 @@ namespace gazebo
 
         void LoadSdfParams()
         {
-            normalized_stiffness = LoadParam<double>("one_meter_stiffness");
             fixed_pos = LoadParam<ignition::math::Vector3d>("rope_fixture");
+            poly_coeffs = LoadParam<ignition::math::Vector3d>("rope_stiff_poly_coeffs");
             eff_r_topic_ = LoadParam<std::string>("radius_topic");
             motor_topic = LoadParam<std::string>("motor_topic");
             reel_in_is_pos = LoadParam<bool>("move_down_pos_encoder");
+            axis_ = LoadParam<int>("rope_joint_axis");
 
             kp = LoadParam<double>("kp");
             kd = LoadParam<double>("kd");
             ki = LoadParam<double>("ki");
 
-            joint = model_->GetJoint(
+            joint_ = model_->GetJoint(
                 LoadParam<std::string>("rope_joint"));
         }
 
@@ -100,8 +101,12 @@ namespace gazebo
         void OnUpdate()
         {
             ros::spinOnce();
+            double spring_ref = joint_->GetSpringReferencePosition(axis_);
+            double spring_pos = rope_link_->RelativePose().Pos()[axis_];
+            double elongation = std::abs(spring_ref - spring_pos);
+            double stiffness = RopeStiffnessCurve(elongation);
 
-            joint->SetStiffness(1, normalized_stiffness / real_pos_);
+            joint_->SetStiffness(axis_, stiffness);
 
             double pid_output = PID();
 
@@ -111,13 +116,13 @@ namespace gazebo
     private:
         double PID()
         {
-            real_pos_ +=  eff_radius_ * (encoder_pos_ - prev_encoder_pos_);
+            real_rope_len_ +=  eff_radius_ * (encoder_pos_ - prev_encoder_pos_);
             double real_vel =  eff_radius_ * encoder_vel_;
 
-            double sim_pos = fixed_pos.Distance(rope_link->WorldCoGPose().Pos());
-            double sim_vel = rope_link->WorldLinearVel().Length();
+            double sim_rope_len = fixed_pos.Distance(rope_link_->WorldCoGPose().Pos());
+            double sim_vel = rope_link_->WorldLinearVel().Length();
             
-            pos_error_ =  sim_pos - real_pos_;
+            pos_error_ =  sim_rope_len - real_rope_len_;
             vel_error_ = sim_vel - real_vel; 
             integral_term_ += ki*pos_error_;
 
@@ -129,17 +134,26 @@ namespace gazebo
             if (pid_output < 0)
             {
                 pid_output = 0;
+                integral_term_ = 0;
             }
             return pid_output;
         }
 
         void ApplyForce(double magnitude)
         {
-            ignition::math::Vector3d winch_pos = winch_link->WorldCoGPose().Pos();
+            ignition::math::Vector3d winch_pos = winch_link_->WorldCoGPose().Pos();
             ignition::math::Vector3d rope_dir = (fixed_pos - winch_pos).Normalize();
 
             ignition::math::Vector3d force = rope_dir * magnitude;
-            rope_link->AddForceAtRelativePosition(force, {0, 0, 0});
+            rope_link_->AddForceAtRelativePosition(force, {0, 0, 0});
+        }
+
+        double RopeStiffnessCurve(double elongation)
+        {
+            ignition::math::Vector3d x{2*elongation, 1, 0};
+
+            double stiffness = x.Dot(poly_coeffs)*70/sim_rope_len_;
+            return stiffness;
         }
 
     private:
@@ -157,13 +171,14 @@ namespace gazebo
         double encoder_pos_ = 0;
         double prev_encoder_pos_;
         bool reel_in_is_pos = true;
+        ignition::math::Vector3d poly_coeffs{848.64823567, 188.91463659,  13.92308499};
         int winch_dir;
 
         double encoder_vel_ = 0;
         double acceleration_ = 0;
 
-        double real_pos_ = 0;
-        double sim_pos = 0;
+        double sim_rope_len_ = 0;
+        double real_rope_len_ = 0;
         double sim_vel = 0;
         double real_vel = 0;
 
@@ -174,12 +189,14 @@ namespace gazebo
         double pos_error_ = 0;
         double vel_error_ = 0;
 
-        physics::LinkPtr winch_link;
-        physics::LinkPtr rope_link;
-        physics::JointPtr joint;
+        int axis_;
 
-        ignition::math::Vector3d fixed_pos{0.0, 0.0, 0.0};
-        double normalized_stiffness = 1;
+        physics::LinkPtr winch_link_;
+        physics::LinkPtr rope_link_;
+
+        physics::JointPtr joint_;
+
+        ignition::math::Vector3d fixed_pos{10, 0.0, 0.0};
     };
 
     // Register this plugin with the simulator

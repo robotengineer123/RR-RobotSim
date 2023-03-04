@@ -258,11 +258,12 @@
         <plugin name="winch_force_plugin_te" filename="libwinch_force_plugin.so">
             <rope_fixture>10 0 0</rope_fixture>
             <rope_joint>rope_springed_joint_te</rope_joint>
+            <rope_joint_axis>1</rope_joint_axis>
             <radius_topic>rope_drive/current_drive_radius</radius_topic>
-            <motor_topic>/left_motor/motor_state</motor_topic>
-            <one_meter_stiffness>100000</one_meter_stiffness>
-            <kp>100</kp>
-            <kd>0</kd>
+            <motor_topic>left_motor/motor_state</motor_topic>
+            <rope_stiff_poly_coeffs>848.64823567 188.91463659 13.92308499</rope_stiff_poly_coeffs>
+            <kp>50</kp>
+            <kd>15</kd>
             <ki>10</ki>
             <move_down_pos_encoder>false</move_down_pos_encoder>
         </plugin>
@@ -272,14 +273,24 @@
         <plugin name="winch_force_plugin_le" filename="libwinch_force_plugin.so">
             <rope_fixture>10 0 0</rope_fixture>
             <rope_joint>rope_springed_joint_le</rope_joint>
+            <rope_joint_axis>1</rope_joint_axis>
             <radius_topic>rope_drive/current_drive_radius</radius_topic>
-            <motor_topic>/right_motor/motor_state</motor_topic>
-            <one_meter_stiffness>100000</one_meter_stiffness> 
-            <kp>100</kp>
-            <kd>0</kd>
+            <motor_topic>right_motor/motor_state</motor_topic>
+            <rope_stiff_poly_coeffs>848.64823567 188.91463659 13.92308499</rope_stiff_poly_coeffs> 
+            <kp>50</kp>
+            <kd>15</kd>
             <ki>10</ki>
             <move_down_pos_encoder>true</move_down_pos_encoder>
         </plugin>
+    </gazebo>
+
+    <gazebo reference="rope_springed_joint_le">
+        <springStiffness>10000</springStiffness>
+        <springReference>0</springReference>
+    </gazebo>
+    <gazebo reference="rope_springed_joint_te">
+        <springStiffness>10000</springStiffness>
+        <springReference>0</springReference>
     </gazebo>
 
     <gazebo>
@@ -288,11 +299,6 @@
             <center>0.121469</center>
             <mu>0.2</mu>
             <N_v>368.93</N_v>
-        </plugin>
-    </gazebo>
-
-    <gazebo>
-        <plugin name="winch_torque_plugin" filename="libwinch_torque_plugin.so">
         </plugin>
     </gazebo>
     

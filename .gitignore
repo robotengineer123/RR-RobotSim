@@ -3,3 +3,5 @@
 **/src/CMakeLists.txt
 .vscode
 *.bag
+logs
+.catkin_tools
