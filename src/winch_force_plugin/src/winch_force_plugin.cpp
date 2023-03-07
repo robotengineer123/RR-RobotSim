@@ -24,7 +24,11 @@ namespace gazebo
             LoadSdfParams();
             winch_link_ = joint_->GetParent();
             rope_link_ = joint_->GetChild();
-            if (reel_in_is_pos)
+
+            for(auto& link : model_->GetLinks()) 
+                tot_mass_+=link->GetInertial()->Mass();
+            
+            if (rot_dir_switch)
                 winch_dir = -1;
             else
                 winch_dir = 1;
@@ -32,8 +36,9 @@ namespace gazebo
             StartNode();
             eff_r_sub = nh->subscribe(eff_r_topic_, 1, &WinchForcePlugin::EffRadiusCallback, this);
             motor_sub = nh->subscribe(motor_topic, 1, &WinchForcePlugin::MotorCallback, this);
-            ros::spinOnce();
             
+            ros::spinOnce();
+
             sim_rope_len_ = fixed_pos.Distance(rope_link_->WorldCoGPose().Pos());
             real_rope_len_ = sim_rope_len_;
             prev_encoder_pos_ = encoder_pos_;
@@ -56,6 +61,7 @@ namespace gazebo
             prev_encoder_pos_ = encoder_pos_;
             encoder_pos_ = msg->position * winch_dir;
             encoder_vel_ = msg->velocity * winch_dir;
+            encoder_not_read = false;
         }
 
     private:
@@ -74,7 +80,7 @@ namespace gazebo
             poly_coeffs = LoadParam<ignition::math::Vector3d>("rope_stiff_poly_coeffs");
             eff_r_topic_ = LoadParam<std::string>("radius_topic");
             motor_topic = LoadParam<std::string>("motor_topic");
-            reel_in_is_pos = LoadParam<bool>("move_down_pos_encoder");
+            rot_dir_switch = LoadParam<bool>("rot_dir_switch");
             axis_ = LoadParam<int>("rope_joint_axis");
 
             kp = LoadParam<double>("kp");
@@ -101,6 +107,14 @@ namespace gazebo
         void OnUpdate()
         {
             ros::spinOnce();
+            if (std::abs(encoder_pos_-prev_encoder_pos_) > 5)
+            {
+                return;
+            }
+            
+            ignition::math::Vector3d winch_pos = winch_link_->WorldCoGPose().Pos();
+            rope_dir_ = (fixed_pos - winch_pos).Normalize();
+
             double spring_ref = joint_->GetSpringReferencePosition(axis_);
             double spring_pos = rope_link_->RelativePose().Pos()[axis_];
             double elongation = std::abs(spring_ref - spring_pos);
@@ -116,17 +130,22 @@ namespace gazebo
     private:
         double PID()
         {
-            real_rope_len_ +=  eff_radius_ * (encoder_pos_ - prev_encoder_pos_);
-            double real_vel =  eff_radius_ * encoder_vel_;
+            real_rope_len_ +=  winch_dir*eff_radius_ * (encoder_pos_ - prev_encoder_pos_);
+            double real_vel =  winch_dir*eff_radius_ * encoder_vel_;
 
             double sim_rope_len = fixed_pos.Distance(rope_link_->WorldCoGPose().Pos());
             double sim_vel = rope_link_->WorldLinearVel().Length();
+
+            ROS_INFO("real: %lf sim: %lf", real_rope_len_, sim_rope_len);
             
             pos_error_ =  sim_rope_len - real_rope_len_;
             vel_error_ = sim_vel - real_vel; 
             integral_term_ += ki*pos_error_;
 
-            double pid_output = pos_error_*kp + vel_error_*kd + integral_term_;
+            double cos_angle = std::abs(rope_dir_.Dot(gravity_dir_));
+            double static_force = tot_mass_*9.82/cos_angle/2;
+
+            double pid_output = pos_error_*kp + vel_error_*kd + integral_term_ + static_force;
 
             // The winch can only apply force to the robot by reeling in rope.
             // if the rope needs to be longer, the winch should stop applying force
@@ -141,10 +160,7 @@ namespace gazebo
 
         void ApplyForce(double magnitude)
         {
-            ignition::math::Vector3d winch_pos = winch_link_->WorldCoGPose().Pos();
-            ignition::math::Vector3d rope_dir = (fixed_pos - winch_pos).Normalize();
-
-            ignition::math::Vector3d force = rope_dir * magnitude;
+            ignition::math::Vector3d force = rope_dir_ * magnitude;
             rope_link_->AddForceAtRelativePosition(force, {0, 0, 0});
         }
 
@@ -168,11 +184,15 @@ namespace gazebo
         std::string eff_r_topic_;
         std::string motor_topic;
         double eff_radius_ = 0.2;
+        bool encoder_not_read = true;
         double encoder_pos_ = 0;
         double prev_encoder_pos_;
-        bool reel_in_is_pos = true;
+        bool rot_dir_switch = false;
         ignition::math::Vector3d poly_coeffs{848.64823567, 188.91463659,  13.92308499};
         int winch_dir;
+        double tot_mass_ = 0;
+        ignition::math::Vector3d rope_dir_ ;
+        ignition::math::Vector3d gravity_dir_{-1, 0 , 0};
 
         double encoder_vel_ = 0;
         double acceleration_ = 0;

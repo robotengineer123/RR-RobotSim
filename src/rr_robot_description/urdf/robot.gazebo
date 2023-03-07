@@ -256,31 +256,31 @@
     
     <gazebo>
         <plugin name="winch_force_plugin_te" filename="libwinch_force_plugin.so">
-            <rope_fixture>10 0 0</rope_fixture>
+            <rope_fixture>30 0 0</rope_fixture>
             <rope_joint>rope_springed_joint_te</rope_joint>
             <rope_joint_axis>1</rope_joint_axis>
             <radius_topic>rope_drive/current_drive_radius</radius_topic>
-            <motor_topic>left_motor/motor_state</motor_topic>
+            <motor_topic>right_motor/motor_state</motor_topic>
             <rope_stiff_poly_coeffs>848.64823567 188.91463659 13.92308499</rope_stiff_poly_coeffs>
-            <kp>50</kp>
-            <kd>15</kd>
-            <ki>10</ki>
-            <move_down_pos_encoder>false</move_down_pos_encoder>
+            <rot_dir_switch>true</rot_dir_switch>
+            <kp>20000</kp>
+            <kd>10</kd>
+            <ki>100</ki>
         </plugin>
     </gazebo>
 
     <gazebo>
         <plugin name="winch_force_plugin_le" filename="libwinch_force_plugin.so">
-            <rope_fixture>10 0 0</rope_fixture>
+            <rope_fixture>30 0 0</rope_fixture>
             <rope_joint>rope_springed_joint_le</rope_joint>
             <rope_joint_axis>1</rope_joint_axis>
             <radius_topic>rope_drive/current_drive_radius</radius_topic>
-            <motor_topic>right_motor/motor_state</motor_topic>
+            <motor_topic>left_motor/motor_state</motor_topic>
             <rope_stiff_poly_coeffs>848.64823567 188.91463659 13.92308499</rope_stiff_poly_coeffs> 
-            <kp>50</kp>
-            <kd>15</kd>
-            <ki>10</ki>
-            <move_down_pos_encoder>true</move_down_pos_encoder>
+            <rot_dir_switch>true</rot_dir_switch>
+            <kp>20000</kp>
+            <kd>10</kd>
+            <ki>100</ki>
         </plugin>
     </gazebo>
 

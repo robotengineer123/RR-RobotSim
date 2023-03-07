@@ -6,7 +6,9 @@
     <arg name="z" default="0.25"/>
     <arg name="model_name" default="rr_robot"/>
 
-    <!-- <node pkg="rosbag" type="play" name="rosbag" args="/home/alexander/dev/RR-RobotSim/secondary_2023-02-23-11-45-48_0.bag"/> -->
+    <remap from="/ackermann/right_wheel_angle" to="/rr_robot/top_wheel_te_joint_controller/command" />
+    <remap from="/ackermann/left_wheel_angle" to="/rr_robot/top_wheel_le_joint_controller/command" />
+    <node pkg="rosbag" type="play" name="rosbag" args="-s 835 /home/alexander/dev/RR-RobotSim/secondary_2023-02-23-11-45-48_0.bag"/>
     <node name="rr_robot_spawn" pkg="gazebo_ros" type="spawn_model" output="screen"
           args="-urdf -param robot_description -model $(arg model_name) -x $(arg x) -y $(arg y) -z $(arg z)" />
     
