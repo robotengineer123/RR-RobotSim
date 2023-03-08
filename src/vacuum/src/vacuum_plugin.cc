@@ -24,7 +24,8 @@ public:
         edge = _sdf->Get<double>("edge");
         center = _sdf->Get<double>("center");
         mu = _sdf->Get<double>("mu");
-        N_v = _sdf->Get<double>("N_v");
+        t = _sdf->Get<double>("t");
+        k_v = _sdf->Get<double>("k_v");
         
         // Start plugin node
         StartNode();
@@ -56,6 +57,15 @@ public:
         N_center = (center_vac*1013)*center;
         N_side = (edge_vac*1013)*edge;
         N = N_center + N_side;
+
+        // Get pose of vacuum sheet
+        auto vac_pose = model->GetLink("vacuum_sheet")->WorldPose();
+
+        // Compression of vacuum sheet
+        d_v = t - vac_pose.Z();
+
+        // Normal force from vacuum sheet
+        N_v = k_v*d_v;
 
         // Force compressing suspension
         N_s = N - N_v;
@@ -161,7 +171,12 @@ private:
     double mu;
     // Vacuum topic message
     std::string vacuum_system = "\n  edge_vacuum: VAC 10.8%\n  center_vacuum: VAC 6.8%";
-
+    // Thickness of vacuum sheet
+    double t;
+    // Stiffness of vacuum sheet
+    double k_v;
+    // Compression of vacuum sheet
+    double d_v;
 
 };
 

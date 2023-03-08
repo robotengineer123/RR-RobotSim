@@ -254,7 +254,7 @@
         </plugin>
     </gazebo>
     
-    <gazebo>
+    <!-- <gazebo>
         <plugin name="winch_force_plugin_te" filename="libwinch_force_plugin.so">
             <rope_fixture>10 0 0</rope_fixture>
             <rope_joint>rope_springed_joint_te</rope_joint>
@@ -262,9 +262,9 @@
             <torque_topic>right_motor/motor_state</torque_topic>
             <one_meter_stiffness>100000</one_meter_stiffness> 
         </plugin>
-    </gazebo>
+    </gazebo> -->
 
-    <gazebo>
+    <!-- <gazebo> 
         <plugin name="winch_force_plugin_le" filename="libwinch_force_plugin.so">
             <rope_fixture>10 0 0</rope_fixture>
             <rope_joint>rope_springed_joint_le</rope_joint>
@@ -272,15 +272,20 @@
             <torque_topic>left_motor/motor_state</torque_topic>
             <one_meter_stiffness>100000</one_meter_stiffness> 
         </plugin>
-    </gazebo>
+    </gazebo> -->
 
     <gazebo>
         <plugin name="vacuum_plugin" filename="libvacuum_plugin.so">
             <edge>0.076674</edge>
             <center>0.121469</center>
             <mu>0.2</mu>
-            <N_v>368.93</N_v>
+            <t>0.060825</t>
+            <k_v>32721.47965474722</k_v>
         </plugin>
+    </gazebo>
+
+    <gazebo reference="vacuum_sheet_joint">
+        <preserveFixedJoint>true</preserveFixedJoint>
     </gazebo>
 
     <gazebo>
