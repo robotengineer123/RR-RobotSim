@@ -3,13 +3,12 @@
 #include <gazebo/gazebo.hh>
 #include <gazebo/physics/physics.hh>
 #include <ignition/math/Vector3.hh>
-#include <std_msgs/Float64.h>
-#include <array>
-#include <iostream>
 #include <ros/ros.h>
+#include <ctime>
 #include <rr_msgs/MotorState.h>
-#include <math.h>
-#include <unordered_map>
+#include "winch_force_plugin/winch.h"
+#include "winch_force_plugin/pid.h"
+
 
 namespace gazebo
 {
@@ -21,51 +20,72 @@ namespace gazebo
             model_ = _parent;
             sdf_ = _sdf;
 
-            LoadSdfParams();
-            winch_link = joint->GetParent();
-            rope_link = joint->GetChild();
+            for(auto& link : model_->GetLinks()) 
+                tot_mass_+=link->GetInertial()->Mass();
 
+            gravity_dir_ = model_->GetWorld()->Gravity().Normalize();
+            
             StartNode();
-            eff_r_sub = nh->subscribe(eff_r_topic_, 1, &WinchForcePlugin::EffRadiusCallback, this);
-            torque_sub = nh->subscribe(torque_topic_, 1, &WinchForcePlugin::TorqueCallback, this);
+            InitWinches();
+            InitPIDs();
+
             ros::spinOnce();
 
-            ROS_INFO("Winch plugin loaded for model: %s", model_->GetName().c_str());
-
-            // Listen to the update event. This event is broadcast every
-            // simulation iteration.
             update_connection_ = event::Events::ConnectWorldUpdateBegin(
                 std::bind(&WinchForcePlugin::OnUpdate, this));
-        }
 
-        // Called by the world update start event
-        void OnUpdate()
-        {
-            ros::spinOnce();
-
-            ignition::math::Vector3d winch_pos = winch_link->WorldCoGPose().Pos();
-            rope_length = fixed_pos.Distance(winch_pos);
-            
-            joint->SetStiffness(1 ,normalized_stiffness/rope_length);
-
-            ignition::math::Vector3d rope_force = GlobRopeForce();
-
-            rope_link->AddForceAtRelativePosition(rope_force, {0, 0, 0});
-            //ROS_INFO("Force is: %lf, %lf, %lf    torque is: %lf, %lf, %lf", force[0], force[1], force[2], torque[0], torque[1], torque[2]);
-        }
-
-
-        void EffRadiusCallback(const std_msgs::Float64ConstPtr &msg)
-        {
-            eff_radius_ = msg->data;
-        }
-
-        void TorqueCallback(const rr_msgs::MotorStateConstPtr &msg)
-        {
-            torque_= msg->effort;
+            ROS_INFO("Winch plugin loaded for model: %s", model_->GetName().c_str());
         }
 
     private:
+        void InitWinches()
+        {
+            ignition::math::Vector3d poly_coeffs = LoadParam<ignition::math::Vector3d>("rope_stiff_poly_coeffs"); 
+
+            right_winch_ptr_ = std::make_unique<WinchPlugin::Winch>(
+                nh_.get(),
+                model_->GetLink(LoadParam<std::string>("right_rope_link")),
+                LoadParam<ignition::math::Vector3d>("right_fixed_pos"),
+                LoadParam<std::string>("right_motor_topic"),
+                LoadParam<std::string>("right_radius_topic"),
+                LoadParam<int>("right_prismatic_axis"),
+                LoadParam<bool>("right_rot_dir_switch")
+                );
+            right_winch_ptr_->SetStrainCurvePolyCoeffs(poly_coeffs);
+
+            left_winch_ptr_ = std::make_unique<WinchPlugin::Winch>(
+                nh_.get(),
+                model_->GetLink(LoadParam<std::string>("right_rope_link")),
+                LoadParam<ignition::math::Vector3d>("left_fixed_pos"),
+                LoadParam<std::string>("left_motor_topic"),
+                LoadParam<std::string>("left_radius_topic"),
+                LoadParam<int>("left_prismatic_axis"),
+                LoadParam<bool>("left_rot_dir_switch")
+                );
+            left_winch_ptr_->SetStrainCurvePolyCoeffs(poly_coeffs);
+        }
+
+
+        void InitPIDs()
+        {
+            double kp = LoadParam<double>("kp");
+            double kd = LoadParam<double>("kd");
+            double ki = LoadParam<double>("ki");
+
+            right_pid_ = WinchPlugin::PID(
+                    kp,
+                    kd,
+                    ki,
+                    std::bind(&WinchPlugin::Winch::GetRealPosition, right_winch_ptr_.get())
+                    );
+
+            left_pid_ = WinchPlugin::PID(
+                    kp,
+                    kd,
+                    ki,
+                    std::bind(&WinchPlugin::Winch::GetRealPosition, left_winch_ptr_.get())
+                    );
+        }
 
         void StartNode()
         {
@@ -73,17 +93,7 @@ namespace gazebo
             int argc = 0;
             char **argv = NULL;
             ros::init(argc, argv, "winch plugin", ros::init_options::AnonymousName);
-            nh = std::make_unique<ros::NodeHandle>();
-        }
-
-        void LoadSdfParams()
-        {
-            normalized_stiffness = LoadParam<double>("one_meter_stiffness");
-            fixed_pos = LoadParam<ignition::math::Vector3d>("rope_fixture");
-            eff_r_topic_ = LoadParam<std::string>("radius_topic");
-            torque_topic_ = LoadParam<std::string>("torque_topic");
-            joint = model_->GetJoint(
-                LoadParam<std::string>("rope_joint"));
+            nh_ = std::make_unique<ros::NodeHandle>();
         }
 
         template <class T>
@@ -97,42 +107,56 @@ namespace gazebo
             return sdf_->Get<T>(par_name);
         }
 
-        ignition::math::Vector3d GlobRopeForce()
+    public:
+
+        // Called by the world update start event
+        void OnUpdate()
         {
-            ignition::math::Vector3d winch_pos = winch_link->WorldCoGPose().Pos();
-            ignition::math::Quaterniond winch_quat = winch_link->WorldCoGPose().Rot();
-
-            ignition::math::Vector3d rope_dir = (fixed_pos - winch_pos).Normalize();
-
-            double cos_angle = std::abs(winch_quat.RotateVector({0, 1, 0}).Dot(rope_dir));
-            ignition::math::Vector3d rope_force = rope_dir* (torque_*eff_radius_/cos_angle);
-            return rope_force;
+            ros::spinOnce();
+            ApplyForce(*right_winch_ptr_, right_pid_);
+            ApplyForce(*left_winch_ptr_, left_pid_);
         }
 
     private:
+
+        void ApplyForce(WinchPlugin::Winch& winch, WinchPlugin::PID& pid)
+        {
+            winch.UpdateState();
+            double pid_output = pid.Compute(winch.GetSimPosition());
+            auto static_tension = StaticRopeTension(winch.GetRopeDir());
+            double rope_tension = pid_output + static_tension;
+            
+            if (rope_tension < 0)
+            {
+                if (pid.integral < - static_tension) 
+                    pid.integral = - static_tension;
+
+                return;
+            }
+            winch.ApplyRopeTension(rope_tension);
+        }
+
+        double StaticRopeTension(const ignition::math::Vector3d& rope_dir) const
+        {
+            double cos_angle = std::abs(rope_dir.Dot(gravity_dir_));
+            double static_force = tot_mass_*9.82/cos_angle/2;
+            return static_force;
+        }
+
+
         physics::ModelPtr model_;
         sdf::ElementPtr sdf_;
-        event::ConnectionPtr update_connection_; // Pointer to the update event connection
+        event::ConnectionPtr update_connection_;
 
-        std::unique_ptr<ros::NodeHandle> nh;
-        
-        ros::Subscriber eff_r_sub;
-        ros::Subscriber torque_sub;
-        std::string eff_r_topic_;
-        std::string torque_topic_;
-        double eff_radius_ = 0.2;
-        double torque_ = 0;
+        std::unique_ptr<ros::NodeHandle> nh_;
 
-        double prev_rot;
+        double tot_mass_ = 0;
+        ignition::math::Vector3d gravity_dir_;
 
-        physics::LinkPtr winch_link;
-        physics::LinkPtr rope_link;
-        physics::JointPtr joint;
-
-
-        ignition::math::Vector3d fixed_pos{0.0, 0.0, 0.0};
-        double normalized_stiffness = 1;
-        double rope_length = 0;
+        std::unique_ptr<WinchPlugin::Winch> right_winch_ptr_;
+        std::unique_ptr<WinchPlugin::Winch> left_winch_ptr_;
+        WinchPlugin::PID right_pid_;
+        WinchPlugin::PID left_pid_;
     };
 
     // Register this plugin with the simulator

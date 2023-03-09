@@ -1,6 +1,7 @@
 /build
 /devel
 **/src/CMakeLists.txt
-/.vscode
-/.catkin_tools
-/logs
+.vscode
+*.bag
+logs
+.catkin_tools

@@ -254,25 +254,35 @@
         </plugin>
     </gazebo>
     
-    <!-- <gazebo>
-        <plugin name="winch_force_plugin_te" filename="libwinch_force_plugin.so">
-            <rope_fixture>10 0 0</rope_fixture>
-            <rope_joint>rope_springed_joint_te</rope_joint>
-            <radius_topic>rope_drive/current_drive_radius</radius_topic>
-            <torque_topic>right_motor/motor_state</torque_topic>
-            <one_meter_stiffness>100000</one_meter_stiffness> 
+    <gazebo>
+        <plugin name="winch_force_plugin" filename="libwinch_force_plugin.so">
+            <right_fixed_pos>30 0 0</right_fixed_pos>
+            <left_fixed_pos>30 0 0</left_fixed_pos>
+            <right_rope_link>rope_link_te</right_rope_link>
+            <left_rope_link>rope_link_te</left_rope_link>
+            <right_motor_topic>right_motor/motor_state</right_motor_topic>
+            <left_motor_topic>left_motor/motor_state</left_motor_topic>
+            <left_radius_topic>rope_drive/current_drive_radius</left_radius_topic>
+            <right_radius_topic>rope_drive/current_drive_radius</right_radius_topic>
+            <right_prismatic_axis>1</right_prismatic_axis>
+            <left_prismatic_axis>1</left_prismatic_axis>
+            <right_rot_dir_switch>false</right_rot_dir_switch>
+            <left_rot_dir_switch>false</left_rot_dir_switch>
+            <rope_stiff_poly_coeffs>848.64823567 188.91463659 13.92308499</rope_stiff_poly_coeffs>
+            <kp>2000</kp>
+            <kd>0.1</kd>
+            <ki>1</ki>
         </plugin>
     </gazebo> -->
 
-    <!-- <gazebo> 
-        <plugin name="winch_force_plugin_le" filename="libwinch_force_plugin.so">
-            <rope_fixture>10 0 0</rope_fixture>
-            <rope_joint>rope_springed_joint_le</rope_joint>
-            <radius_topic>rope_drive/current_drive_radius</radius_topic>
-            <torque_topic>left_motor/motor_state</torque_topic>
-            <one_meter_stiffness>100000</one_meter_stiffness> 
-        </plugin>
-    </gazebo> -->
+    <gazebo reference="rope_springed_joint_le">
+        <springStiffness>10000</springStiffness>
+        <springReference>0</springReference>
+    </gazebo>
+    <gazebo reference="rope_springed_joint_te">
+        <springStiffness>10000</springStiffness>
+        <springReference>0</springReference>
+    </gazebo>
 
     <gazebo>
         <plugin name="vacuum_plugin" filename="libvacuum_plugin.so">
@@ -319,16 +329,6 @@
 
     <gazebo reference="top_pivot_joint_te">
         <springStiffness>760.69</springStiffness>
-        <springReference>0.0</springReference>
-    </gazebo>
-
-    <!-- Attach spring to rope prismatic joing -->
-    <gazebo reference="rope_springed_joint_te">
-        <springStiffness>500</springStiffness>
-        <springReference>0.0</springReference>
-    </gazebo>
-    <gazebo reference="rope_springed_joint_le">
-        <springStiffness>500</springStiffness>
         <springReference>0.0</springReference>
     </gazebo>
 </robot>

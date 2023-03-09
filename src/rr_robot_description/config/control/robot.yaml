@@ -15,11 +15,11 @@ rr_robot:
   #   pid: {p: 100.0, d: 0.0, i: 0.0}
 
   top_wheel_le_joint_controller:
-    type: effort_controllers/JointEffortController
-    joint: top_wheel_le_joint
-    pid: {p: 100.0, d: 0.0, i: 0.0}
+    type: effort_controllers/JointPositionController
+    joint: top_wheel_yaw_joint_le
+    pid: {p: 1000.0, d: 10.0, i: 10.0}
     
-  top_wheel_te_joint_cotnroller:
-    type: effort_controllers/JointEffortController
-    joint: top_wheel_te_joint
-    pid: {p: 100.0, d: 0.0, i: 0.0}
+  top_wheel_te_joint_controller:
+    type: effort_controllers/JointPositionController
+    joint: top_wheel_yaw_joint_te
+    pid: {p: 1000.0, d: 10.0, i: 10.0}

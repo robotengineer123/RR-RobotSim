@@ -23,7 +23,7 @@
         <limit lower="-0.5235" upper="0.5235" effort="100000" velocity="1000000"/>
         <parent link="${winch_name_no_postfix}_${postfix}"/>
         <child link="rope_yaw_link_${postfix}"/>
-        <dynamics damping="0.5" />
+        <dynamics damping="1" />
       </joint>
   
       <!-- Rope pitch -->
@@ -38,7 +38,7 @@
           <limit lower="-0.5235" upper="0.5235" effort="100000" velocity="1000000"/>
           <parent link="rope_yaw_link_${postfix}"/>
           <child link="rope_pitch_link_${postfix}"/>
-          <dynamics damping="0.5" />
+          <dynamics damping="1" />
         </joint>
   
       <!-- rope prismatic joint (springed joint)-->
@@ -62,7 +62,7 @@
         <limit lower="0" upper="${rope_l}" effort="100000" velocity="1000000"/>
         <parent link="rope_pitch_link_${postfix}"/>
         <child link="rope_link_${postfix}" />
-        <dynamics damping="0.5" />
+        <dynamics damping="2" />
       </joint>
     </xacro:macro>
     

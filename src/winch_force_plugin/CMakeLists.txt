@@ -122,13 +122,14 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-# include
+  include
   ${catkin_INCLUDE_DIRS}
 )
+
 include_directories(${GAZEBO_INCLUDE_DIRS})
 link_directories(${GAZEBO_LIBRARY_DIRS})
 
-add_library(winch_force_plugin SHARED src/winch_force_plugin.cpp)
+add_library(winch_force_plugin SHARED src/winch_force_plugin.cpp src/pid.cpp src/winch.cpp)
 target_link_libraries(winch_force_plugin ${GAZEBO_LIBRARIES} ${catkin_LIBRARIES})
 
 ## Declare a C++ library
