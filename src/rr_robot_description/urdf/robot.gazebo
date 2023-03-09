@@ -273,7 +273,7 @@
             <kd>0.1</kd>
             <ki>1</ki>
         </plugin>
-    </gazebo> -->
+    </gazebo> 
 
     <gazebo reference="rope_springed_joint_le">
         <springStiffness>10000</springStiffness>
