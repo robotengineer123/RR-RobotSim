@@ -27,6 +27,10 @@ public:
         t = _sdf->Get<double>("t");
         k_v = _sdf->Get<double>("k_v");
         
+        // Get links
+        vacuum_link = model->GetLink("vacuum_sheet");
+        dummy_link = model->GetLink("dummy");
+
         // Start plugin node
         StartNode();
 
@@ -59,7 +63,7 @@ public:
         N = N_center + N_side;
 
         // Get pose of vacuum sheet
-        auto vac_pose = model->GetLink("vacuum_sheet")->WorldPose();
+        auto vac_pose = vacuum_link->WorldPose();
 
         // Compression of vacuum sheet
         d_v = t - vac_pose.Z();
@@ -74,7 +78,7 @@ public:
         F = mu*N_v;
         
         // Get resultant force on robot with no friction force
-        ignition::math::Vector3d F_res = model->GetLink("dummy")->RelativeForce();
+        ignition::math::Vector3d F_res = dummy_link->RelativeForce();
         
         // Check if all vacuum is off -> set forces to zero
         // Check if resultant force in plane is below the friction force -> Stand still
@@ -84,13 +88,13 @@ public:
         //    model->GetLink("dummy")->SetForce(ignition::math::Vector3d(0, 0, 0));
         //}
         if (F_res_plane == 0.0) {
-            model->GetLink("dummy")->SetForce(ignition::math::Vector3d(0, 0, -N));
+            dummy_link->SetForce(ignition::math::Vector3d(0, 0, -N));
         }
         else if (F_res_plane < F) {
-            model->GetLink("dummy")->SetForce(ignition::math::Vector3d(-F_res.X(), -F_res.Y(), -N));
+            dummy_link->SetForce(ignition::math::Vector3d(-F_res.X(), -F_res.Y(), -N));
         } 
         else {
-            model->GetLink("dummy")->SetForce(ignition::math::Vector3d(-F*F_res.X()/F_res_plane, -F*F_res.Y()/F_res_plane, -N));
+            dummy_link->SetForce(ignition::math::Vector3d(-F*F_res.X()/F_res_plane, -F*F_res.Y()/F_res_plane, -N));
         }
 
     }
@@ -177,6 +181,9 @@ private:
     double k_v;
     // Compression of vacuum sheet
     double d_v;
+    // Links
+    physics::LinkPtr vacuum_link;
+    physics::LinkPtr dummy_link;
 
 };
 
