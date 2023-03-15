@@ -298,10 +298,10 @@
         <preserveFixedJoint>true</preserveFixedJoint>
     </gazebo>
 
-    <gazebo>
+    <!-- <gazebo>
         <plugin name="winch_torque_plugin" filename="libwinch_torque_plugin.so">
         </plugin>
-    </gazebo>
+    </gazebo> -->
     
     <!-- Attach rotational spring to suspension-->
     <!-- We are approximating the suspension mechanism as a revolute joint
