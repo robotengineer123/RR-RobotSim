@@ -1,0 +1,4 @@
+geometry_msgs/Vector3 acceleration
+rr_common_msg_and_srv/EulerAngles euler_angles
+string orientation_state
+time time_stamp
