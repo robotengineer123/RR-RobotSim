@@ -1,10 +1,10 @@
 #include <ros/ros.h>
 #include <sensor_msgs/LaserScan.h>
 #include <gazebo/gazebo.hh>
-#include <gazebo_msgs/SetModelState.h>
 #include <gazebo/physics/physics.hh>
 #include <string>
 #include <math.h>
+#include <stdio.h>
 
 
 namespace gazebo {
@@ -16,27 +16,26 @@ public:
         model = _parent;
         
         // Width of turbine blade
-        blade_width = _sdf->Get<double>("blade_width");
+        blade_width = _sdf->Get<float>("blade_width");
         half_blade_width = blade_width/2;
         
         // Populate the LaserScan message
-        sensor_msgs::LaserScan scan;
-        laser_frequency = _sdf->Get<double>("laser_frequency");
+        laser_frequency = _sdf->Get<float>("laser_frequency");
         scan.header.frame_id = _sdf->Get<std::string>("header_frame_id");
-        scan.angle_min = _sdf->Get<double>("scan_angle_min");
-        scan.angle_max = _sdf->Get<double>("scan_angle_max");
-        scan.range_min = _sdf->Get<double>("scan_range_min");
-        scan.range_max = _sdf->Get<double>("scan_range_max");
+        scan.angle_min = _sdf->Get<float>("scan_angle_min");
+        scan.angle_max = _sdf->Get<float>("scan_angle_max");
+        scan.range_min = _sdf->Get<float>("scan_range_min");
+        scan.range_max = _sdf->Get<float>("scan_range_max");
+
         scan.angle_increment = (scan.angle_max - scan.angle_min) / num_readings;
         scan.time_increment = (1 / laser_frequency) / (num_readings);
 
         // Set the model name and reference for obtaining the pose
-        modelstate.model_name = model->GetName().c_str();
-        setmodelstate.request.model_state = modelstate;
+        //modelstate.model_name = model->GetName().c_str();
+        //setmodelstate.request.model_state = modelstate;
 
         // Initialize node, service client and laser publisher
         StartNode();
-        client = nh->serviceClient<gazebo_msgs::SetModelState>("/gazebo/get_model_state");
         scan_pub = nh->advertise<sensor_msgs::LaserScan>("scan", 50);
         ros::spinOnce();
 
@@ -54,8 +53,9 @@ public:
         ros::spinOnce();
 
         // Pose of the robot
-        y = modelstate.pose.position.y;
-        beta = modelstate.pose.orientation.z;
+        auto rr_pose = model->WorldPose();
+        y = rr_pose.Y();
+        beta = rr_pose.Yaw();
 
         // Distance to edges
         le_dist = half_blade_width - y;
@@ -63,12 +63,16 @@ public:
 
         // Generate some fake data for our laser scan
         for(unsigned int i = 0; i < num_readings; ++i){
-        angle = beta - i*scan.angle_increment;
-        if (angle<0.01) {
-            ranges[i] = 50;
+        angle = beta + i*scan.angle_increment;
+        abs_angle = fabs(angle);
+        if (abs_angle<1.55) {
+            ranges[i] = fabs(te_dist/(cos(angle)));
+        }
+        else if (abs_angle>1.59) {
+            ranges[i] = fabs(le_dist/(cos(angle)));
         }
         else {
-            ranges[i] = le_dist/(cos(angle));
+            ranges[i] = 50;
         }
         }
         
@@ -107,26 +111,26 @@ private:
     std::unique_ptr<ros::NodeHandle> nh;
 
     // Blade and robot
-    double blade_width;
-    double half_blade_width;
-    double x;
+    float blade_width;
+    float half_blade_width;
+    float x;
     double y;
     double beta;
-    double le_dist;
-    double te_dist;
-    double angle;
+    float le_dist;
+    float te_dist;
+    float angle;
+    float abs_angle;
 
     // Laser scan variables
     constexpr static int num_readings = 100;
-    double laser_frequency;
-    double ranges[num_readings];
-    double intensities[num_readings] = {};
+    float laser_frequency;
+    float ranges[num_readings];
+    float intensities[num_readings] = {};
 
-    gazebo_msgs::SetModelState setmodelstate;
-    gazebo_msgs::ModelState modelstate;
+    //gazebo_msgs::SetModelState setmodelstate;
+    //gazebo_msgs::ModelState modelstate;
 
     ros::Publisher scan_pub;
-    ros::ServiceClient client;
 
     // Populate the LaserScan message
     sensor_msgs::LaserScan scan;
