@@ -17,20 +17,22 @@ class Ofsetter:
         
 
     def RightCallback(self, msg: Float64):
-        offset_msg = Float64()
-        offset_msg.data = msg.data + self.r_offset*np.pi/180  #convert to radians
-        self.r_pub.publish(offset_msg)
+        rad_msg = Float64()
+        rad_msg.data = msg.data*np.pi/180  #convert to radians
+        self.r_pub.publish(rad_msg)
 
     def LeftCallback(self, msg: Float64):
-        offset_msg = Float64()
-        offset_msg.data = msg.data*np.pi/180  #convert to radians
-        self.l_pub.publish(offset_msg)
+        rad_msg = Float64()
+        rad_msg.data = msg.data*np.pi/180  #convert to radians
+        self.l_pub.publish(rad_msg)
+
 
 if __name__ == "__main__":
-    if len(sys.argv) < 5:
-        print("offsetter node needs cml args to be specified")
+    
+    if len(sys.argv) < 3:
+        print("deg_to_rad converter node needs cml args to be specified")
     else:
-        obj = Ofsetter(sys.argv[1], sys.argv[2], float(sys.argv[3]), float(sys.argv[4]))
+        obj = Ofsetter(sys.argv[1], sys.argv[2])
         rospy.spin()
 
 

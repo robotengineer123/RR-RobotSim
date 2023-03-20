@@ -1,0 +1,12 @@
+<launch>
+    <arg name="l_pub_topic" default="/rr_robot/top_wheel_le_joint_controller/command"/>
+    <arg name="r_pub_topic" default="/rr_robot/top_wheel_te_joint_controller/command"/>
+    
+    
+    <node pkg="deg_to_rad_topic_mapper" 
+        type="deg_to_rad_topic_mapper.py" 
+        name="deg_to_rad_topic_mapper" 
+        output="screen" 
+        args="$(arg l_pub_topic) $(arg r_pub_topic)"/>
+    
+</launch>
