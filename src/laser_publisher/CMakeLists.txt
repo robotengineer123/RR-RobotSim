@@ -11,6 +11,8 @@ find_package(gazebo REQUIRED)
 
 find_package(catkin REQUIRED COMPONENTS
   gazebo_plugins
+  gazebo_msgs
+  sensor_msgs
   gazebo_ros
   roscpp
 )

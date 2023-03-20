@@ -336,7 +336,7 @@
         <plugin name="laser_publisher" filename="liblaser_publisher.so">
             <blade_width>2</blade_width>
             <laser_frequency>40</laser_frequency>
-            <header_frame_id>"laser_frame"</header_frame_id>
+            <header_frame_id>dummy</header_frame_id>
             <scan_angle_min>-1.57</scan_angle_min>
             <scan_angle_max>1.57</scan_angle_max>
             <scan_range_min>0.0</scan_range_min>
