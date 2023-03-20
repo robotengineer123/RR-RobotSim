@@ -4,6 +4,9 @@ import rospy
 from nav_msgs.msg import Odometry
 from std_msgs.msg import Header
 from gazebo_msgs.srv import GetModelState, GetModelStateRequest
+import tf
+
+br = tf.TransformBroadcaster()
 
 rospy.init_node('odom_pub')
 
@@ -31,5 +34,11 @@ while not rospy.is_shutdown():
     odom.header = header
 
     odom_pub.publish (odom)
+
+    br.sendTransform((result.pose.position.x, result.pose.position.y, result.pose.position.z),
+                    (result.pose.orientation.x, result.pose.orientation.y, result.pose.orientation.z, result.pose.orientation.w),
+                    rospy.Time.now(),
+                    "dummy",
+                    "odom")    
 
     r.sleep()
