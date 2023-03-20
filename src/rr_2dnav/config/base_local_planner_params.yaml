@@ -32,7 +32,7 @@ TebLocalPlannerROS:
  max_vel_theta: 0.3
  acc_lim_x: 0.5
  acc_lim_theta: 0.5
- min_turning_radius: 0.0
+ min_turning_radius: 7.2
  footprint_model: # types: "point", "circular", "two_circles", "line", "polygon"
    type: "point"
    radius: 0.2 # for type "circular"
