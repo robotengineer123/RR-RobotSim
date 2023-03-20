@@ -13,11 +13,12 @@ class MotorVel:
     rot_vel: float = 0
 
 class CmdVelController:
-    def __init__(self, wheel_base, track_width, l_rope_drive_topic: str, r_rope_drive_topic: str, l_top_wheel_topic, r_top_wheel_topic) -> None:
+    def __init__(self, wheel_base, track_width) -> None:
         self.L = wheel_base
         self.T = track_width
         self.radius = 0.2
 
+    def InitNode(self, l_rope_drive_topic: str, r_rope_drive_topic: str, l_top_wheel_topic, r_top_wheel_topic):
         rospy.init_node("cmd_vel_controller")
         rospy.Subscriber("cmd_vel", Twist, self._ControlCallback)
         rospy.Subscriber("rope_drive/current_drive_radius", Float64, self._RadiusCallback)
@@ -28,6 +29,7 @@ class CmdVelController:
         self.r_fw_pub = rospy.Publisher(r_top_wheel_topic, Float64, queue_size=1)
         self.l_fw_pub = rospy.Publisher(l_top_wheel_topic, Float64, queue_size=1)
 
+    
     def ComputeMotorVel(self, yaw_vel, lin_vel, radius)->MotorVel:
         
         if (lin_vel == 0):
@@ -81,12 +83,11 @@ if __name__=="__main__":
             r_tw_topic = str(sys.argv[5])
             l_tw_topic = str(sys.argv[6])
 
-            controller = CmdVelController(wheel_base, 
-                                          track_width,
-                                          l_rd_topic,
-                                          r_rd_topic,
-                                          l_tw_topic,
-                                          r_tw_topic)
+            controller = CmdVelController(wheel_base, track_width)
+            controller.InitNode(l_rd_topic,
+                                r_rd_topic,
+                                l_tw_topic,
+                                r_tw_topic)
             rospy.spin()
             
         except rospy.ROSInterruptException:

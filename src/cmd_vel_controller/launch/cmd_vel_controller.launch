@@ -1,11 +1,11 @@
 <launch>
-<arg name="wheel_base" default="1">
-<arg name="track_width" default="0.5">
+<arg name="wheel_base" default="1"/>
+<arg name="track_width" default="0.5"/>
 
-<arg name="l_rope_drive_topic" default="">
-<arg name="r_rope_drive_topic" default="">
-<arg name="l_top_wheel_topic" default="">
-<arg name="r_top_wheel_topic" default="">
+<arg name="l_rope_drive_topic" default="test_lrd"/>
+<arg name="r_rope_drive_topic" default="test_rrd"/>
+<arg name="l_top_wheel_topic" default="test_ltw"/>
+<arg name="r_top_wheel_topic" default="test_rtw"/>
 
 
 
@@ -13,6 +13,6 @@
     type="cmd_vel_controller.py" 
     name="cmd_vel_controller" 
     output="screen" 
-    args="$(arg wheel_base) $(arg track_width)"/>
+    args="$(arg wheel_base) $(arg track_width) $(arg l_rope_drive_topic) $(arg r_rope_drive_topic) $(arg l_top_wheel_topic) $(arg r_top_wheel_topic)"/>
 
 </launch>

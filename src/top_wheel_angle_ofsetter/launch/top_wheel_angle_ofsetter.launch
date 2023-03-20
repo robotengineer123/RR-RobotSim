@@ -1,0 +1,16 @@
+<launch>
+    <arg name="l_pub_topic" default="/rr_robot/top_wheel_le_joint_controller/command"/>
+    <arg name="r_pub_topic" default="/rr_robot/top_wheel_te_joint_controller/command"/>
+    <arg name="l_offset" default="0"/>
+    <arg name="r_offset" default="0"/>
+    
+        <!-- <remap from="/ackermann/right_wheel_angle" to="/rr_robot/top_wheel_te_joint_controller/command" />
+    <remap from="/ackermann/left_wheel_angle" to="/rr_robot/top_wheel_le_joint_controller/command" /> -->
+    
+    <node pkg="top_wheel_angle_ofsetter" 
+        type="top_wheel_angle_ofsetter.py" 
+        name="top_wheel_angle_ofsetter" 
+        output="screen" 
+        args="$(arg l_pub_topic) $(arg r_pub_topic) $(arg l_offset) $(arg r_offset)"/>
+    
+</launch>

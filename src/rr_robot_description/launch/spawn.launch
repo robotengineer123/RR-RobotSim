@@ -18,6 +18,4 @@
     <!-- Load Odometry publisher -->
     <include file="$(find odom_publisher)/launch/odom_publisher.launch"/>
 
-    <node pkg="rr_robot_description" type="top_wheel.bash" name="bash_script" output="screen" />
-
 </launch>
