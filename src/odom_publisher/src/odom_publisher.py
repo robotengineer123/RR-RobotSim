@@ -22,7 +22,7 @@ header.frame_id='/odom'
 model = GetModelStateRequest()
 model.model_name='rr_robot'
 
-r = rospy.Rate(10)
+r = rospy.Rate(50)
 
 while not rospy.is_shutdown():
     result = get_model_srv(model)

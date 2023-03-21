@@ -2,7 +2,7 @@
 <launch>
 
     <arg name="start_joint_state_publisher" default="true"/>
-    <arg name="moveit_controllers" default="$(find rr_robot_description)/config/control/moveit_controllers.yaml"/>
+    <!-- <arg name="moveit_controllers" default="$(find rr_robot_description)/config/control/moveit_controllers.yaml"/> -->
 
     <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find rr_robot_description)/urdf/robot.urdf.xacro'"/>
 
@@ -18,7 +18,7 @@
     <node name="rviz" pkg="rviz" type="rviz" args="-d $(find rr_robot_description)/config/rviz/robot.rviz" />
 
     <!-- MoveIt -->
-    <group>
+    <!-- <group>
         <remap from="/joint_states" to="/rr_robot/joint_states" />
         <include file="$(find rr_moveit_configuration)/launch/planning_context.launch">
             <arg name="load_robot_description" value="true"/>
@@ -31,6 +31,6 @@
             <arg name="debug" value="false"/>
             <arg name="pipeline" value="ompl"/>
         </include>
-    </group>
+    </group> -->
 
 </launch>
