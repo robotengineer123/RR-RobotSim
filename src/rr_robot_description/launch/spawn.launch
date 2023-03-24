@@ -18,4 +18,7 @@
     <!-- Load Odometry publisher -->
     <include file="$(find odom_publisher)/launch/odom_publisher.launch"/>
 
+    <!-- Broadcast tf from world to odom -->
+    <!-- <node pkg="tf" type="static_transform_publisher" name="world_odom_broadcaster" args="0 0 0 0 0 0 0 world odom 100" /> -->
+
 </launch>
