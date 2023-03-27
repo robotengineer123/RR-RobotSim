@@ -1,0 +1,8 @@
+<library path="lib/librr_ackermann_controller_lib">
+    <class name="rr_ackermann_controller/RrAckermannController" type="rr_ackermann_controller::RrAckermannController" base_class_type="controller_interface::ControllerBase">
+        <description>
+            Listens to cmd_vel and translates into ackermann steering using rope drive as linear driver
+            Top wheels must have position interface and rope drive must have velocity interface
+        </description>
+    </class>
+</library>

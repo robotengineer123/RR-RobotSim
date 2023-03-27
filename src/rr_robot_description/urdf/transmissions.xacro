@@ -4,7 +4,7 @@
         <transmission name="${joint_name}_simple_trans">
             <type>transmission_interface/SimpleTransmission</type>
             <joint name="${joint_name}">
-                <hardwareInterface>EffortJointInterface</hardwareInterface>
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
             </joint>
             <actuator name="${joint_name}_motor">
                 <mechanicalReduction>1</mechanicalReduction>
@@ -12,10 +12,35 @@
         </transmission>
     </xacro:macro>
 
-    <!-- <xacro:EffortJointMacro joint_name="rope_drive_le_joint"/>
-    <xacro:EffortJointMacro joint_name="rope_drive_te_joint"/> -->
-    <xacro:EffortJointMacro joint_name="top_wheel_yaw_joint_te"/>
-    <xacro:EffortJointMacro joint_name="top_wheel_yaw_joint_le"/>
+    <xacro:macro name="VelocityJointMacro" params="joint_name">
+        <transmission name="${joint_name}_simple_trans">
+            <type>transmission_interface/SimpleTransmission</type>
+            <joint name="${joint_name}">
+                <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+            </joint>
+            <actuator name="${joint_name}_motor">
+                <mechanicalReduction>1</mechanicalReduction>
+            </actuator>
+        </transmission>
+    </xacro:macro>
+
+    <xacro:macro name="PositionJointMacro" params="joint_name">
+        <transmission name="${joint_name}_simple_trans">
+            <type>transmission_interface/SimpleTransmission</type>
+            <joint name="${joint_name}">
+                <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+            </joint>
+            <actuator name="${joint_name}_motor">
+                <mechanicalReduction>1</mechanicalReduction>
+            </actuator>
+        </transmission>
+    </xacro:macro>
+
+    <xacro:VelocityJointMacro joint_name="rope_drive_le_joint"/>
+    <xacro:VelocityJointMacro joint_name="rope_drive_te_joint"/>
+    
+    <xacro:PositionJointMacro joint_name="top_wheel_yaw_joint_te"/>
+    <xacro:PositionJointMacro joint_name="top_wheel_yaw_joint_le"/>
 
     <xacro:EffortJointMacro joint_name="top_pivot_joint_le"/>
     <xacro:EffortJointMacro joint_name="top_pivot_joint_te"/>

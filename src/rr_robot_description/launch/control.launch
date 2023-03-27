@@ -2,7 +2,9 @@
 
     <param name="robot_description" command="$(find xacro)/xacro '$(find rr_robot_description)/urdf/robot.urdf.xacro'"/>
     <!-- Load joint controller configurations from YAML file to parameter server -->
-    <rosparam file="$(find rr_robot_description)/config/control/robot.yaml" command="load"/>
+    <!-- <rosparam file="$(find rr_robot_description)/config/control/robot.yaml" command="load"/> -->
+    <rosparam file="$(find rr_robot_description)/config/control/rr_robot_controllers.yaml" command="load"/>
+
     <rosparam file="$(find ur_robot_driver)/config/ur10_controllers.yaml" ns="rr_robot" command="load"/>
 
     <remap from="/top_wheel_le_joint_controller/command" to="/ackermann/left_wheel_angle" />
@@ -15,6 +17,7 @@
             pos_joint_traj_controller
             top_wheel_le_joint_controller 
             top_wheel_te_joint_controller 
+            cmd_vel_controller
             "/>
 
     <!-- convert joint states to TF transforms for rviz, etc -->
