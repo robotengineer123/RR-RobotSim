@@ -53,7 +53,7 @@ void RrAckermannController::starting(const ros::Time& time)
     Brake();
     vel_cmd.stamp = ros::Time::now();
     vel_buf_.initRT(vel_cmd);
-    radius_buf_.initRT(0);
+    radius_buf_.initRT(0.3);
 }
 
 void RrAckermannController::update(const ros::Time& time, const ros::Duration& period)
@@ -92,6 +92,8 @@ void RrAckermannController::CmdVelCallback(geometry_msgs::TwistConstPtr cmd)
 void RrAckermannController::RadiusCallback(std_msgs::Float64ConstPtr cmd)
 {
     double radius = cmd->data;
+    if (radius == 0)
+        radius = 0.3;
     radius_buf_.writeFromNonRT(radius);
 }
 
