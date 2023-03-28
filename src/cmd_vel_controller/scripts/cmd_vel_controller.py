@@ -72,7 +72,7 @@ class CmdVelController:
 
 if __name__=="__main__":
     if len(sys.argv) < 7:
-        print("This node takes 2 command line arguments: wheel_base, track_width")
+        print("This node takes 6 command line arguments: wheel_base, track_width")
     else:
         try:
             wheel_base = float(sys.argv[1])

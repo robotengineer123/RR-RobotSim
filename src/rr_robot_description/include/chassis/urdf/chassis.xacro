@@ -66,7 +66,7 @@
     <link name="rope_drive_le">
       <inertial>
         <mass value="2.206" />
-        <origin xyz="0.01032 0 0" rpy="0 0 0" />
+        <origin xyz="0 0 0" rpy="0 0 0" />
         <inertia ixx="0.00699387" ixy="0" ixz="0" iyy="0.0044146" iyz="0" izz="0.0044146"/>
       </inertial>
       <visual>
@@ -85,7 +85,7 @@
         </geometry>
       </collision>
     </link>
-    <joint name="rope_drive_le_joint" type="fixed">
+    <joint name="rope_drive_le_joint" type="continuous">
       <origin xyz="0.92999 0.24067 -0.0269" rpy="-0.09857 0.09857 -1.64405" />
       <axis rpy="0 0 0" xyz="1 0 0" />
       <limit effort="10000" velocity="1000" />
@@ -116,7 +116,7 @@
         </geometry>
       </collision>
     </link>
-    <joint name="rope_drive_te_joint" type="fixed">
+    <joint name="rope_drive_te_joint" type="continuous">
       <origin xyz="0.92999 -0.24067 -0.0269" rpy="0.09857 0.09857 1.64405" />
       <axis rpy="0 0 0" xyz="1 0 0" />
       <limit effort="10000" velocity="1000" />
