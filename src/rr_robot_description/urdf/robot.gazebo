@@ -258,20 +258,15 @@
         <plugin name="winch_force_plugin" filename="libwinch_force_plugin.so">
             <right_fixed_pos>30 0 0</right_fixed_pos>
             <left_fixed_pos>30 0 0</left_fixed_pos>
-            <right_rope_link>rope_link_te</right_rope_link>
-            <left_rope_link>rope_link_te</left_rope_link>
-            <right_motor_topic>right_motor/motor_state</right_motor_topic>
-            <left_motor_topic>left_motor/motor_state</left_motor_topic>
+            <left_winch_link>rope_drive_le</left_winch_link>
+            <right_winch_link>rope_drive_te</right_winch_link>
             <left_radius_topic>rope_drive/current_drive_radius</left_radius_topic>
             <right_radius_topic>rope_drive/current_drive_radius</right_radius_topic>
-            <right_prismatic_axis>1</right_prismatic_axis>
-            <left_prismatic_axis>1</left_prismatic_axis>
+            <right_winch_axis>0</right_winch_axis>
+            <left_winch_axis>0</left_winch_axis>
             <right_rot_dir_switch>false</right_rot_dir_switch>
             <left_rot_dir_switch>false</left_rot_dir_switch>
             <rope_stiff_poly_coeffs>848.64823567 188.91463659 13.92308499</rope_stiff_poly_coeffs>
-            <kp>2000</kp>
-            <kd>0.1</kd>
-            <ki>1</ki>
         </plugin>
     </gazebo> 
 
