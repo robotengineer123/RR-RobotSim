@@ -1,92 +1,94 @@
 <?xml version="1.0"?>
-<!-- because closed loops are not allowed in URDF, the suspension is simplified to a torsional spring
+<!-- because closed loops are not allowed in URDF, the suspension is simplified to a torsional
+spring
     at the wheel mount revolute joint. This can approximate the more complicated suspension as long as
     the range of motion is small -->
 <robot xmlns:xacro="http://ros.org/wiki/xacro" name="top_wheels">
-    <xacro:macro name="top_wheels_macro" params="parent x z wspan">
-    <xacro:property name="range" value="0.174533" />
-      <!-- Macro for making a single wheel-->
-      <xacro:macro name="make_wheel" params="te='true'"> 
-          <xacro:if value="${te}">
-            <xacro:property name="postfix" value="te" />
-            <xacro:property name="y" value="${-wspan/2}" />
-            <xacro:property name="yaw_arm" value="-0.041" />
-          </xacro:if>
-          <xacro:unless value="${te}">
-            <xacro:property name="postfix" value="le" />
-            <xacro:property name="y" value="${wspan/2}" />
-            <xacro:property name="yaw_arm" value="0.041" />
-          </xacro:unless>
+  <xacro:macro name="top_wheels_macro" params="parent x z wspan">
+    <!-- Macro for making a single wheel-->
+    <xacro:macro name="make_wheel" params="te='true'">
+      <xacro:property name="range" value="0.174533" />
 
-          <link name="top_wheel_mount_${postfix}">
-            <inertial>
-                <mass value="0.001" />
-                <inertia ixx="0.002526666666667" ixy="0" ixz="0" iyy="0.002526666666667" iyz="0" izz="0.005"/>
-            </inertial>
-            <visual>
-                <geometry>
-                    <box size="0.05 0.01 0.01"/>
-                </geometry>
-            </visual>
-          </link>
-          <joint name="top_pivot_joint_${postfix}" type="revolute">
-              <origin xyz="${x-0.10581} ${y-yaw_arm} ${z-0.01217}" rpy="0 0 0" />
-              <axis xyz="0 1 0" />
-              <limit lower="${-range}" upper="${range}" effort="10000000" velocity="100000"/>
-              <parent link="${parent}" />
-              <child link="top_wheel_mount_${postfix}"/>
-              <dynamics damping="30" friction="1"/>
-          </joint>
-          
-          <link name="yaw_link_${postfix}">
-              <inertial>
-                  <mass value="1" />
-                  <origin xyz="0 0 0" rpy="0 0 0" />
-                  <inertia ixx="0.002526666666667" ixy="0" ixz="0" iyy="0.002526666666667" iyz="0" izz="0.005"/>
-              </inertial>
-          </link>
-          
-          <joint name="top_wheel_yaw_joint_${postfix}" type="revolute">
-              <origin xyz="0.10581 0 0.01217" rpy="0. 0. 1.5708" />
-              <axis xyz="0 0 1" />
-              <limit lower="-0.20" upper="0.20" effort="1000000" velocity="1000" />
-              <parent link="top_wheel_mount_${postfix}" />
-              <child link="yaw_link_${postfix}" />
-              <dynamics damping="1"/>
-          </joint>
-          
-          <link name="top_wheel_${postfix}">
-            <inertial>
-              <mass value="1" />
-              <origin xyz="0 0 0" rpy="0 0 0" />
-              <inertia ixx="0.002526666666667" ixy="0" ixz="0" iyy="0.002526666666667" iyz="0" izz="0.005"/>
-            </inertial>
-            <visual>
-              <origin xyz="0 0 0" rpy="0 0 0" />
-              <geometry>
-                <mesh filename="package://rr_robot_description/include/chassis/meshes/BottomWheels/visual.STL" />
-              </geometry>
-              <material name="grey">
-                <color rgba="0.4 0.4 0.4 1" />
-              </material>
-            </visual>
-            <collision>
-              <origin xyz="0 0 0" rpy="0 0 0" />
-              <geometry>
-                <mesh filename="package://rr_robot_description/include/chassis/meshes/TopWheels/collision.STL" />
-              </geometry>
-            </collision>
-          </link>
-          <joint name="top_wheel_joint_${postfix}" type="continuous">
-            <origin xyz="${yaw_arm} 0 0" />
-            <axis xyz="1 0 0" />
-            <parent link="yaw_link_${postfix}" />
-            <child link="top_wheel_${postfix}" />
-            <dynamics damping="1" />
-          </joint>
-        </xacro:macro>
-        
-        <xacro:make_wheel te="true" />
-        <xacro:make_wheel te="false" />
+      <xacro:if value="${te}">
+        <xacro:property name="postfix" value="te" />
+        <xacro:property name="y" value="${-wspan/2}" />
+        <xacro:property name="yaw_arm" value="-0.041" />
+      </xacro:if>
+      <xacro:unless value="${te}">
+        <xacro:property name="postfix" value="le" />
+        <xacro:property name="y" value="${wspan/2}" />
+        <xacro:property name="yaw_arm" value="0.041" />
+      </xacro:unless>
+
+      <link name="top_wheel_mount_${postfix}">
+        <inertial>
+          <mass value="0.001" />
+          <inertia ixx="0.002526666666667" ixy="0" ixz="0" iyy="0.002526666666667" iyz="0"
+            izz="0.005" />
+        </inertial>
+      </link>
+      <joint name="top_pivot_joint_${postfix}" type="revolute">
+        <origin xyz="${x-0.10581} ${y-yaw_arm} ${z-0.01217}" rpy="0 0 0" />
+        <axis xyz="0 1 0" />
+        <limit lower="${-range}" upper="${range}" effort="10000000" velocity="100000" />
+        <parent link="${parent}" />
+        <child link="top_wheel_mount_${postfix}" />
+        <dynamics damping="1" friction="1" />
+      </joint>
+
+      <link name="yaw_link_${postfix}">
+        <inertial>
+          <mass value="1" />
+          <origin xyz="0 0 0" rpy="0 0 0" />
+          <inertia ixx="0.002526666666667" ixy="0" ixz="0" iyy="0.002526666666667" iyz="0"
+            izz="0.005" />
+        </inertial>
+      </link>
+
+      <joint name="top_wheel_yaw_joint_${postfix}" type="revolute">
+        <origin xyz="0.10581 0 0.01217" rpy="0. 0. 1.5708" />
+        <axis xyz="0 0 1" />
+        <limit lower="-0.20" upper="0.20" effort="1000000" velocity="1000" />
+        <parent link="top_wheel_mount_${postfix}" />
+        <child link="yaw_link_${postfix}" />
+        <dynamics damping="1" />
+      </joint>
+
+      <link name="top_wheel_${postfix}">
+        <inertial>
+          <mass value="1" />
+          <origin xyz="0 0 0" rpy="0 0 0" />
+          <inertia ixx="0.002526666666667" ixy="0" ixz="0" iyy="0.002526666666667" iyz="0"
+            izz="0.005" />
+        </inertial>
+        <visual>
+          <origin xyz="0 0 0" rpy="0 0 0" />
+          <geometry>
+            <mesh
+              filename="package://rr_robot_description/include/chassis/meshes/BottomWheels/visual.STL" />
+          </geometry>
+          <material name="grey">
+            <color rgba="0.4 0.4 0.4 1" />
+          </material>
+        </visual>
+        <collision>
+          <origin xyz="0 0 0" rpy="0 0 0" />
+          <geometry>
+            <mesh
+              filename="package://rr_robot_description/include/chassis/meshes/BottomWheels/collision.STL" />
+          </geometry>
+        </collision>
+      </link>
+      <joint name="top_wheel_joint_${postfix}" type="continuous">
+        <origin xyz="${yaw_arm} 0 0" />
+        <axis xyz="1 0 0" />
+        <parent link="yaw_link_${postfix}" />
+        <child link="top_wheel_${postfix}" />
+        <dynamics damping="1" />
+      </joint>
     </xacro:macro>
+
+    <xacro:make_wheel te="true" />
+    <xacro:make_wheel te="false" />
+  </xacro:macro>
 </robot>
