@@ -88,13 +88,13 @@ public:
         //    model->GetLink("dummy")->SetForce(ignition::math::Vector3d(0, 0, 0));
         //}
         if (F_res_plane == 0.0) {
-            dummy_link->SetForce(ignition::math::Vector3d(0, 0, -N));
+            dummy_link->SetForce(ignition::math::Vector3d(0, 0, -N_s));
         }
         else if (F_res_plane < F) {
-            dummy_link->SetForce(ignition::math::Vector3d(-F_res.X(), -F_res.Y(), -N));
+            dummy_link->SetForce(ignition::math::Vector3d(-F_res.X(), -F_res.Y(), -N_s));
         } 
         else {
-            dummy_link->SetForce(ignition::math::Vector3d(-F*F_res.X()/F_res_plane, -F*F_res.Y()/F_res_plane, -N));
+            dummy_link->SetForce(ignition::math::Vector3d(-F*F_res.X()/F_res_plane, -F*F_res.Y()/F_res_plane, -N_s));
         }
 
     }

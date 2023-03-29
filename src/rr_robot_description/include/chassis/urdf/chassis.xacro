@@ -16,12 +16,12 @@
           <color rgba="0 0.62352941176 0.89019607843 1" />
         </material>
       </visual>
-      <collision>
+      <!-- <collision>
         <origin xyz="0 0 0" rpy="0 0 0" />
         <geometry>
           <mesh filename="package://rr_robot_description/include/chassis/meshes/Chassis/collision.STL" />
         </geometry>
-      </collision>
+      </collision> -->
     </link>
 
     <joint name="${parent_link}_to_${name}" type="fixed">

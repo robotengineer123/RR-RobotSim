@@ -3,9 +3,8 @@
     at the wheel mount revolute joint. This can approximate the more complicated suspension as long as
     the range of motion is small -->
 <robot xmlns:xacro="http://ros.org/wiki/xacro" name="bot_wheel">
-    <xacro:property name="range" value="0.174533" />
     <xacro:macro name="bot_wheels_macro" params="parent x z wspan">
-
+        <xacro:property name="range" value="0.174533" />
         <xacro:macro name="make_bot_wheel" params="te='true'">
             <xacro:if value="${te}">
                 <xacro:property name="postfix" value="te" />
@@ -34,7 +33,7 @@
                 <limit lower="${-range}" upper="${range}" effort="1000" velocity="1000"/>
                 <parent link="${parent}" />
                 <child link="bot_wheel_mount_${postfix}"/>
-                <dynamics damping="30" />
+                <dynamics damping="30" friction="1" />
             </joint>
 
         <!-- Wheel -->
