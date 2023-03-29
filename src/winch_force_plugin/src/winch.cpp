@@ -26,6 +26,8 @@ Winch::Winch(
         rot_dir_ = -1;
     else
         rot_dir_ = 1;
+
+    prev_rot = winch_joint_->Position(winch_axis_);
 }
 
 /// @brief sets the polynomial-coefficients for the Force/Strain curve
@@ -45,7 +47,7 @@ void Winch::EffRadiusCallback(std_msgs::Float64ConstPtr msg)
 
 void Winch::UpdateLenghts()
 {
-    rope_len_ += rot_dir_ * UnwindStep();
+    rope_len_ += UnwindStep();
     dist_to_fixed_ = fixed_pos_.Distance(winch_link_->WorldCoGPose().Pos());
     ignition::math::Vector3d winch_pos = winch_link_->WorldCoGPose().Pos();
     rope_dir_ = (fixed_pos_ - winch_pos).Normalize();
@@ -55,14 +57,14 @@ void Winch::UpdateRopeTension()
 {
     UpdateLenghts();
 
-    double elongation = rope_len_ - dist_to_fixed_;
+    double elongation = dist_to_fixed_ - rope_len_;
     double strain = elongation / dist_to_fixed_;
-    double stiffness = RopeStiffness(strain);
+    double force_mag = ElaticRopeForce(strain);
     
     if (elongation < 0)
         return;
 
-    ignition::math::Vector3d force = rope_dir_ * stiffness * elongation;
+    ignition::math::Vector3d force = rope_dir_ * force_mag;
 
 
     // express force vector in the winch coordinatesystem
@@ -75,38 +77,25 @@ void Winch::UpdateRopeTension()
     ignition::math::Vector3d force_inplane = loc_force - loc_force.Dot(rot_plane_normal)*rot_plane_normal;
 
 
-    ignition::math::Vector3d torque{0, 0, 0};
-    torque[winch_axis_] = force_inplane.Length()*eff_radius_;
+    double torque = -force_inplane.Length()*eff_radius_;
 
     winch_link_->AddForceAtRelativePosition(force, {0, 0, 0});  //Add Force at rotational joint
 
-    winch_link_->AddRelativeTorque(torque);
+    winch_joint_->SetForce(winch_axis_, torque);
 }
 
-double Winch::RopeStiffness(double strain)
+double Winch::ElaticRopeForce(double strain)
 {
-    ignition::math::Vector3d x{2 * strain, 1, 0};
-    double stiffness = x.Dot(poly_coeffs_);
-    return stiffness;
+    ignition::math::Vector3d x{std::pow(strain,2), strain, 1};
+    double force = x.Dot(poly_coeffs_);
+    return force;
 }
 
 double Winch::UnwindStep()
 {
-    double cur_rot = PosAngle(
-        winch_joint_->Position(winch_axis_));
+    double cur_rot = winch_joint_->Position(winch_axis_);
     double angle_diff = rot_dir_*(cur_rot - prev_rot);
     prev_rot = cur_rot;
-    if (std::abs(angle_diff) > M_PI) // then we wrapped around the circle
-    {
-        angle_diff = 2 * M_PI + angle_diff;
-    }
     double unwind_l = angle_diff * eff_radius_;
     return unwind_l;
-}
-
-double Winch::PosAngle(double angle)
-{
-    if (angle < 0)
-        angle = 2 * M_PI - angle;
-    return angle;
 }

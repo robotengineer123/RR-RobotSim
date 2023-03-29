@@ -34,7 +34,7 @@
                 <limit lower="${-range}" upper="${range}" effort="1000" velocity="1000"/>
                 <parent link="${parent}" />
                 <child link="bot_wheel_mount_${postfix}"/>
-                <dynamics damping="1" />
+                <dynamics damping="30" />
             </joint>
 
         <!-- Wheel -->

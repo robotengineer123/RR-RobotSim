@@ -26,9 +26,8 @@ namespace WinchPlugin
     private:
         void EffRadiusCallback(std_msgs::Float64ConstPtr msg);
         void UpdateLenghts();
-        double RopeStiffness(double strain);
+        double ElaticRopeForce(double strain);
         double UnwindStep();
-        double PosAngle(double angle);
 
         ros::NodeHandle* nh;
 
@@ -38,7 +37,6 @@ namespace WinchPlugin
         double prev_rot = 0;
         
         int rot_dir_;
-        bool first_read = true;
         
         ignition::math::Vector3d rope_dir_;
 

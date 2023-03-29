@@ -123,13 +123,7 @@
                             z= "-0.1344"/>
   <!-- ******************************** Tranmissions ******************************** -->
   <xacro:include filename="$(find rr_robot_description)/urdf/transmissions.xacro" />
-
-  <!--***************************** Rope for winch plugin *****************************-->
-  <xacro:include filename="$(find rr_robot_description)/urdf/rope.xacro" />
-  <xacro:rope_macro winch_name_no_postfix="rope_drive"
-                    rope_l="50"/>
-
-
+  
   <!-- *********************************** Gazebo *********************************** -->
   <xacro:include filename="$(find rr_robot_description)/urdf/robot.gazebo" />
   

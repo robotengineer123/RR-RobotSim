@@ -118,7 +118,7 @@
     </link>
     <joint name="rope_drive_te_joint" type="continuous">
       <origin xyz="0.92999 -0.24067 -0.0269" rpy="0.09857 0.09857 1.64405" />
-      <axis rpy="0 0 0" xyz="1 0 0" />
+      <axis rpy="0 0 0" xyz="-1 0 0" />
       <limit effort="10000" velocity="1000" />
       <joint_properties damping="1.0" friction="1.0" />
       <parent link="${name}" />

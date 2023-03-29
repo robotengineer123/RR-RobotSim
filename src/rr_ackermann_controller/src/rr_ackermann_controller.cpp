@@ -17,6 +17,7 @@ bool RrAckermannController::init(hardware_interface::RobotHW* robot_hw,
     controller_nh.getParam("wheel_base", wheel_base_);
     controller_nh.getParam("track_width", track_width_);
 
+
     std::string r_drive_name_, l_drive_name_, r_steer_name_, l_steer_name_, radius_topic;
     controller_nh.getParam("right_drive_joint", r_drive_name_);
     controller_nh.getParam("left_drive_joint", l_drive_name_);
@@ -103,7 +104,7 @@ RrAckermannController::InvKinResult RrAckermannController::InvKin(double yaw_vel
     if (lin_vel == 0)
     return IKR{0.0, 0.0, 0.0};
     
-    double steer = std::atan(wheel_base_*std::abs(yaw_vel)/lin_vel);
+    double steer = std::atan(wheel_base_*yaw_vel/lin_vel);
     double steer_i = 0;
     double steer_o = 0;
     double rot_vel = lin_vel/radius;
@@ -116,7 +117,7 @@ RrAckermannController::InvKinResult RrAckermannController::InvKin(double yaw_vel
         double steer_i = std::atan(wheel_base_/(r - track_width_/2.0));
         double steer_o = std::atan(wheel_base_/(r + track_width_/2.0));
 
-        if (r  >= 0)
+        if (r  <= 0)
             ikr = IKR{steer_i, steer_o, rot_vel};
         else
             ikr = IKR{steer_o, steer_i, rot_vel};

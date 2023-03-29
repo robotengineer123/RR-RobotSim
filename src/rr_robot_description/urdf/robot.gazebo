@@ -264,20 +264,11 @@
             <right_radius_topic>rope_drive/current_drive_radius</right_radius_topic>
             <right_winch_axis>0</right_winch_axis>
             <left_winch_axis>0</left_winch_axis>
-            <right_rot_dir_switch>false</right_rot_dir_switch>
-            <left_rot_dir_switch>false</left_rot_dir_switch>
-            <rope_stiff_poly_coeffs>848.64823567 188.91463659 13.92308499</rope_stiff_poly_coeffs>
+            <right_rot_dir_switch>true</right_rot_dir_switch>
+            <left_rot_dir_switch>true</left_rot_dir_switch>
+            <rope_stiff_poly_coeffs>4158376.35 13224.0246 13.923085</rope_stiff_poly_coeffs>
         </plugin>
     </gazebo> 
-
-    <gazebo reference="rope_springed_joint_le">
-        <springStiffness>10000</springStiffness>
-        <springReference>0</springReference>
-    </gazebo>
-    <gazebo reference="rope_springed_joint_te">
-        <springStiffness>10000</springStiffness>
-        <springReference>0</springReference>
-    </gazebo>
 
     <gazebo>
         <plugin name="vacuum_plugin" filename="libvacuum_plugin.so">
@@ -306,25 +297,34 @@
     the revolute joint.
     bottom wheels arm is: 0.04626071
     top wheels arm is: 0.10789946
-    The spring stiffness is: 7050-->
+    The spring stiffness is: 7050
+    326.138
+    760.69
+
+
+-->
     <gazebo reference="bot_pivot_joint_le">
-        <springStiffness>326.138</springStiffness>
+        <springStiffness>500</springStiffness>
         <springReference>-0.174533</springReference>
+        <implicitSpringDamper>true</implicitSpringDamper>
     </gazebo>
 
     <gazebo reference="bot_pivot_joint_te">
-        <springStiffness>326.138</springStiffness>
+        <springStiffness>500</springStiffness>
         <springReference>-0.174533</springReference>
+        <implicitSpringDamper>true</implicitSpringDamper>
     </gazebo>
 
     <gazebo reference="top_pivot_joint_le">
-        <springStiffness>760.69</springStiffness>
+        <springStiffness>500</springStiffness>
         <springReference>0.0</springReference>
+        <implicitSpringDamper>true</implicitSpringDamper>
     </gazebo>
 
     <gazebo reference="top_pivot_joint_te">
-        <springStiffness>760.69</springStiffness>
+        <springStiffness>500</springStiffness>
         <springReference>0.0</springReference>
+        <implicitSpringDamper>true</implicitSpringDamper>
     </gazebo>
     
     <gazebo>

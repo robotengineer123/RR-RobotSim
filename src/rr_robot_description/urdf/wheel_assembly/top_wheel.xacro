@@ -35,7 +35,7 @@
               <limit lower="${-range}" upper="${range}" effort="10000000" velocity="100000"/>
               <parent link="${parent}" />
               <child link="top_wheel_mount_${postfix}"/>
-              <dynamics damping="1" />
+              <dynamics damping="30" />
           </joint>
           
           <link name="yaw_link_${postfix}">

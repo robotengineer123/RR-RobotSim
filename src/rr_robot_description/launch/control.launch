@@ -7,16 +7,11 @@
 
     <rosparam file="$(find ur_robot_driver)/config/ur10_controllers.yaml" ns="rr_robot" command="load"/>
 
-    <remap from="/top_wheel_le_joint_controller/command" to="/ackermann/left_wheel_angle" />
-    <remap from="/top_wheel_te_joint_controller/command" to="/ackermann/right_wheel_angle" />
-
     <!-- load the controllers -->
     <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
           output="screen" ns="/rr_robot" args="
             joint_state_controller
             pos_joint_traj_controller
-            top_wheel_le_joint_controller 
-            top_wheel_te_joint_controller 
             cmd_vel_controller
             "/>
 
