@@ -18,8 +18,7 @@
     </node>
 
     <!-- Show in Rviz -->
-    <node name="rviz" pkg="rviz" type="rviz"  />
-    <!--args="-d $(find rr_robot_description)/config/rviz/robot.rviz" -->
+    <node name="rviz" pkg="rviz" type="rviz"  args="-d $(find rr_robot_description)/config/rviz/robot.rviz"/>
     <!-- MoveIt -->
     <!-- <group>
         <remap from="/joint_states" to="/rr_robot/joint_states" />
