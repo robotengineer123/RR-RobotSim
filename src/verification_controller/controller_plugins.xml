@@ -1,0 +1,8 @@
+<library path="lib/libverification_controller_lib">
+    <class name="verification_controller/VerificationController" type="verification_controller::VerificationController" base_class_type="controller_interface::ControllerBase">
+        <description>
+            Controller obtains constant linear velocity in x-direction, constant yaw angle, constant steer using PID controller
+            Top wheels must have position interface and rope drive must have velocity interface
+        </description>
+    </class>
+</library>
