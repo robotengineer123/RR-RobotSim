@@ -270,7 +270,7 @@
         </plugin>
     </gazebo> 
 
-    <!-- <gazebo>
+    <gazebo>
         <plugin name="vacuum_plugin" filename="libvacuum_plugin.so">
             <edge>0.076674</edge>
             <center>0.121469</center>
@@ -278,10 +278,15 @@
             <t>0.060825</t>
             <k_v>32721.47965474722</k_v>
         </plugin>
-    </gazebo> -->
+    </gazebo>
 
     <gazebo reference="vacuum_sheet_joint">
         <preserveFixedJoint>true</preserveFixedJoint>
+    </gazebo>
+
+    <gazebo reference="vacuum_sheet_joint">
+        <springStiffness>10</springStiffness>
+        <springReference>0</springReference> 
     </gazebo>
 
     <!-- <gazebo>
@@ -303,9 +308,29 @@
 
 
 -->
+    <!-- <gazebo reference="bot_pivot_joint_le">
+        <springStiffness>326.138</springStiffness>
+        <springReference>-0.17</springReference> 0.174533
+    </gazebo>
+
+    <gazebo reference="bot_pivot_joint_te">
+        <springStiffness>326.138</springStiffness>
+        <springReference>-0.17</springReference>
+    </gazebo>
+
+    <gazebo reference="top_pivot_joint_le">
+        <springStiffness>760.69</springStiffness>
+        <springReference>0</springReference>
+    </gazebo>
+
+    <gazebo reference="top_pivot_joint_te">
+        <springStiffness>760.69</springStiffness>
+        <springReference>0</springReference>
+    </gazebo> -->
+    
     <gazebo reference="bot_pivot_joint_le">
         <springStiffness>326.138</springStiffness>
-        <springReference>-0.174533</springReference> <!--0.174533-->
+        <springReference>-0.174533</springReference> 
     </gazebo>
 
     <gazebo reference="bot_pivot_joint_te">
