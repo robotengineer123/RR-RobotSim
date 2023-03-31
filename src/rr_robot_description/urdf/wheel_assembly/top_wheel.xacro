@@ -33,7 +33,7 @@ spring
         <limit lower="${-range}" upper="${range}" effort="10000000" velocity="100000" />
         <parent link="${parent}" />
         <child link="top_wheel_mount_${postfix}" />
-        <dynamics damping="1" friction="1" />
+        <dynamics damping="1" friction="10" />
       </joint>
 
       <link name="yaw_link_${postfix}">
@@ -72,10 +72,11 @@ spring
           </material>
         </visual>
         <collision>
-          <origin xyz="0 0 0" rpy="0 0 0" />
+          <origin xyz="0 0 0" rpy="0 1.57079633 0" />
           <geometry>
-            <mesh
-              filename="package://rr_robot_description/include/chassis/meshes/BottomWheels/collision.STL" />
+            <cylinder radius="0.05" length="0.02"/>
+            <!-- <mesh
+              filename="package://rr_robot_description/include/chassis/meshes/BottomWheels/collision.STL" /> -->
           </geometry>
         </collision>
       </link>
@@ -84,7 +85,7 @@ spring
         <axis xyz="1 0 0" />
         <parent link="yaw_link_${postfix}" />
         <child link="top_wheel_${postfix}" />
-        <dynamics damping="1" />
+        <dynamics damping="1" friction="10"/>
       </joint>
     </xacro:macro>
 
