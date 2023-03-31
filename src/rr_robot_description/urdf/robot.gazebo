@@ -270,7 +270,7 @@
         </plugin>
     </gazebo> 
 
-    <!-- <gazebo>
+    <gazebo>
         <plugin name="vacuum_plugin" filename="libvacuum_plugin.so">
             <edge>0.076674</edge>
             <center>0.121469</center>
@@ -278,7 +278,7 @@
             <t>0.060825</t>
             <k_v>32721.47965474722</k_v>
         </plugin>
-    </gazebo> -->
+    </gazebo>
 
     <gazebo reference="vacuum_sheet_joint">
         <preserveFixedJoint>true</preserveFixedJoint>
