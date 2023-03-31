@@ -30,7 +30,7 @@ spring
                 <limit lower="${-range}" upper="${range}" effort="100000" velocity="1000" />
                 <parent link="${parent}" />
                 <child link="bot_wheel_mount_${postfix}" />
-                <dynamics damping="1" friction="1" />
+                <dynamics damping="1" friction="10" />
             </joint>
 
             <!-- Wheel -->
@@ -51,10 +51,11 @@ spring
                     </material>
                 </visual>
                 <collision>
-                    <origin xyz="0 0 0" rpy="0 0 0" />
+                    <origin xyz="0 0 0" rpy="0 1.57079633 0" />
                     <geometry>
-                        <mesh
-                            filename="package://rr_robot_description/include/chassis/meshes/BottomWheels/collision.STL" />
+                        <cylinder radius="0.05" length="0.02"/>
+                        <!-- <mesh
+                            filename="package://rr_robot_description/include/chassis/meshes/BottomWheels/collision.STL" /> -->
                     </geometry>
                 </collision>
             </link>
@@ -64,7 +65,7 @@ spring
                 <axis xyz="1 0 0" />
                 <parent link="bot_wheel_mount_${postfix}" />
                 <child link="bot_wheel_${postfix}" />
-                <dynamics damping="1" />
+                <dynamics damping="1" friction="10"/>
             </joint>
         </xacro:macro>
         <xacro:make_bot_wheel te="true" />

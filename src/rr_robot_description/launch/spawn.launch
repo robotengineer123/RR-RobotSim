@@ -3,7 +3,7 @@
 
     <arg name="x" default="0"/>
     <arg name="y" default="0"/>
-    <arg name="z" default="0.17"/>
+    <arg name="z" default="0.20"/>
     <arg name="model_name" default="rr_robot"/>
 
     <!-- <node pkg="rosbag" type="play" name="rosbag" args="-s 830 /home/alexander/dev/RR-RobotSim/secondary_2023-02-23-11-45-48_0.bag"/> -->
