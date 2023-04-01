@@ -55,4 +55,7 @@
     <xacro:EffortJointMacro joint_name="bot_wheel_joint_le"/>
     <xacro:EffortJointMacro joint_name="bot_wheel_joint_te"/>
 
+    <!-- <xacro:EffortJointMacro joint_name="vacuum_sheet_joint"/> -->
+
+
 </robot>
