@@ -13,6 +13,7 @@
     <!-- Load the gazebo params -->
     <include file="$(find rr_robot_description)/launch/control.launch"/>
 
+    <remap from="odom" to="$(arg model_name)/odom"/>
     <!-- Load Odometry publisher -->
     <include file="$(find odom_publisher)/launch/odom_publisher.launch"/>
 
