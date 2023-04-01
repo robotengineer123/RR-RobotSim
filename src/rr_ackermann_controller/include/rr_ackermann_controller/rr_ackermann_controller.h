@@ -1,7 +1,10 @@
 #pragma once
 #include <controller_interface/multi_interface_controller.h>
 #include <hardware_interface/joint_command_interface.h>
+#include <hardware_interface/imu_sensor_interface.h>
 #include <pluginlib/class_list_macros.h>
+#include <control_toolbox/pid.h>
+
 #include <nav_msgs/Odometry.h>
 
 #include <realtime_tools/realtime_buffer.h>
@@ -34,13 +37,17 @@ namespace rr_ackermann_controller {
   private:
     void CmdVelCallback(geometry_msgs::TwistConstPtr cmd);
     void RadiusCallback(std_msgs::Float64ConstPtr cmd);
+    void DesiredYawCallback(std_msgs::Float64ConstPtr cmd);
+    void OdomCallback(nav_msgs::OdometryConstPtr cmd);
 
+    double ComputeYawCmd(const ros::Duration& period);
     InvKinResult InvKin(double yaw_vel, double lin_vel, double radius);
     void Brake();
 
     // subscribers
     ros::Subscriber twist_sub_;
     ros::Subscriber radius_sub_;
+    ros::Subscriber odom_sub_;
 
     // car specifications
     double wheel_base_;
@@ -60,11 +67,20 @@ namespace rr_ackermann_controller {
 
       VelCmd() : lin(0.0), ang(0.0), stamp(0.0) {}
     };
+    VelCmd vel_cmd_; 
+    double odom_yaw_cmd_;
+    double radius_cmd_;
+    double yaw_cmd_;
     realtime_tools::RealtimeBuffer<VelCmd> vel_buf_;
+    realtime_tools::RealtimeBuffer<double> odom_yaw_buf_;
     realtime_tools::RealtimeBuffer<double> radius_buf_;
-    VelCmd vel_cmd; 
+    realtime_tools::RealtimeBuffer<double> yaw_buf_;
+
   
     double cmd_vel_timeout = 0.5;  //timeout tolerance in seconds
+
+    control_toolbox::Pid yaw_pid_;
+
   };
   PLUGINLIB_EXPORT_CLASS(rr_ackermann_controller::RrAckermannController, controller_interface::ControllerBase)
 }

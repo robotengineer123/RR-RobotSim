@@ -39,6 +39,11 @@ rr_robot:
     left_steer_joint: top_wheel_yaw_joint_le
     right_steer_joint: top_wheel_yaw_joint_te
     radius_topic: rope_drive/current_drive_radius
+    odom_topic: odom
+    p: 2 
+    i: 0.001
+    d: 0
+    i_clamp: 1000
 
   # Verification controller
   #verification_controller:
