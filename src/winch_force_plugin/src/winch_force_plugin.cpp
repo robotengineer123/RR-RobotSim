@@ -71,7 +71,7 @@ namespace gazebo
         {
             if (not sdf_->HasElement(par_name))
             {
-                ROS_WARN("Winch plugin needs %s to be specified\n", par_name);
+                ROS_WARN("Winch plugin needs %s to be specified\n", par_name.c_str());
                 throw std::invalid_argument(par_name);
             }
             return sdf_->Get<T>(par_name);
