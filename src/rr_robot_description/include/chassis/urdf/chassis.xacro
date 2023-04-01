@@ -143,15 +143,19 @@
         </material>
       </visual>
       <!-- Collision of vacuum sheet is neglected -->
-      <!--<collision>
+      <!-- <collision>
         <origin xyz="0 0 0" rpy="0 0 0" />
         <geometry>
+          <box size="0.5 0.2 0.1"/>
           <mesh filename="package://rr_robot_description/include/chassis/meshes/VacuumSheet/collision.STL" />
         </geometry>
       </collision> -->
     </link>
     <joint name="vacuum_sheet_joint" type="fixed">
+      <dynamics damping="10" friction="10"/>
       <origin xyz="0.55919 0. -0.145" rpy="0. 0. 1.5708" />
+      <limit lower="0" upper="1" effort="10000" velocity="1000"/>
+      <axis xyz="0 0 1"/>
       <parent link="${name}" />
       <child link="vacuum_sheet" />
     </joint>
