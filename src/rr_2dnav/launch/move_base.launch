@@ -1,5 +1,5 @@
 <launch>
-
+   <remap from="cmd_vel" to="/rr_robot/cmd_vel_controller/cmd_vel"/>
     <master auto="start"/>
   <!-- Run the map server --> 
      <!-- <node name="map_server" pkg="map_server" type="map_server" args="$(find my_map_package)/my_map.pgm my_map_resolution"/> -->
