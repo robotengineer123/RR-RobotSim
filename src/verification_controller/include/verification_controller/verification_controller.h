@@ -12,9 +12,6 @@
 
 #include <tf/transform_datatypes.h>
 
-#include <geometry_msgs/PoseWithCovariance.h>
-#include <geometry_msgs/TwistWithCovariance.h>
-
 namespace verification_controller {
     
   class VerificationController 
@@ -37,8 +34,12 @@ namespace verification_controller {
     void OdomCallback(nav_msgs::OdometryConstPtr cmd);
     void Brake();
 
-    // subscribers
+    // subscribers/publishers
     ros::Subscriber odom_sub_;
+    ros::Publisher yaw_pub;
+    ros::Publisher velX_pub;
+    std_msgs::Float64 currentYawMsg;
+    std_msgs::Float64 currentVelMsg;
 
     // joints
     hardware_interface::JointHandle r_drive_jh_;
@@ -49,8 +50,9 @@ namespace verification_controller {
     // pid
     double yaw_desi_ = 0.05;
     double vel_desi_ = 0.2;
-    double steer_desi_ = 0.01;
-    double steer_desi_angle_ = steer_desi_*180/3.14;
+    //double steer_desi_ = 0.01;
+    //double steer_desi_angle_ = steer_desi_*180/3.14;
+    double steer_desi_angle_ = 0;
     double currentVel;
     double currentRoll, currentPitch, currentYaw;
     control_toolbox::Pid pidV;
@@ -58,14 +60,11 @@ namespace verification_controller {
     ros::Time last_time = ros::Time::now();
     
     // odometry
-    realtime_tools::RealtimeBuffer<geometry_msgs::PoseWithCovariance> odom_buf_pose_;
-    realtime_tools::RealtimeBuffer<geometry_msgs::TwistWithCovariance> odom_buf_twist_;
+    realtime_tools::RealtimeBuffer<nav_msgs::Odometry> odom_buf_;
     // callback
-    geometry_msgs::PoseWithCovariance odom_pose_;
-    geometry_msgs::TwistWithCovariance odom_twist_;
+    nav_msgs::Odometry odom_cmd;
     // pid
-    geometry_msgs::PoseWithCovariance odom_pose;
-    geometry_msgs::TwistWithCovariance odom_twist;
+    nav_msgs::Odometry odom;
   
   };
   PLUGINLIB_EXPORT_CLASS(verification_controller::VerificationController, controller_interface::ControllerBase)

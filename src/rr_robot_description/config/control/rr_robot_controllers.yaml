@@ -40,14 +40,13 @@ rr_robot:
     right_steer_joint: top_wheel_yaw_joint_te
     radius_topic: rope_drive/current_drive_radius
 
-  # Verification controller
-  #verification_controller:
-  #  type: verification_controller/VerificationController
+  verification_controller:
+    type: verification_controller/VerificationController
 
-  #  left_drive_joint: rope_drive_le_joint
-  #  right_drive_joint: rope_drive_te_joint
-  #  left_steer_joint: top_wheel_yaw_joint_le
-  #  right_steer_joint: top_wheel_yaw_joint_te
+    left_drive_joint: rope_drive_le_joint
+    right_drive_joint: rope_drive_te_joint
+    left_steer_joint: top_wheel_yaw_joint_le
+    right_steer_joint: top_wheel_yaw_joint_te
 
 
 
