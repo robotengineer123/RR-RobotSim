@@ -27,6 +27,9 @@ bool VerificationController::init(hardware_interface::RobotHW* robot_hw,
     odom_sub_ = controller_nh.subscribe("/odom", 1, &VerificationController::OdomCallback, this);
     yaw_pub = controller_nh.advertise<std_msgs::Float64>("/yaw", 50);
     velX_pub = controller_nh.advertise<std_msgs::Float64>("/velX", 50);
+    odom_sub_ = controller_nh.subscribe("/odom", 1, &VerificationController::OdomCallback, this);
+    yaw_pub = controller_nh.advertise<std_msgs::Float64>("/yaw", 50);
+    velX_pub = controller_nh.advertise<std_msgs::Float64>("/velX", 50);
 
     pidV.initPid(35.0, 25.0, 5.5, 2.5, -2.5);
     pidY.initPid(4.5, 1.5, 1.5, 0.3, -0.3);
