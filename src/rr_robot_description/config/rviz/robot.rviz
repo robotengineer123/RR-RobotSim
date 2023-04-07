@@ -1,15 +1,14 @@
 Panels:
   - Class: rviz/Displays
-    Help Height: 78
+    Help Height: 146
     Name: Displays
     Property Tree Widget:
       Expanded:
         - /Global Options1
         - /Status1
         - /LaserScan1
-        - /LaserScan1/Status1
       Splitter Ratio: 0.5
-    Tree Height: 439
+    Tree Height: 371
   - Class: rviz/Selection
     Name: Selection
   - Class: rviz/Tool Properties
@@ -89,12 +88,10 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: true
         bot_wheel_mount_te:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: true
         bot_wheel_te:
           Alpha: 1
           Show Axes: false
@@ -144,32 +141,6 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        rope_link_le:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        rope_link_te:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        rope_pitch_link_le:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        rope_pitch_link_te:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        rope_yaw_link_le:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        rope_yaw_link_te:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
         rr_chassis:
           Alpha: 1
           Show Axes: false
@@ -258,12 +229,10 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: true
         top_wheel_mount_te:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: true
         top_wheel_te:
           Alpha: 1
           Show Axes: false
@@ -326,7 +295,7 @@ Visualization Manager:
       Min Color: 0; 0; 0
       Name: LaserScan
       Position Transformer: XYZ
-      Queue Size: 10
+      Queue Size: 100
       Selectable: true
       Size (Pixels): 3
       Size (m): 0.009999999776482582
@@ -340,7 +309,7 @@ Visualization Manager:
   Global Options:
     Background Color: 48; 48; 48
     Default Light: true
-    Fixed Frame: dummy
+    Fixed Frame: odom
     Frame Rate: 30
   Name: root
   Tools:
@@ -364,7 +333,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 10
+      Distance: 7.744000434875488
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -372,17 +341,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: -0.36168360710144043
-        Y: -0.24028721451759338
-        Z: 0.4256579875946045
+        X: -1.8752787113189697
+        Y: -1.0056084394454956
+        Z: -0.773229718208313
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.6853980422019958
+      Pitch: 0.5303981900215149
       Target Frame: <Fixed Frame>
-      Yaw: 2.7603988647460938
+      Yaw: 2.4653971195220947
     Saved: ~
 Window Geometry:
   Displays:
