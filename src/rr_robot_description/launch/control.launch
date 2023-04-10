@@ -2,14 +2,13 @@
 
     <param name="robot_description" command="$(find xacro)/xacro '$(find rr_robot_description)/urdf/robot.urdf.xacro'"/>
     <!-- Load joint controller configurations from YAML file to parameter server -->
-    <!-- <rosparam file="$(find rr_robot_description)/config/control/robot.yaml" command="load"/> -->
     <rosparam file="$(find rr_robot_description)/config/control/rr_robot_controllers.yaml" command="load"/>
 
     <rosparam file="$(find ur_robot_driver)/config/ur10_controllers.yaml" ns="rr_robot" command="load"/>
 
     <!-- load the controllers -->
     <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
-          output="screen" ns="/rr_robot" args="
+          output="screen" ns="rr_robot" args="
             joint_state_controller
             pos_joint_traj_controller
             cmd_vel_controller

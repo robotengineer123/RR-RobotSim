@@ -14,6 +14,7 @@
     <include file="$(find rr_robot_description)/launch/control.launch"/>
 
     <!-- Load Odometry publisher -->
+    <remap from="odom" to="rr_robot/odom"/>
     <include file="$(find odom_publisher)/launch/odom_publisher.launch"/>
 
     <!-- Broadcast tf from world to odom -->
