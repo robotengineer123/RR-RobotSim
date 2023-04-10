@@ -18,15 +18,16 @@ bool RrAckermannController::init(hardware_interface::RobotHW* robot_hw,
     controller_nh.getParam("wheel_base", wheel_base_);
     controller_nh.getParam("track_width", track_width_);
 
-
+    // joints
     std::string r_drive_name_, l_drive_name_, r_steer_name_, l_steer_name_, radius_topic, odom_topic;
     controller_nh.getParam("right_drive_joint", r_drive_name_);
     controller_nh.getParam("left_drive_joint", l_drive_name_);
     controller_nh.getParam("right_steer_joint", r_steer_name_);
     controller_nh.getParam("left_steer_joint", l_steer_name_);
+
+    // topics
     controller_nh.getParam("radius_topic", radius_topic);
     controller_nh.getParam("odom_topic", odom_topic);
-
 
     r_drive_jh_ = vel_joint_if->getHandle(r_drive_name_);
     l_drive_jh_ = vel_joint_if->getHandle(l_drive_name_);
@@ -35,8 +36,14 @@ bool RrAckermannController::init(hardware_interface::RobotHW* robot_hw,
 
     twist_sub_ = controller_nh.subscribe("cmd_vel", 1, &RrAckermannController::CmdVelCallback, this);
     radius_sub_ = controller_nh.subscribe(radius_topic, 1, &RrAckermannController::RadiusCallback, this);
-    odom_sub_ = root_nh.subscribe(odom_topic, 1, &RrAckermannController::OdomCallback, this);
 
+    // Activate yaw control (optional)
+    std::string yaw_topic;
+    if (controller_nh.getParam("yaw_topic", yaw_topic))
+    {
+        odom_sub_ = root_nh.subscribe(odom_topic, 1, &RrAckermannController::OdomCallback, this);
+        sp_yaw_sub_ = root_nh.subscribe(yaw_topic, 1, &RrAckermannController::DesiredYawCallback, this);
+    }
 
     yaw_pid_.init(controller_nh);
 
@@ -61,7 +68,7 @@ void RrAckermannController::starting(const ros::Time& time)
     vel_buf_.initRT(vel_cmd_);
     radius_buf_.initRT(0.3);
     yaw_buf_.initRT(0);
-    odom_yaw_buf_.initRT(0);
+    yaw_sensor_buf_.initRT(0);
 }
 
 void RrAckermannController::update(const ros::Time& time, const ros::Duration& period)
@@ -129,12 +136,12 @@ void rr_ackermann_controller::RrAckermannController::OdomCallback(nav_msgs::Odom
     tf::Matrix3x3 m(q);
     double roll, pitch;
     m.getRPY(roll, pitch, odom_yaw_cmd_);
-    odom_yaw_buf_.writeFromNonRT(odom_yaw_cmd_);
+    yaw_sensor_buf_.writeFromNonRT(odom_yaw_cmd_);
 }
 double rr_ackermann_controller::RrAckermannController::ComputeYawCmd(const ros::Duration& period)
 {
     double yaw_sp = *(yaw_buf_.readFromRT());
-    double yaw_ref = *(odom_yaw_buf_.readFromRT());
+    double yaw_ref = *(yaw_sensor_buf_.readFromRT());
     
     double yaw_cmd = yaw_pid_.computeCommand(yaw_sp-yaw_ref, period);
     return yaw_cmd;

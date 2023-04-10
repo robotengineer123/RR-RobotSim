@@ -48,6 +48,8 @@ namespace rr_ackermann_controller {
     ros::Subscriber twist_sub_;
     ros::Subscriber radius_sub_;
     ros::Subscriber odom_sub_;
+    ros::Subscriber sp_yaw_sub_;
+
 
     // car specifications
     double wheel_base_;
@@ -72,7 +74,7 @@ namespace rr_ackermann_controller {
     double radius_cmd_;
     double yaw_cmd_;
     realtime_tools::RealtimeBuffer<VelCmd> vel_buf_;
-    realtime_tools::RealtimeBuffer<double> odom_yaw_buf_;
+    realtime_tools::RealtimeBuffer<double> yaw_sensor_buf_;
     realtime_tools::RealtimeBuffer<double> radius_buf_;
     realtime_tools::RealtimeBuffer<double> yaw_buf_;
 
