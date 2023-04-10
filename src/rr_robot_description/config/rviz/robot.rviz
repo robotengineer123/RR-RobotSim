@@ -1,6 +1,6 @@
 Panels:
   - Class: rviz/Displays
-    Help Height: 78
+    Help Height: 146
     Name: Displays
     Property Tree Widget:
       Expanded:
@@ -9,7 +9,7 @@ Panels:
         - /LaserScan1
         - /Path1
       Splitter Ratio: 0.5
-    Tree Height: 439
+    Tree Height: 371
   - Class: rviz/Selection
     Name: Selection
   - Class: rviz/Tool Properties
@@ -296,7 +296,7 @@ Visualization Manager:
       Min Color: 0; 0; 0
       Name: LaserScan
       Position Transformer: XYZ
-      Queue Size: 10
+      Queue Size: 100
       Selectable: true
       Size (Pixels): 3
       Size (m): 0.009999999776482582
