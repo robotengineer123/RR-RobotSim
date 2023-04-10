@@ -280,14 +280,15 @@
         </plugin>
     </gazebo>
 
+    
     <gazebo reference="vacuum_sheet_joint">
         <preserveFixedJoint>true</preserveFixedJoint>
     </gazebo>
 
-    <gazebo reference="vacuum_sheet_joint">
+    <!-- <gazebo reference="vacuum_sheet_joint">
         <springStiffness>10</springStiffness>
         <springReference>0</springReference> 
-    </gazebo>
+    </gazebo> -->
 
     <!-- <gazebo>
         <plugin name="winch_torque_plugin" filename="libwinch_torque_plugin.so">

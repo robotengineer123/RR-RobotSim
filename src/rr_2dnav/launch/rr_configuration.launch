@@ -5,10 +5,6 @@
      <param name="sensor_param" value="param_value" />
   </node> -->
 
-  <include file="$(find odom_publisher)/launch/odom_publisher.launch"/>
+  <!-- <include file="$(find odom_publisher)/launch/odom_publisher.launch"/> -->
 
-  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen">
-    <remap from="/joint_states" to="/rr_robot/joint_states" />
-</node>
- 
  </launch> 
