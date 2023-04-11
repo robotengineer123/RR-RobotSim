@@ -11,6 +11,9 @@
 #include <realtime_tools/realtime_publisher.h>
 #include <std_msgs/Float64.h>
 
+#include <memory>
+
+
 namespace rr_ackermann_controller {
     
   class RrAckermannController 
@@ -35,14 +38,23 @@ namespace rr_ackermann_controller {
     void stopping(const ros::Time& time);
   
   private:
+    InvKinResult InvKin(double yaw_vel, double lin_vel, double radius);
+    double ComputeYawCmd(const ros::Duration& period);
+    void Brake();
+    double Clamp(double value, double hi, double lo) 
+    {
+      if (value > hi)
+        return hi;
+      if (value < lo)
+        return lo;
+      return value;
+    }
+
     void CmdVelCallback(geometry_msgs::TwistConstPtr cmd);
     void RadiusCallback(std_msgs::Float64ConstPtr cmd);
     void DesiredYawCallback(std_msgs::Float64ConstPtr cmd);
     void OdomCallback(nav_msgs::OdometryConstPtr cmd);
 
-    double ComputeYawCmd(const ros::Duration& period);
-    InvKinResult InvKin(double yaw_vel, double lin_vel, double radius);
-    void Brake();
 
     // subscribers
     ros::Subscriber twist_sub_;
@@ -74,7 +86,7 @@ namespace rr_ackermann_controller {
     double radius_cmd_;
     double yaw_cmd_;
     realtime_tools::RealtimeBuffer<VelCmd> vel_buf_;
-    realtime_tools::RealtimeBuffer<double> yaw_sensor_buf_;
+    realtime_tools::RealtimeBuffer<double> yaw_vel_buf_;
     realtime_tools::RealtimeBuffer<double> radius_buf_;
     realtime_tools::RealtimeBuffer<double> yaw_buf_;
 
