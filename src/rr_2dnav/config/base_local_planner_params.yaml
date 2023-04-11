@@ -22,6 +22,7 @@ TebLocalPlannerROS:
  dt_ref: 0.3
  dt_hysteresis: 0.1
  global_plan_overwrite_orientation: True
+ allow_init_with_backwards_motion: True
  max_global_plan_lookahead_dist: 3.0
  feasibility_check_no_poses: 5
     
@@ -32,7 +33,7 @@ TebLocalPlannerROS:
  max_vel_theta: 0.3
  acc_lim_x: 0.5
  acc_lim_theta: 0.5
- min_turning_radius: 13.18 #7.2(maximum possible steering angle)
+ min_turning_radius: 7.2 #(maximum possible steering angle)13.18
  footprint_model: # types: "point", "circular", "two_circles", "line", "polygon"
    type: "point"
    radius: 0.2 # for type "circular"
@@ -46,8 +47,8 @@ TebLocalPlannerROS:
 
  # GoalTolerance
     
- xy_goal_tolerance: 0.2
- yaw_goal_tolerance: 0.1
+ xy_goal_tolerance: 0.4
+ yaw_goal_tolerance: 0.2
  free_goal_vel: False
     
  # Obstacles
@@ -74,7 +75,7 @@ TebLocalPlannerROS:
  weight_kinematics_nh: 1000
  weight_kinematics_forward_drive: 1
  weight_kinematics_turning_radius: 1
- weight_optimaltime: 1
+ weight_optimaltime: 10
  weight_shortest_path: 40
  weight_obstacle: 50
  weight_dynamic_obstacle: 10 # not in use yet
@@ -85,7 +86,7 @@ TebLocalPlannerROS:
  enable_homotopy_class_planning: True
  enable_multithreading: True
  simple_exploration: False
- max_number_classes: 4
+ max_number_classes: 2
  roadmap_graph_no_samples: 15
  roadmap_graph_area_width: 5
  h_signature_prescaler: 0.5
