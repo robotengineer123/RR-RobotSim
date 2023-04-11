@@ -5,6 +5,8 @@ rr_robot:
   #     rope_drive_le_joint: {p: 1200, d: 0, i: 150}
   #     rope_drive_te_joint: {p: 1200, d: 0, i: 150}
 
+  # gazebo_ros_control:
+  #   pid_gains:
   joint_state_controller:
     type: joint_state_controller/JointStateController
     publish_rate: 
@@ -40,10 +42,18 @@ rr_robot:
     right_steer_joint: top_wheel_yaw_joint_te
     radius_topic: rope_drive/current_drive_radius
     odom_topic: odom
-    p: 2 
+    # p: 2 
+    # i: 0.001
+    # d: 0
+    # i_clamp: 1000
+    # p: 0.3
+    # i: 0.001
+    # d: 0.01
+    # i_clamp: 300
+    p: 0.1
     i: 0.001
-    d: 0
-    i_clamp: 1000
+    d: 0.01
+    i_clamp: 300
 
   verification_controller:
     type: verification_controller/VerificationController
