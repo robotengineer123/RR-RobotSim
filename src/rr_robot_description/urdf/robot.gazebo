@@ -301,42 +301,23 @@
     for small ranges of motion. 
     Spring stiffness is calculated by transforming it to an equivalent torque at
     the revolute joint.
-    bottom wheels arm is: 0.04626071
+    bottom wheels arm is: 0.04109256931
     top wheels arm is: 0.10789946
     The spring stiffness is: 7050
-    326.138
-    760.69
+    289.7
+    738.7
 
 
 -->
-    <!-- <gazebo reference="bot_pivot_joint_le">
-        <springStiffness>326.138</springStiffness>
-        <springReference>-0.17</springReference> 0.174533
-    </gazebo>
-
-    <gazebo reference="bot_pivot_joint_te">
-        <springStiffness>326.138</springStiffness>
-        <springReference>-0.17</springReference>
-    </gazebo>
-
-    <gazebo reference="top_pivot_joint_le">
-        <springStiffness>760.69</springStiffness>
-        <springReference>0</springReference>
-    </gazebo>
-
-    <gazebo reference="top_pivot_joint_te">
-        <springStiffness>760.69</springStiffness>
-        <springReference>0</springReference>
-    </gazebo> -->
     
     <gazebo reference="bot_pivot_joint_le">
-        <springStiffness>326.138</springStiffness>
-        <springReference>-0.174533</springReference> 
+        <springStiffness>289.7</springStiffness>
+        <springReference>0</springReference> 
     </gazebo>
 
     <gazebo reference="bot_pivot_joint_te">
-        <springStiffness>326.138</springStiffness>
-        <springReference>-0.174533</springReference>
+        <springStiffness>289.7</springStiffness>
+        <springReference>0</springReference>
     </gazebo>
 
     <gazebo reference="top_pivot_joint_le">

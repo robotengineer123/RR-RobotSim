@@ -112,15 +112,15 @@
   <!-- ******************************** wheels ******************************** -->
   <xacro:include filename="$(find rr_robot_description)/urdf/wheel_assembly/bot_wheel.xacro" />
   <xacro:bot_wheels_macro parent="${robot_name}_chassis"
-                            x= "-0.0265"
+                            x= "0.03762"
                             wspan= "0.323"
-                            z= "-0.11818"/>
+                            z= "-0.13465"/>
   
   <xacro:include filename="$(find rr_robot_description)/urdf/wheel_assembly/top_wheel.xacro" />
   <xacro:top_wheels_macro parent="${robot_name}_chassis"
-                            x= "1.12508"  
+                            x= "1.02306"  
                             wspan= "0.342" 
-                            z= "-0.13492"/>
+                            z= "-0.147"/>
   <!-- ******************************** Tranmissions ******************************** -->
   <xacro:include filename="$(find rr_robot_description)/urdf/transmissions.xacro" />
   

@@ -7,7 +7,6 @@ spring
   <xacro:macro name="top_wheels_macro" params="parent x z wspan">
     <!-- Macro for making a single wheel-->
     <xacro:macro name="make_wheel" params="te='true'">
-      <xacro:property name="range" value="0.174533" />
 
       <xacro:if value="${te}">
         <xacro:property name="postfix" value="te" />
@@ -28,9 +27,9 @@ spring
         </inertial>
       </link>
       <joint name="top_pivot_joint_${postfix}" type="revolute">
-        <origin xyz="${x-0.10581} ${y-yaw_arm} ${z-0.01217}" rpy="0 0 0" />
+        <origin xyz="${x} ${y} ${z}" rpy="0 0 0" />
         <axis xyz="0 1 0" />
-        <limit lower="${-range}" upper="${range}" effort="10000" velocity="100" />
+        <limit lower="0" upper="0.20542525" effort="10000" velocity="100" />
         <parent link="${parent}" />
         <child link="top_wheel_mount_${postfix}" />
         <dynamics damping="1" friction="10" />
@@ -46,7 +45,7 @@ spring
       </link>
 
       <joint name="top_wheel_yaw_joint_${postfix}" type="revolute">
-        <origin xyz="0.10581 0 0.01217" rpy="0. 0. 1.5708" />
+        <origin xyz="0.10141 0 0.066" rpy="0. 0. 1.5708" />
         <axis xyz="0 0 1" />
         <limit lower="-0.20" upper="0.20" effort="500" velocity="5" />
         <parent link="top_wheel_mount_${postfix}" />
