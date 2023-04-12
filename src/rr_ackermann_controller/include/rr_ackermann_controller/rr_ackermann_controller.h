@@ -4,14 +4,12 @@
 #include <hardware_interface/imu_sensor_interface.h>
 #include <pluginlib/class_list_macros.h>
 #include <control_toolbox/pid.h>
-
 #include <nav_msgs/Odometry.h>
-
+#include <std_msgs/Float64.h>
 #include <realtime_tools/realtime_buffer.h>
 #include <realtime_tools/realtime_publisher.h>
-#include <std_msgs/Float64.h>
-
 #include <memory>
+#include <rr_ackermann_controller/control_limits.h>
 
 
 namespace rr_ackermann_controller {
@@ -41,14 +39,6 @@ namespace rr_ackermann_controller {
     InvKinResult InvKin(double yaw_vel, double lin_vel, double radius);
     double ComputeYawCmd(const ros::Duration& period);
     void Brake();
-    double Clamp(double value, double hi, double lo) 
-    {
-      if (value > hi)
-        return hi;
-      if (value < lo)
-        return lo;
-      return value;
-    }
 
     void CmdVelCallback(geometry_msgs::TwistConstPtr cmd);
     void RadiusCallback(std_msgs::Float64ConstPtr cmd);
@@ -95,6 +85,11 @@ namespace rr_ackermann_controller {
 
     control_toolbox::Pid yaw_pid_;
 
+    SpeedLimiter speed_limiter_;
+    double last_v0_;
+    double last_v1_;
+
+    SteerLimiter steer_limiter_;
   };
   PLUGINLIB_EXPORT_CLASS(rr_ackermann_controller::RrAckermannController, controller_interface::ControllerBase)
 }

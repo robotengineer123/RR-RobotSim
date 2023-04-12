@@ -29,16 +29,32 @@ bool RrAckermannController::init(hardware_interface::RobotHW *robot_hw,
     controller_nh.getParam("radius_topic", radius_topic);
     controller_nh.getParam("odom_topic", odom_topic);
 
+    // Get joint handles
     r_drive_jh_ = vel_joint_if->getHandle(r_drive_name_);
     l_drive_jh_ = vel_joint_if->getHandle(l_drive_name_);
     r_steer_jh_ = pos_joint_if->getHandle(r_steer_name_);
     l_steer_jh_ = pos_joint_if->getHandle(l_steer_name_);
 
+    // Init subscribers
     twist_sub_ = controller_nh.subscribe("cmd_vel", 1, &RrAckermannController::CmdVelCallback, this);
     radius_sub_ = controller_nh.subscribe(radius_topic, 1, &RrAckermannController::RadiusCallback, this);
     odom_sub_ = root_nh.subscribe(odom_topic, 1, &RrAckermannController::OdomCallback, this);
 
     yaw_pid_.init(controller_nh);
+
+    controller_nh.param("has_velocity_limits", speed_limiter_.has_velocity_limits, speed_limiter_.has_velocity_limits);
+    controller_nh.param("has_acceleration_limits", speed_limiter_.has_acceleration_limits, speed_limiter_.has_acceleration_limits);
+    controller_nh.param("has_jerk_limits", speed_limiter_.has_jerk_limits, speed_limiter_.has_jerk_limits);
+    controller_nh.param("max_velocity", speed_limiter_.max_velocity, speed_limiter_.max_velocity);
+    controller_nh.param("min_velocity", speed_limiter_.min_velocity, speed_limiter_.max_velocity);
+    controller_nh.param("max_acceleration", speed_limiter_.max_acceleration, speed_limiter_.max_acceleration);
+    controller_nh.param("min_acceleration", speed_limiter_.min_acceleration, speed_limiter_.max_acceleration);
+    controller_nh.param("max_jerk", speed_limiter_.max_jerk, speed_limiter_.max_jerk);
+    controller_nh.param("min_jerk", speed_limiter_.min_jerk, speed_limiter_.max_jerk);
+
+    controller_nh.param("has_steer_limit", steer_limiter_.has_steer_limits, steer_limiter_.has_steer_limits);
+    controller_nh.param("max_steer", steer_limiter_.max_steer, steer_limiter_.max_steer);
+    controller_nh.param("min_steer", steer_limiter_.min_steer, steer_limiter_.min_steer);
 
     return true;
 }
@@ -76,11 +92,20 @@ void RrAckermannController::update(const ros::Time &time, const ros::Duration &p
         vel.lin = 0;
     }
 
+    // limit linear speed
+    speed_limiter_.limit(vel.lin, last_v0_, last_v1_, period.toSec());
+    last_v1_ = last_v0_;
+    last_v0_ = vel.lin;
+
     InvKinResult ikr = InvKin(vel.ang, vel.lin, radius);
 
-    double yaw_cmd = Clamp(ComputeYawCmd(period), std::abs(ikr.rot_vel), -std::abs(ikr.rot_vel));
+    // limit steer angle
+    steer_limiter_.LimitSteer(ikr.l_fw_angle);
+    steer_limiter_.LimitSteer(ikr.r_fw_angle);
 
-    // make one of the ropes take more of the weight to generate a 
+    double yaw_cmd = ComputeYawCmd(period);
+
+    // make one of the ropes take more of the weight to generate a
     // torque that can induce a desired yaw
     if (yaw_cmd > 0)
     {

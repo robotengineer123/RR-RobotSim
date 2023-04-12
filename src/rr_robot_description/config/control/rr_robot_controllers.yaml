@@ -55,6 +55,20 @@ rr_robot:
     d: 0.01
     i_clamp: 300
 
+    has_velocity_limits: false
+    has_acceleration_limits: false
+    has_jerk_limits: false
+    # max_velocity:
+    # min_velocity:
+    # max_acceleration:
+    # min_acceleration:
+    # max_jerk:
+    # min_jerk:
+
+    has_steer_limit: false
+    # max_steer:
+    # min_steer:
+
   verification_controller:
     type: verification_controller/VerificationController
 
