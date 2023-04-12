@@ -113,7 +113,9 @@
   <xacro:include filename="$(find rr_robot_description)/urdf/wheel_assembly/bot_wheel.xacro" />
   <xacro:bot_wheels_macro parent="${robot_name}_chassis"
                             x= "0.03762"
+                            x= "0.03762"
                             wspan= "0.323"
+                            z= "-0.13465"/>
                             z= "-0.13465"/>
   
   <xacro:include filename="$(find rr_robot_description)/urdf/wheel_assembly/top_wheel.xacro" />
