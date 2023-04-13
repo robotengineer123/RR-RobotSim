@@ -48,7 +48,7 @@ spring
       <joint name="top_wheel_yaw_joint_${postfix}" type="revolute">
         <origin xyz="0.09941 0 0.02003" rpy="0. 0. 1.5708" />
         <axis xyz="0 0 1" />
-        <limit lower="0" upper="0.20" effort="500" velocity="5" />
+        <limit lower="-0.2" upper="0.2" effort="500" velocity="5" />
         <parent link="top_wheel_mount_${postfix}" />
         <child link="yaw_link_${postfix}" />
         <dynamics damping="1" />
