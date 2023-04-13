@@ -5,4 +5,5 @@ class MotorDriver
 public:
     virtual bool ReadState() = 0;
     virtual bool SendCommand() = 0;
+    virtual ~MotorDriver() = default;
 };
