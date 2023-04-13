@@ -1,0 +1,4 @@
+le_top_wheel_yaw_joint: top_wheel_yaw_joint_le
+te_top_wheel_yaw_joint: top_wheel_yaw_joint_te
+le_rope_drive_joint: rope_drive_le
+te_rope_drive_joint: rope_drive_te
