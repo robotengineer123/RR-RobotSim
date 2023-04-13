@@ -36,7 +36,7 @@ namespace rr_ackermann_controller {
     void stopping(const ros::Time& time);
   
   private:
-    InvKinResult InvKin(double yaw_vel, double lin_vel, double radius);
+    InvKinResult InvKinWithSteerLimit(double yaw_vel, double lin_vel, double radius);
     double ComputeYawCmd(const ros::Duration& period);
     void Brake();
 

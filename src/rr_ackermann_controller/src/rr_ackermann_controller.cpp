@@ -97,43 +97,29 @@ void RrAckermannController::update(const ros::Time &time, const ros::Duration &p
     last_v1_ = last_v0_;
     last_v0_ = vel.lin;
 
-    InvKinResult ikr = InvKin(vel.ang, vel.lin, radius);
+    InvKinResult ikr = InvKinWithSteerLimit(vel.ang, vel.lin, radius);
 
     // limit steer angle
-    steer_limiter_.LimitSteer(ikr.l_fw_angle);
-    steer_limiter_.LimitSteer(ikr.r_fw_angle);
+    ikr.l_fw_angle;
+    ikr.r_fw_angle;
 
     double yaw_cmd = ComputeYawCmd(period);
 
-    // make one of the ropes take more of the weight to generate a
-    // torque that can induce a desired yaw
-    if (yaw_cmd > 0)
-    {
-        r_drive_jh_.setCommand(ikr.rot_vel + yaw_cmd);
-        l_drive_jh_.setCommand(ikr.rot_vel);
-    }
-    if (yaw_cmd < 0)
-    {
-        r_drive_jh_.setCommand(ikr.rot_vel);
-        l_drive_jh_.setCommand(ikr.rot_vel - yaw_cmd);
-    }
-    else
-    {
-        r_drive_jh_.setCommand(ikr.rot_vel);
-        l_drive_jh_.setCommand(ikr.rot_vel);
-    }
+    r_drive_jh_.setCommand(ikr.rot_vel + yaw_cmd);
+    l_drive_jh_.setCommand(ikr.rot_vel - yaw_cmd);
 
     r_steer_jh_.setCommand(ikr.r_fw_angle);
     l_steer_jh_.setCommand(ikr.l_fw_angle);
 }
 
-RrAckermannController::InvKinResult RrAckermannController::InvKin(double yaw_vel, double lin_vel, double radius)
+RrAckermannController::InvKinResult RrAckermannController::InvKinWithSteerLimit(double yaw_vel, double lin_vel, double radius)
 {
     typedef RrAckermannController::InvKinResult IKR;
     if (lin_vel == 0)
         return IKR{0.0, 0.0, 0.0};
 
     double steer = std::atan(wheel_base_ * yaw_vel / lin_vel);
+    steer_limiter_.LimitSteer(steer);
     double steer_i = 0;
     double steer_o = 0;
     double rot_vel = lin_vel / radius;
