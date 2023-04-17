@@ -4,12 +4,13 @@
 #include <hardware_interface/imu_sensor_interface.h>
 #include <pluginlib/class_list_macros.h>
 #include <control_toolbox/pid.h>
-
 #include <nav_msgs/Odometry.h>
-
+#include <std_msgs/Float64.h>
 #include <realtime_tools/realtime_buffer.h>
 #include <realtime_tools/realtime_publisher.h>
-#include <std_msgs/Float64.h>
+#include <memory>
+#include <rr_ackermann_controller/control_limits.h>
+
 
 namespace rr_ackermann_controller {
     
@@ -35,19 +36,22 @@ namespace rr_ackermann_controller {
     void stopping(const ros::Time& time);
   
   private:
+    InvKinResult InvKinWithSteerLimit(double yaw_vel, double lin_vel, double radius);
+    double ComputeYawCmd(const ros::Duration& period);
+    void Brake();
+
     void CmdVelCallback(geometry_msgs::TwistConstPtr cmd);
     void RadiusCallback(std_msgs::Float64ConstPtr cmd);
     void DesiredYawCallback(std_msgs::Float64ConstPtr cmd);
     void OdomCallback(nav_msgs::OdometryConstPtr cmd);
 
-    double ComputeYawCmd(const ros::Duration& period);
-    InvKinResult InvKin(double yaw_vel, double lin_vel, double radius);
-    void Brake();
 
     // subscribers
     ros::Subscriber twist_sub_;
     ros::Subscriber radius_sub_;
     ros::Subscriber odom_sub_;
+    ros::Subscriber sp_yaw_sub_;
+
 
     // car specifications
     double wheel_base_;
@@ -72,7 +76,7 @@ namespace rr_ackermann_controller {
     double radius_cmd_;
     double yaw_cmd_;
     realtime_tools::RealtimeBuffer<VelCmd> vel_buf_;
-    realtime_tools::RealtimeBuffer<double> odom_yaw_buf_;
+    realtime_tools::RealtimeBuffer<double> yaw_vel_buf_;
     realtime_tools::RealtimeBuffer<double> radius_buf_;
     realtime_tools::RealtimeBuffer<double> yaw_buf_;
 
@@ -81,6 +85,11 @@ namespace rr_ackermann_controller {
 
     control_toolbox::Pid yaw_pid_;
 
+    SpeedLimiter speed_limiter_;
+    double last_v0_;
+    double last_v1_;
+
+    SteerLimiter steer_limiter_;
   };
   PLUGINLIB_EXPORT_CLASS(rr_ackermann_controller::RrAckermannController, controller_interface::ControllerBase)
 }

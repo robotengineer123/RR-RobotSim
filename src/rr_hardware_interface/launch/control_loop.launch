@@ -1,0 +1,9 @@
+<launch>
+    <node 
+        name="rr_hardware_interface"
+        pkg="rr_hardware_interface"
+        type="rr_hardware_interface_node.cpp"
+        output="screen">
+        <rosparam command="load" file="$(find rr_hardware_interface)/config/joint_names.yaml"/>
+    </node>
+</launch>

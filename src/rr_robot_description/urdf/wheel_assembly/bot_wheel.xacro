@@ -5,7 +5,6 @@ spring
     the range of motion is small -->
 <robot xmlns:xacro="http://ros.org/wiki/xacro" name="bot_wheel">
     <xacro:macro name="bot_wheels_macro" params="parent x z wspan">
-        <xacro:property name="range" value="0.174533" />
         <xacro:macro name="make_bot_wheel" params="te='true'">
             <xacro:if value="${te}">
                 <xacro:property name="postfix" value="te" />
@@ -25,9 +24,9 @@ spring
             </link>
 
             <joint name="bot_pivot_joint_${postfix}" type="revolute">
-                <origin xyz="${x+0.06343} ${y} ${z+0.01419}" rpy="0 0 0" />
+                <origin xyz="${x} ${y} ${z}" rpy="0 0 0" />
                 <axis xyz="0 1 0" />
-                <limit lower="${-range}" upper="${range}" effort="100000" velocity="1000" />
+                <limit lower="0" upper="0.38659043" effort="100000" velocity="1000" />
                 <parent link="${parent}" />
                 <child link="bot_wheel_mount_${postfix}" />
                 <dynamics damping="1" friction="10" />
@@ -53,7 +52,7 @@ spring
                 <collision>
                     <origin xyz="0 0 0" rpy="0 1.57079633 0" />
                     <geometry>
-                        <cylinder radius="0.05" length="0.02"/>
+                        <cylinder radius="0.055" length="0.03322"/>
                         <!-- <mesh
                             filename="package://rr_robot_description/include/chassis/meshes/BottomWheels/collision.STL" /> -->
                     </geometry>
@@ -61,7 +60,7 @@ spring
             </link>
 
             <joint name="bot_wheel_joint_${postfix}" type="continuous">
-                <origin xyz="-0.06343 0 -0.01419" rpy="0 0 1.5708" />
+                <origin xyz="-0.06062042 0 -0.0234556" rpy="0 0 1.5708" />
                 <axis xyz="1 0 0" />
                 <parent link="bot_wheel_mount_${postfix}" />
                 <child link="bot_wheel_${postfix}" />
