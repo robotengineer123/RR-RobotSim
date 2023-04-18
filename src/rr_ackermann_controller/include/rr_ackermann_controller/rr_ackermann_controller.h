@@ -2,14 +2,21 @@
 #include <controller_interface/multi_interface_controller.h>
 #include <hardware_interface/joint_command_interface.h>
 #include <hardware_interface/imu_sensor_interface.h>
+
 #include <pluginlib/class_list_macros.h>
 #include <control_toolbox/pid.h>
-#include <nav_msgs/Odometry.h>
-#include <std_msgs/Float64.h>
 #include <realtime_tools/realtime_buffer.h>
 #include <realtime_tools/realtime_publisher.h>
 #include <memory>
+
 #include <rr_ackermann_controller/control_limits.h>
+#include <rr_ackermann_controller/odometry.h>
+
+#include <tf/tfMessage.h>
+#include <nav_msgs/Odometry.h>
+#include <std_msgs/Float64.h>
+
+
 
 
 namespace rr_ackermann_controller {
@@ -17,7 +24,8 @@ namespace rr_ackermann_controller {
   class RrAckermannController 
   : public controller_interface::MultiInterfaceController<
     hardware_interface::PositionJointInterface,
-    hardware_interface::VelocityJointInterface>
+    hardware_interface::VelocityJointInterface,
+    hardware_interface::JointStateInterface>
   {
     struct InvKinResult
     {
@@ -36,6 +44,9 @@ namespace rr_ackermann_controller {
     void stopping(const ros::Time& time);
   
   private:
+    void InitOdom(ros::NodeHandle controller_nh);
+    void setOdomPubFields(ros::NodeHandle &root_nh, ros::NodeHandle &controller_nh);
+
     InvKinResult InvKinWithSteerLimit(double yaw_vel, double lin_vel, double radius);
     double ComputeYawCmd(const ros::Duration& period);
     void Brake();
@@ -56,12 +67,15 @@ namespace rr_ackermann_controller {
     // car specifications
     double wheel_base_;
     double track_width_;
+    double steer_pos_multiplier_ = 1.;
 
     // joints
     hardware_interface::JointHandle r_drive_jh_;
     hardware_interface::JointHandle l_drive_jh_;
     hardware_interface::JointHandle r_steer_jh_;
     hardware_interface::JointHandle l_steer_jh_;
+    hardware_interface::JointStateHandle bot_encoder_jh_;
+
 
     struct VelCmd
     {
@@ -90,6 +104,17 @@ namespace rr_ackermann_controller {
     double last_v1_;
 
     SteerLimiter steer_limiter_;
+
+    steer_drive_controller::Odometry odometry_;
+    std::shared_ptr<realtime_tools::RealtimePublisher<nav_msgs::Odometry> > odom_pub_;
+    std::shared_ptr<realtime_tools::RealtimePublisher<tf::tfMessage> > tf_odom_pub_;
+    ros::Duration publish_period_;
+    ros::Time last_state_publish_time_;
+    std::string odom_frame_id_ = "odom";
+    std::string base_frame_id_ = "base_link";
+    std::string name_;
+    bool enable_odom_tf_ = true;
+
   };
   PLUGINLIB_EXPORT_CLASS(rr_ackermann_controller::RrAckermannController, controller_interface::ControllerBase)
 }

@@ -35,11 +35,13 @@ rr_robot:
     type: rr_ackermann_controller/RrAckermannController
     wheel_base: 1.152
     track_width: 0.342
+    wheel_radius: 0.055
 
     left_drive_joint: rope_drive_le_joint
     right_drive_joint: rope_drive_te_joint
     left_steer_joint: top_wheel_yaw_joint_le
     right_steer_joint: top_wheel_yaw_joint_te
+    bot_wheel_encoder_joint: bot_wheel_joint_le
     radius_topic: rope_drive/current_drive_radius
     odom_topic: odom
     # p: 2 
@@ -68,6 +70,19 @@ rr_robot:
     has_steer_limit: false
     # max_steer:
     # min_steer:
+
+    #enable_odom_tf: 
+    pose_covariance_diagonal: [0.001, 0.001, 1000000.0, 1000000.0, 1000000.0, 1000.0]
+    twist_covariance_diagonal: [0.001, 0.001, 1000000.0, 1000000.0, 1000000.0, 1000.0]
+    base_frame_id: dummy
+    odom_frame_id: odom
+    #publish_rate:
+    #wheel_base_multiplier:
+    #wheel_radius_multiplier:
+    #steer_pos_multiplier:
+    #velocity_rolling_window_size:
+
+
 
   verification_controller:
     type: verification_controller/VerificationController

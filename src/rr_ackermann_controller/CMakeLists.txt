@@ -125,6 +125,7 @@ include_directories(
 add_library(${PROJECT_NAME}_lib
   src/rr_ackermann_controller.cpp
   src/control_limits.cpp
+  src/odometry.cpp
 )
 
 ## Add cmake target dependencies of the library
