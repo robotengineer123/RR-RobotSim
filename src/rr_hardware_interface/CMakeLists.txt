@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   hardware_interface
   roscpp
   rr_ethercat_motor
+  rr_wheels
 )
 
 ## System dependencies are found with CMake's conventions
