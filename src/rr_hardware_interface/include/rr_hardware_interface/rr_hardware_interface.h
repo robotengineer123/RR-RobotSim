@@ -5,9 +5,9 @@
 
 #include <vector>
 #include <array>
-
 #include <rr_hardware_interface/top_wheel_driver.h>
 #include <rr_hardware_interface/rope_drive_driver.h>
+#include <ros/callback_queue.h>
 
 namespace rr_hardware_interface
 {
@@ -24,6 +24,11 @@ namespace rr_hardware_interface
     private:
         void LoadParamWErrorHandling(ros::NodeHandle &nh, const std::string& name, std::string& store_var);
         
+        hardware_interface::JointStateInterface state_if_;
+        hardware_interface::PositionJointInterface pos_if_;
+        hardware_interface::VelocityJointInterface vel_if_;
+
         std::array<std::unique_ptr<MotorDriver>, 4> drivers_;
+        ros::CallbackQueue queue_;
     };
 }

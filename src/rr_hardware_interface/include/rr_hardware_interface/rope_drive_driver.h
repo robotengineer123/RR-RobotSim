@@ -2,25 +2,33 @@
 #include <hardware_interface/joint_command_interface.h>
 #include <hardware_interface/joint_state_interface.h>
 #include <hardware_interface/robot_hw.h>
-#include "motor_driver.h"
+#include <rr_hardware_interface/motor_driver.h>
+#include <std_msgs/Float64.h>
+#include <rr_ethercat_motor/MotorState.h> 
+#include <ros/ros.h>
 
 class RopeDriveDriver : public MotorDriver
 {
 public:
     RopeDriveDriver(
         ros::NodeHandle &nh, 
-        hardware_interface::InterfaceManager* if_manager,
-        const std::string& joint_name);
+        hardware_interface::JointStateInterface& state_if,
+        hardware_interface::VelocityJointInterface& vel_if,
+        const std::string& joint_name,
+        const std::string& motor_state_topic,
+        const std::string& command_topic);
     bool ReadState();
     bool SendCommand();
 
 private:
-    hardware_interface::JointStateInterface joint_state_if_;
-    hardware_interface::VelocityJointInterface joint_vel_if_;
+    void StateCallback(rr_ethercat_motor::MotorStateConstPtr msg);
 
-    double cmd_;
+    ros::Subscriber state_sub_;
+    ros::Publisher cmd_pub_;
+
+    std_msgs::Float64 cmd_msg_;
     
-    double pos_state_;
-    double vel_state_;
-    double eff_state_;
+    double pos_state_ = 0;
+    double vel_state_ = 0;
+    double eff_state_ = 0;
 };

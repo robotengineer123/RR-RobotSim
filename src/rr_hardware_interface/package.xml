@@ -59,6 +59,7 @@
   <exec_depend>hardware_interface</exec_depend>
   <exec_depend>roscpp</exec_depend>
   <depend>rr_ethercat_motor</depend>
+  <depend>rr_wheels</depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->
