@@ -5,3 +5,4 @@
 *.bag
 logs
 .catkin_tools
+*.csv

@@ -29,7 +29,7 @@ t_span = np.arange(0, 15, 0.0001)
 t_interval = (0, 15)
 
 # Friction constant
-mu = 1
+mu = 0.7
 
 # Steering angle
 def delta_f(t):
