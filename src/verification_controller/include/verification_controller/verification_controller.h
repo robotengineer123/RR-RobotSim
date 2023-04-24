@@ -32,12 +32,10 @@ namespace verification_controller {
   
   private:
     void OdomCallback(nav_msgs::OdometryConstPtr cmd);
-    void RadiusCallback(std_msgs::Float64ConstPtr cmd);
     void Brake();
 
     // subscribers/publishers
     ros::Subscriber odom_sub_;
-    ros::Subscriber radius_sub_;
     ros::Publisher yaw_pub;
     ros::Publisher velX_pub;
     std_msgs::Float64 currentYawMsg;
@@ -50,14 +48,14 @@ namespace verification_controller {
     hardware_interface::JointHandle l_steer_jh_;
 
     // pid
+    double radius = 0.2;
     double yaw_desi_ = 0.0;
     double vel_desi_ = 0.05;
     //double steer_desi_ = 0.01;
     //double steer_desi_angle_ = steer_desi_*180/3.14;
-    double steer_desi_angle_ = 2;
+    double steer_desi_angle_ = 6;
     double currentVel;
     double currentRoll, currentPitch, currentYaw;
-    control_toolbox::Pid pidV;
     control_toolbox::Pid pidY;
     ros::Time last_time = ros::Time::now();
     
@@ -67,10 +65,6 @@ namespace verification_controller {
     nav_msgs::Odometry odom_cmd;
     // pid
     nav_msgs::Odometry odom;
-
-    // radius
-    realtime_tools::RealtimeBuffer<double> radius_buf_;
-    double radius_cmd_;
 
     // Node handle
     ros::NodeHandle nhp_;

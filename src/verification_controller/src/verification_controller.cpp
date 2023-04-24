@@ -25,40 +25,24 @@ bool VerificationController::init(hardware_interface::RobotHW* robot_hw,
     l_steer_jh_ = pos_joint_if->getHandle(l_steer_name_);
 
     odom_sub_ = controller_nh.subscribe("/rr_robot/odom", 1, &VerificationController::OdomCallback, this);
-    //radius_sub_ = controller_nh.subscribe("rope_drive/current_drive_radius", 1, &VerificationController::RadiusCallback, this);
     yaw_pub = controller_nh.advertise<std_msgs::Float64>("/yaw", 50);
     velX_pub = controller_nh.advertise<std_msgs::Float64>("/velX", 50);
 
-    //pidV.initPid(35.0, 25.0, 5.5, 2.5, -2.5);
-    //pidY.initPid(4.5, 1.5, 1.5, 0.3, -0.3);
-
     nhp_ = ros::NodeHandle("~");
 
-    if (!nhp_.hasParam("pidV/p"))
-        nhp_.setParam("pidV/p", 35.0);
-    if (!nhp_.hasParam("pidV/i"))
-        nhp_.setParam("pidV/i", 25.0);
-    if (!nhp_.hasParam("pidV/d"))
-        nhp_.setParam("pidV/d", 5.5);
-    if (!nhp_.hasParam("pidV/i_clamp_min"))
-        nhp_.setParam("pidV/i_clamp_min", -2.5);
-    if (!nhp_.hasParam("pidV/i_clamp_max"))
-        nhp_.setParam("pidV/i_clamp_max", 2.5);
-
     if (!nhp_.hasParam("pidY/p"))
-        nhp_.setParam("pidY/p", 4.5);
+        nhp_.setParam("pidY/p", 100.0);
     if (!nhp_.hasParam("pidY/i"))
-        nhp_.setParam("pidY/i", 1.5);
+        nhp_.setParam("pidY/i", 10.0);
     if (!nhp_.hasParam("pidY/d"))
-        nhp_.setParam("pidY/d", 1.5);
+        nhp_.setParam("pidY/d", 20.0);
     if (!nhp_.hasParam("pidY/i_clamp_min"))
-        nhp_.setParam("pidY/i_clamp_min", -0.3);
+        nhp_.setParam("pidY/i_clamp_min", -1.5);
     if (!nhp_.hasParam("pidY/i_clamp_max"))
-        nhp_.setParam("pidY/i_clamp_max", 0.3);
+        nhp_.setParam("pidY/i_clamp_max", 1.5);
 
     nhp_.setParam("publish_state", true);
 
-    pidV.init(ros::NodeHandle(nhp_, "pidV"), false);
     pidY.init(ros::NodeHandle(nhp_, "pidY"), false);
 
     return true;
@@ -95,15 +79,12 @@ void VerificationController::update(const ros::Time& time, const ros::Duration& 
     m.getRPY(currentRoll, currentPitch, currentYaw);
     
     currentVel = odom.twist.twist.linear.x;
-    //double radius = *(radius_buf_.readFromRT());
 
-    // PID
-    double velocity_r = pidV.updatePid(currentVel - vel_desi_, time - last_time);
-    double velocity_l = pidV.updatePid(currentVel - vel_desi_, time - last_time);   
+    // PID 
     double yaw = pidY.updatePid(currentYaw - yaw_desi_, time - last_time);
     
-    //double velocity_r = vel_desi_/radius;
-    //double velocity_l = vel_desi_/radius;
+    double velocity_r = vel_desi_/radius;
+    double velocity_l = vel_desi_/radius;
 
     double pid_combined_r = velocity_r + yaw/2;
     double pid_combined_l = velocity_l - yaw/2;
@@ -134,11 +115,3 @@ void VerificationController::OdomCallback(nav_msgs::OdometryConstPtr cmd)
     odom_cmd.twist.twist = cmd->twist.twist;
     odom_buf_.writeFromNonRT(odom_cmd);
 }
-
-//void VerificationController::RadiusCallback(std_msgs::Float64ConstPtr cmd)
-//{
-//    double radius = cmd->data;
-//    if (radius == 0)
-//        radius = 0.3;
-//    radius_buf_.writeFromNonRT(radius);
-//}
