@@ -24,12 +24,26 @@ bool VerificationController::init(hardware_interface::RobotHW* robot_hw,
     r_steer_jh_ = pos_joint_if->getHandle(r_steer_name_);
     l_steer_jh_ = pos_joint_if->getHandle(l_steer_name_);
 
-    odom_sub_ = controller_nh.subscribe("/odom", 1, &VerificationController::OdomCallback, this);
+    odom_sub_ = controller_nh.subscribe("/rr_robot/odom", 1, &VerificationController::OdomCallback, this);
     yaw_pub = controller_nh.advertise<std_msgs::Float64>("/yaw", 50);
     velX_pub = controller_nh.advertise<std_msgs::Float64>("/velX", 50);
 
-    pidV.initPid(35.0, 25.0, 5.5, 2.5, -2.5);
-    pidY.initPid(4.5, 1.5, 1.5, 0.3, -0.3);
+    nhp_ = ros::NodeHandle("~");
+
+    if (!nhp_.hasParam("pidY/p"))
+        nhp_.setParam("pidY/p", 100.0);
+    if (!nhp_.hasParam("pidY/i"))
+        nhp_.setParam("pidY/i", 10.0);
+    if (!nhp_.hasParam("pidY/d"))
+        nhp_.setParam("pidY/d", 20.0);
+    if (!nhp_.hasParam("pidY/i_clamp_min"))
+        nhp_.setParam("pidY/i_clamp_min", -1.5);
+    if (!nhp_.hasParam("pidY/i_clamp_max"))
+        nhp_.setParam("pidY/i_clamp_max", 1.5);
+
+    nhp_.setParam("publish_state", true);
+
+    pidY.init(ros::NodeHandle(nhp_, "pidY"), false);
 
     return true;
 }
@@ -66,13 +80,14 @@ void VerificationController::update(const ros::Time& time, const ros::Duration& 
     
     currentVel = odom.twist.twist.linear.x;
 
-    // PID
-    double velocity_r = pidV.updatePid(currentVel - vel_desi_, time - last_time);
-    double velocity_l = pidV.updatePid(currentVel - vel_desi_, time - last_time);   
+    // PID 
     double yaw = pidY.updatePid(currentYaw - yaw_desi_, time - last_time);
     
-    double pid_combined_r = velocity_r + yaw;
-    double pid_combined_l = velocity_r - yaw;
+    double velocity_r = vel_desi_/radius;
+    double velocity_l = vel_desi_/radius;
+
+    double pid_combined_r = velocity_r + yaw/2;
+    double pid_combined_l = velocity_l - yaw/2;
     
     last_time = time;
 

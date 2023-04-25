@@ -48,14 +48,14 @@ namespace verification_controller {
     hardware_interface::JointHandle l_steer_jh_;
 
     // pid
-    double yaw_desi_ = 0.05;
-    double vel_desi_ = 0.2;
+    double radius = 0.2;
+    double yaw_desi_ = 0.0;
+    double vel_desi_ = 0.05;
     //double steer_desi_ = 0.01;
     //double steer_desi_angle_ = steer_desi_*180/3.14;
-    double steer_desi_angle_ = 0;
+    double steer_desi_angle_ = 6;
     double currentVel;
     double currentRoll, currentPitch, currentYaw;
-    control_toolbox::Pid pidV;
     control_toolbox::Pid pidY;
     ros::Time last_time = ros::Time::now();
     
@@ -65,6 +65,9 @@ namespace verification_controller {
     nav_msgs::Odometry odom_cmd;
     // pid
     nav_msgs::Odometry odom;
+
+    // Node handle
+    ros::NodeHandle nhp_;
   
   };
   PLUGINLIB_EXPORT_CLASS(verification_controller::VerificationController, controller_interface::ControllerBase)

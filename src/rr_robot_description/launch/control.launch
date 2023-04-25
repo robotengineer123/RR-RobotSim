@@ -11,7 +11,7 @@
           output="screen" ns="rr_robot" args="
             joint_state_controller
             pos_joint_traj_controller
-            cmd_vel_controller
+            verification_controller
             "/>
 
     <!-- convert joint states to TF transforms for rviz, etc -->
