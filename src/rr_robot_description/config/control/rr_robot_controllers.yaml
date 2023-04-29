@@ -1,12 +1,18 @@
 rr_robot:
 
-  # gazebo_ros_control:
-  #   pid_gains:
-  #     rope_drive_le_joint: {p: 1200, d: 0, i: 150}
-  #     rope_drive_te_joint: {p: 1200, d: 0, i: 150}
+  #gazebo_ros_control:
+      #pid_gains:
+        #rope_drive_le_joint: {p: 1200, d: 0, i: 150}
+        #rope_drive_te_joint: {p: 1200, d: 0, i: 150}
+        #top_wheel_yaw_joint_le: {p: 100.0, i: 0.01, d: 10.0}
+        #top_wheel_yaw_joint_te: {p: 100.0, i: 0.01, d: 10.0}
+        #shoulder_pan_joint: {p: 100.0, i: 0.01, d: 10.0}
+        #shoulder_lift_joint: {p: 100.0, i: 0.01, d: 10.0}
+        #elbow_joint: {p: 100.0, i: 0.01, d: 10.0}
+        #wrist_1_joint: {p: 100.0, i: 0.01, d: 10.0}
+        #wrist_2_joint: {p: 100.0, i: 0.01, d: 10.0}
+        #wrist_3_joint: {p: 100.0, i: 0.01, d: 10.0}
 
-  # gazebo_ros_control:
-  #   pid_gains:
   joint_state_controller:
     type: joint_state_controller/JointStateController
     publish_rate: 

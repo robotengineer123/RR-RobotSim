@@ -7,10 +7,19 @@
 #include <realtime_tools/realtime_buffer.h>
 #include <realtime_tools/realtime_publisher.h>
 #include <std_msgs/Float64.h>
+#include <stdio.h>
 
 #include <control_toolbox/pid.h>
 
 #include <tf/transform_datatypes.h>
+
+
+#include <iostream>
+#include <string>
+#include <iomanip>
+#include <sstream>
+#include <vector>
+#include <fstream>
 
 namespace verification_controller {
     
@@ -29,6 +38,8 @@ namespace verification_controller {
     void starting(const ros::Time& time);
     void update(const ros::Time& time, const ros::Duration& period);
     void stopping(const ros::Time& time);
+    std::vector<float> time_vector();
+    std::vector<float> yaw_vector();
   
   private:
     void OdomCallback(nav_msgs::OdometryConstPtr cmd);
@@ -49,11 +60,15 @@ namespace verification_controller {
 
     // pid
     double radius = 0.2;
+
+    std::string file = "exp1.csv";
     double yaw_desi_ = 0.0;
-    double vel_desi_ = 0.05;
-    //double steer_desi_ = 0.01;
-    //double steer_desi_angle_ = steer_desi_*180/3.14;
-    double steer_desi_angle_ = 6;
+    double steer_desi_angle_ = 6.0;
+    double vel_desi = 0.05;
+
+    double vel_offset = 0.004;
+    double vel_desi_ = vel_desi + vel_offset;
+    double steer_desi_ = steer_desi_angle_*3.14/180;
     double currentVel;
     double currentRoll, currentPitch, currentYaw;
     control_toolbox::Pid pidY;
@@ -68,7 +83,6 @@ namespace verification_controller {
 
     // Node handle
     ros::NodeHandle nhp_;
-  
   };
   PLUGINLIB_EXPORT_CLASS(verification_controller::VerificationController, controller_interface::ControllerBase)
 }

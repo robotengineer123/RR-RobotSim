@@ -45,6 +45,9 @@ bool VerificationController::init(hardware_interface::RobotHW* robot_hw,
 
     pidY.init(ros::NodeHandle(nhp_, "pidY"), false);
 
+    std::vector<float> Time = time_vector();
+    std::vector<float> Yaw = yaw_vector();
+
     return true;
 }
 
@@ -101,9 +104,80 @@ void VerificationController::update(const ros::Time& time, const ros::Duration& 
     r_drive_jh_.setCommand(pid_combined_r);
     l_drive_jh_.setCommand(pid_combined_l);
 
-    r_steer_jh_.setCommand(steer_desi_angle_);
-    l_steer_jh_.setCommand(steer_desi_angle_);
+    r_steer_jh_.setCommand(steer_desi_);
+    l_steer_jh_.setCommand(steer_desi_);
 }
+
+std::vector<float> VerificationController::time_vector()
+{
+    // define variables
+    std::string Time_str, Yaw_str;//variables from file are here
+    std::vector<float> Time;
+    std::vector<float> Yaw;
+
+    //number of lines
+    int i = 0;
+
+    std::ifstream coeff {file}; //opening the file.
+    if (coeff.is_open()) //if the file is open
+    {
+      //ignore first line
+      std::string line;
+      getline(coeff, line);
+
+      while (!coeff.eof()) //while the end of file is NOT reached
+      {
+        //I have 4 sets {alpha, CD, CL, CY} so use 4 getlines
+        getline(coeff, Time_str, ',');
+        Time.push_back(stof(Time_str));
+        getline(coeff, Yaw_str, '\n');
+        Yaw.push_back(stof(Yaw_str));
+        
+        i += 1; //increment number of lines
+      }
+      coeff.close(); //closing the file
+      std::cout << "Number of entries: " << i-1 << std::endl;
+    }
+    else std::cout << "Unable to open file"; //if the file is not open output
+
+    return Time;
+}
+
+std::vector<float> VerificationController::yaw_vector()
+{
+    // define variables
+    std::string Time_str, Yaw_str;//variables from file are here
+    std::vector<float> Time;
+    std::vector<float> Yaw;
+
+    //number of lines
+    int i = 0;
+
+    std::ifstream coeff {file}; //opening the file.
+    if (coeff.is_open()) //if the file is open
+    {
+      //ignore first line
+      std::string line;
+      getline(coeff, line);
+
+      while (!coeff.eof()) //while the end of file is NOT reached
+      {
+        //I have 4 sets {alpha, CD, CL, CY} so use 4 getlines
+        getline(coeff, Time_str, ',');
+        Time.push_back(stof(Time_str));
+        getline(coeff, Yaw_str, '\n');
+        Yaw.push_back(stof(Yaw_str));
+        
+        i += 1; //increment number of lines
+      }
+      coeff.close(); //closing the file
+      std::cout << "Number of entries: " << i-1 << std::endl;
+    }
+    else std::cout << "Unable to open file"; //if the file is not open output
+
+    return Yaw;
+}
+
 void VerificationController::stopping(const ros::Time& time)
 {
     Brake();
