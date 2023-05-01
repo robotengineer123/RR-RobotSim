@@ -38,8 +38,7 @@ namespace verification_controller {
     void starting(const ros::Time& time);
     void update(const ros::Time& time, const ros::Duration& period);
     void stopping(const ros::Time& time);
-    std::vector<float> time_vector();
-    std::vector<float> yaw_vector();
+    long search_closest(const std::vector<float>& sorted_array, float x);
   
   private:
     void OdomCallback(nav_msgs::OdometryConstPtr cmd);
@@ -61,12 +60,14 @@ namespace verification_controller {
     // pid
     double radius = 0.2;
 
-    std::string file = "exp1.csv";
+    std::string file = "/home/mathias/dev/RR-RobotSim/src/verification_controller/src/exp1.csv"; // File containing yaw data to mimic
+    float yaw_start = 30.0;
+
     double yaw_desi_ = 0.0;
-    double steer_desi_angle_ = 6.0;
+    double steer_desi_angle_ = 0.0;
     double vel_desi = 0.05;
 
-    double vel_offset = 0.004;
+    double vel_offset = 0.004; // Velocity offset to reach wanted velocity
     double vel_desi_ = vel_desi + vel_offset;
     double steer_desi_ = steer_desi_angle_*3.14/180;
     double currentVel;
@@ -83,6 +84,75 @@ namespace verification_controller {
 
     // Node handle
     ros::NodeHandle nhp_;
+
+    std::vector<float> time_vector()
+    {
+        // define variables
+        std::string Time_str, Yaw_str;//variables from file are here
+        std::vector<float> Time_;
+
+        //number of lines
+        int i = 0;
+
+        std::ifstream coeff(file); //opening the file.
+        if (coeff.is_open()) //if the file is open
+        {
+          //ignore first line
+          std::string line;
+          getline(coeff, line);
+
+          while (!coeff.eof()) //while the end of file is NOT reached
+          {
+            //2 sets {Time, Yaw} so use 2 getlines
+            getline(coeff, Time_str, ',');
+            Time_.push_back(stof(Time_str));
+            getline(coeff, Yaw_str, '\n');
+            
+            i += 1; //increment number of lines
+          }
+          coeff.close(); //closing the file
+        }
+        else ROS_INFO("Unable to open file");
+
+        return Time_;
+    }
+
+    std::vector<float> yaw_vector()
+    {
+        // define variables
+        std::string Time_str, Yaw_str;//variables from file are here
+
+        std::vector<float> Yaw_;
+
+        //number of lines
+        int i = 0;
+
+        std::ifstream coeff(file); //opening the file.
+        if (coeff.is_open()) //if the file is open
+        {
+          //ignore first line
+          std::string line;
+          getline(coeff, line);
+
+          while (!coeff.eof()) //while the end of file is NOT reached
+          {
+            //2 sets {Time, Yaw} so use 2 getlines
+            getline(coeff, Time_str, ',');
+            getline(coeff, Yaw_str, '\n');
+            Yaw_.push_back(stof(Yaw_str));
+            
+            i += 1; //increment number of lines
+          }
+          coeff.close(); //closing the file
+        }
+        else ROS_INFO("Unable to open file");
+
+        return Yaw_;
+    }
+
+    std::vector<float> Time = time_vector();
+    std::vector<float> Yaw = yaw_vector();
+
   };
   PLUGINLIB_EXPORT_CLASS(verification_controller::VerificationController, controller_interface::ControllerBase)
 }

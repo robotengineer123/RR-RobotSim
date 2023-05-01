@@ -30,23 +30,31 @@ bool VerificationController::init(hardware_interface::RobotHW* robot_hw,
 
     nhp_ = ros::NodeHandle("~");
 
+    //if (!nhp_.hasParam("pidY/p"))
+    //    nhp_.setParam("pidY/p", 100.0);
+    //if (!nhp_.hasParam("pidY/i"))
+    //    nhp_.setParam("pidY/i", 10.0);
+    //if (!nhp_.hasParam("pidY/d"))
+    //    nhp_.setParam("pidY/d", 20.0);
+    //if (!nhp_.hasParam("pidY/i_clamp_min"))
+    //    nhp_.setParam("pidY/i_clamp_min", -1.5);
+    //if (!nhp_.hasParam("pidY/i_clamp_max"))
+    //    nhp_.setParam("pidY/i_clamp_max", 1.5);
+
     if (!nhp_.hasParam("pidY/p"))
-        nhp_.setParam("pidY/p", 100.0);
+        nhp_.setParam("pidY/p", 1.0);
     if (!nhp_.hasParam("pidY/i"))
-        nhp_.setParam("pidY/i", 10.0);
+        nhp_.setParam("pidY/i", 0.5);
     if (!nhp_.hasParam("pidY/d"))
-        nhp_.setParam("pidY/d", 20.0);
+        nhp_.setParam("pidY/d", 0.5);
     if (!nhp_.hasParam("pidY/i_clamp_min"))
-        nhp_.setParam("pidY/i_clamp_min", -1.5);
+        nhp_.setParam("pidY/i_clamp_min", -0.3);
     if (!nhp_.hasParam("pidY/i_clamp_max"))
-        nhp_.setParam("pidY/i_clamp_max", 1.5);
+        nhp_.setParam("pidY/i_clamp_max", 0.3);
 
     nhp_.setParam("publish_state", true);
 
     pidY.init(ros::NodeHandle(nhp_, "pidY"), false);
-
-    std::vector<float> Time = time_vector();
-    std::vector<float> Yaw = yaw_vector();
 
     return true;
 }
@@ -68,7 +76,7 @@ void VerificationController::starting(const ros::Time& time)
     odom_buf_.initRT(odom_cmd);
 }
 
-void VerificationController::update(const ros::Time& time, const ros::Duration& period)
+voidVerific ationController::update(const ros::Time& time, const ros::Duration& period)
 {
     odom = *(odom_buf_.readFromRT());
 
@@ -82,6 +90,14 @@ void VerificationController::update(const ros::Time& time, const ros::Duration& 
     m.getRPY(currentRoll, currentPitch, currentYaw);
     
     currentVel = odom.twist.twist.linear.x;
+
+    // After yaw_start seconds use yaw from experimental results
+    if ((time.toSec() > yaw_start) && (time.toSec() < Time[Time.size() - 1]))
+    {
+        float yaw_time = time.toSec() - yaw_start;
+        long idx_closest = search_closest(Time, yaw_time);
+        yaw_desi_ = Yaw[idx_closest];
+    }
 
     // PID 
     double yaw = pidY.updatePid(currentYaw - yaw_desi_, time - last_time);
@@ -108,74 +124,28 @@ void VerificationController::update(const ros::Time& time, const ros::Duration& 
     l_steer_jh_.setCommand(steer_desi_);
 }
 
-std::vector<float> VerificationController::time_vector()
+// Search for closest value in vector and output its index
+long VerificationController::search_closest(const std::vector<float>& sorted_array, float x)
 {
-    // define variables
-    std::string Time_str, Yaw_str;//variables from file are here
-    std::vector<float> Time;
-    std::vector<float> Yaw;
+    auto iter_geq = std::lower_bound(
+        sorted_array.begin(), 
+        sorted_array.end(), 
+        x
+    );
 
-    //number of lines
-    int i = 0;
-
-    std::ifstream coeff {file}; //opening the file.
-    if (coeff.is_open()) //if the file is open
-    {
-      //ignore first line
-      std::string line;
-      getline(coeff, line);
-
-      while (!coeff.eof()) //while the end of file is NOT reached
-      {
-        //I have 4 sets {alpha, CD, CL, CY} so use 4 getlines
-        getline(coeff, Time_str, ',');
-        Time.push_back(stof(Time_str));
-        getline(coeff, Yaw_str, '\n');
-        Yaw.push_back(stof(Yaw_str));
-        
-        i += 1; //increment number of lines
-      }
-      coeff.close(); //closing the file
-      std::cout << "Number of entries: " << i-1 << std::endl;
+    if (iter_geq == sorted_array.begin()) {
+        return 0;
     }
-    else std::cout << "Unable to open file"; //if the file is not open output
 
-    return Time;
-}
+    float a = *(iter_geq - 1);
+    float b = *(iter_geq);
 
-std::vector<float> VerificationController::yaw_vector()
-{
-    // define variables
-    std::string Time_str, Yaw_str;//variables from file are here
-    std::vector<float> Time;
-    std::vector<float> Yaw;
-
-    //number of lines
-    int i = 0;
-
-    std::ifstream coeff {file}; //opening the file.
-    if (coeff.is_open()) //if the file is open
-    {
-      //ignore first line
-      std::string line;
-      getline(coeff, line);
-
-      while (!coeff.eof()) //while the end of file is NOT reached
-      {
-        //I have 4 sets {alpha, CD, CL, CY} so use 4 getlines
-        getline(coeff, Time_str, ',');
-        Time.push_back(stof(Time_str));
-        getline(coeff, Yaw_str, '\n');
-        Yaw.push_back(stof(Yaw_str));
-        
-        i += 1; //increment number of lines
-      }
-      coeff.close(); //closing the file
-      std::cout << "Number of entries: " << i-1 << std::endl;
+    if (std::fabs(x - a) < std::fabs(x - b)) {
+        return iter_geq - sorted_array.begin() - 1;
     }
-    else std::cout << "Unable to open file"; //if the file is not open output
 
-    return Yaw;
+    return iter_geq - sorted_array.begin();
+
 }
 
 void VerificationController::stopping(const ros::Time& time)
