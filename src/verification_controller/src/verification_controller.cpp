@@ -44,9 +44,9 @@ bool VerificationController::init(hardware_interface::RobotHW* robot_hw,
     if (!nhp_.hasParam("pidY/p"))
         nhp_.setParam("pidY/p", 1.0);
     if (!nhp_.hasParam("pidY/i"))
-        nhp_.setParam("pidY/i", 0.5);
+        nhp_.setParam("pidY/i", 1.0);
     if (!nhp_.hasParam("pidY/d"))
-        nhp_.setParam("pidY/d", 0.5);
+        nhp_.setParam("pidY/d", 1.0);
     if (!nhp_.hasParam("pidY/i_clamp_min"))
         nhp_.setParam("pidY/i_clamp_min", -0.3);
     if (!nhp_.hasParam("pidY/i_clamp_max"))

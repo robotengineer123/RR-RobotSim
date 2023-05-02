@@ -61,12 +61,12 @@ namespace verification_controller {
     double radius = 0.2;
 
     std::string file = "/home/mathias/dev/RR-RobotSim/src/verification_controller/src/exp1.csv"; // File containing yaw data to mimic
-    float yaw_start = 30.0;
-
     double yaw_desi_ = 0.0;
     double steer_desi_angle_ = 0.0;
-    double vel_desi = 0.05;
 
+    float yaw_start = 10.0;
+
+    double vel_desi = 0.05;
     double vel_offset = 0.004; // Velocity offset to reach wanted velocity
     double vel_desi_ = vel_desi + vel_offset;
     double steer_desi_ = steer_desi_angle_*3.14/180;
