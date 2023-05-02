@@ -76,7 +76,7 @@ void VerificationController::starting(const ros::Time& time)
     odom_buf_.initRT(odom_cmd);
 }
 
-voidVerific ationController::update(const ros::Time& time, const ros::Duration& period)
+void VerificationController::update(const ros::Time& time, const ros::Duration& period)
 {
     odom = *(odom_buf_.readFromRT());
 
