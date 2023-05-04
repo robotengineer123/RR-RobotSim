@@ -30,27 +30,49 @@ bool VerificationController::init(hardware_interface::RobotHW* robot_hw,
 
     nhp_ = ros::NodeHandle("~");
 
-    //if (!nhp_.hasParam("pidY/p"))
-    //    nhp_.setParam("pidY/p", 100.0);
-    //if (!nhp_.hasParam("pidY/i"))
-    //    nhp_.setParam("pidY/i", 10.0);
-    //if (!nhp_.hasParam("pidY/d"))
-    //    nhp_.setParam("pidY/d", 20.0);
-    //if (!nhp_.hasParam("pidY/i_clamp_min"))
-    //    nhp_.setParam("pidY/i_clamp_min", -1.5);
-    //if (!nhp_.hasParam("pidY/i_clamp_max"))
-    //    nhp_.setParam("pidY/i_clamp_max", 1.5);
-
     if (!nhp_.hasParam("pidY/p"))
-        nhp_.setParam("pidY/p", 1.0);
+        nhp_.setParam("pidY/p", 100.0);
     if (!nhp_.hasParam("pidY/i"))
-        nhp_.setParam("pidY/i", 1.0);
+        nhp_.setParam("pidY/i", 10.0);
     if (!nhp_.hasParam("pidY/d"))
-        nhp_.setParam("pidY/d", 1.0);
+        nhp_.setParam("pidY/d", 20.0);
     if (!nhp_.hasParam("pidY/i_clamp_min"))
-        nhp_.setParam("pidY/i_clamp_min", -0.3);
+        nhp_.setParam("pidY/i_clamp_min", -1.5);
     if (!nhp_.hasParam("pidY/i_clamp_max"))
-        nhp_.setParam("pidY/i_clamp_max", 0.3);
+        nhp_.setParam("pidY/i_clamp_max", 1.5);
+
+    //if (!nhp_.hasParam("pidY/p"))
+    //    nhp_.setParam("pidY/p", 1.0);
+    //if (!nhp_.hasParam("pidY/i"))
+    //    nhp_.setParam("pidY/i", 1.0);
+    //if (!nhp_.hasParam("pidY/d"))
+    //    nhp_.setParam("pidY/d", 1.0);
+    // if (!nhp_.hasParam("pidY/i_clamp_min"))
+    //     nhp_.setParam("pidY/i_clamp_min", -0.3);
+    // if (!nhp_.hasParam("pidY/i_clamp_max"))
+    //     nhp_.setParam("pidY/i_clamp_max", 0.3);
+
+    // if (!nhp_.hasParam("pidV/p"))
+    //     nhp_.setParam("pidV/p", 35.0);
+    // if (!nhp_.hasParam("pidV/i"))
+    //     nhp_.setParam("pidV/i", 25.0);
+    // if (!nhp_.hasParam("pidV/d"))
+    //     nhp_.setParam("pidV/d", 5.5);
+    // if (!nhp_.hasParam("pidV/i_clamp_min"))
+    //     nhp_.setParam("pidV/i_clamp_min", -2.5);
+    // if (!nhp_.hasParam("pidV/i_clamp_max"))
+    //     nhp_.setParam("pidV/i_clamp_max", 2.5);
+
+    // if (!nhp_.hasParam("pidY/p"))
+    //     nhp_.setParam("pidY/p", 10.5);
+    // if (!nhp_.hasParam("pidY/i"))
+    //     nhp_.setParam("pidY/i", 1.5);
+    // if (!nhp_.hasParam("pidY/d"))
+    //     nhp_.setParam("pidY/d", 1.5);
+    // if (!nhp_.hasParam("pidY/i_clamp_min"))
+    //     nhp_.setParam("pidY/i_clamp_min", -0.3);
+    // if (!nhp_.hasParam("pidY/i_clamp_max"))
+    //     nhp_.setParam("pidY/i_clamp_max", 0.3);
 
     nhp_.setParam("publish_state", true);
 
@@ -92,15 +114,18 @@ void VerificationController::update(const ros::Time& time, const ros::Duration& 
     currentVel = odom.twist.twist.linear.x;
 
     // After yaw_start seconds use yaw from experimental results
-    if ((time.toSec() > yaw_start) && (time.toSec() < Time[Time.size() - 1]))
+    if (time.toSec() > yaw_start)
     {
         float yaw_time = time.toSec() - yaw_start;
         long idx_closest = search_closest(Time, yaw_time);
-        yaw_desi_ = Yaw[idx_closest];
+        yaw_desi_ = Yaw[idx_closest]*3.14/180;
     }
 
     // PID 
     double yaw = pidY.updatePid(currentYaw - yaw_desi_, time - last_time);
+    
+    // double velocity_r = pidV.updatePid(currentVel - vel_desi_, time - last_time);
+    // double velocity_l = pidV.updatePid(currentVel - vel_desi_, time - last_time); 
     
     double velocity_r = vel_desi_/radius;
     double velocity_l = vel_desi_/radius;

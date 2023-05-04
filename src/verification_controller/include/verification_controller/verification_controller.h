@@ -21,6 +21,8 @@
 #include <vector>
 #include <fstream>
 
+#include <functional> 
+
 namespace verification_controller {
     
   class VerificationController 
@@ -64,7 +66,7 @@ namespace verification_controller {
     double yaw_desi_ = 0.0;
     double steer_desi_angle_ = 0.0;
 
-    float yaw_start = 10.0;
+    float yaw_start = 30.0;
 
     double vel_desi = 0.05;
     double vel_offset = 0.004; // Velocity offset to reach wanted velocity
@@ -73,6 +75,7 @@ namespace verification_controller {
     double currentVel;
     double currentRoll, currentPitch, currentYaw;
     control_toolbox::Pid pidY;
+    control_toolbox::Pid pidV;
     ros::Time last_time = ros::Time::now();
     
     // odometry
