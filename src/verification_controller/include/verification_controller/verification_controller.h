@@ -62,7 +62,7 @@ namespace verification_controller {
     // pid
     double radius = 0.2;
 
-    std::string file = "/home/mathias/dev/RR-RobotSim/src/verification_controller/src/exp1.csv"; // File containing yaw data to mimic
+    std::string file = "/home/mathias/dev/RR-RobotSim/src/verification_controller/src/exp2.csv"; // File containing yaw data to mimic
     double yaw_desi_ = 0.0;
     double steer_desi_angle_ = 0.0;
 
