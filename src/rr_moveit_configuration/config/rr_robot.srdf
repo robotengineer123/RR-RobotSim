@@ -45,6 +45,15 @@
         <joint name="wrist_2_joint" value="-2.08361" />
         <joint name="wrist_3_joint" value="-0.491" />
     </group_state>
+    <group_state name="le_scan" group="arm">
+        <joint name="elbow_joint" value="1.81" />
+        <joint name="shoulder_lift_joint" value="-0.79" />
+        <joint name="shoulder_pan_joint" value="-1.36" />
+        <joint name="wrist_1_joint" value="-2.67" />
+        <joint name="wrist_2_joint" value="-1.57" />
+        <joint name="wrist_3_joint" value="2.98" />
+    </group_state>
+    
     <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
     <virtual_joint name="virtual_joint" type="fixed" parent_frame="base" child_link="world" />
     <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
