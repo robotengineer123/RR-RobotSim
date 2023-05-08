@@ -6,3 +6,4 @@
 logs
 .catkin_tools
 *.csv
+*.png
