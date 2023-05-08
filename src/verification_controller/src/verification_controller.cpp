@@ -41,39 +41,6 @@ bool VerificationController::init(hardware_interface::RobotHW* robot_hw,
     if (!nhp_.hasParam("pidY/i_clamp_max"))
         nhp_.setParam("pidY/i_clamp_max", 1.5);
 
-    //if (!nhp_.hasParam("pidY/p"))
-    //    nhp_.setParam("pidY/p", 1.0);
-    //if (!nhp_.hasParam("pidY/i"))
-    //    nhp_.setParam("pidY/i", 1.0);
-    //if (!nhp_.hasParam("pidY/d"))
-    //    nhp_.setParam("pidY/d", 1.0);
-    // if (!nhp_.hasParam("pidY/i_clamp_min"))
-    //     nhp_.setParam("pidY/i_clamp_min", -0.3);
-    // if (!nhp_.hasParam("pidY/i_clamp_max"))
-    //     nhp_.setParam("pidY/i_clamp_max", 0.3);
-
-    // if (!nhp_.hasParam("pidV/p"))
-    //     nhp_.setParam("pidV/p", 35.0);
-    // if (!nhp_.hasParam("pidV/i"))
-    //     nhp_.setParam("pidV/i", 25.0);
-    // if (!nhp_.hasParam("pidV/d"))
-    //     nhp_.setParam("pidV/d", 5.5);
-    // if (!nhp_.hasParam("pidV/i_clamp_min"))
-    //     nhp_.setParam("pidV/i_clamp_min", -2.5);
-    // if (!nhp_.hasParam("pidV/i_clamp_max"))
-    //     nhp_.setParam("pidV/i_clamp_max", 2.5);
-
-    // if (!nhp_.hasParam("pidY/p"))
-    //     nhp_.setParam("pidY/p", 10.5);
-    // if (!nhp_.hasParam("pidY/i"))
-    //     nhp_.setParam("pidY/i", 1.5);
-    // if (!nhp_.hasParam("pidY/d"))
-    //     nhp_.setParam("pidY/d", 1.5);
-    // if (!nhp_.hasParam("pidY/i_clamp_min"))
-    //     nhp_.setParam("pidY/i_clamp_min", -0.3);
-    // if (!nhp_.hasParam("pidY/i_clamp_max"))
-    //     nhp_.setParam("pidY/i_clamp_max", 0.3);
-
     nhp_.setParam("publish_state", true);
 
     pidY.init(ros::NodeHandle(nhp_, "pidY"), false);
@@ -123,9 +90,6 @@ void VerificationController::update(const ros::Time& time, const ros::Duration& 
 
     // PID 
     double yaw = pidY.updatePid(currentYaw - yaw_desi_, time - last_time);
-    
-    // double velocity_r = pidV.updatePid(currentVel - vel_desi_, time - last_time);
-    // double velocity_l = pidV.updatePid(currentVel - vel_desi_, time - last_time); 
     
     double velocity_r = vel_desi_/radius;
     double velocity_l = vel_desi_/radius;
