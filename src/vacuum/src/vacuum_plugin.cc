@@ -68,7 +68,7 @@ public:
         // Compression of vacuum sheet
         d_v = t - vac_pose.Z();
 
-        // Normal force from vacuum sheet
+        // Normal force to compress vacuum sheet
         N_v = k_v*d_v;
 
         // Force compressing suspension
@@ -77,6 +77,11 @@ public:
         // Friction force
         F = mu*N_v;
         
+        // Friction moments
+        M_edge = a_edge*F*N_side/N;
+        M_center = a_center*F*N_center/N;
+        M_F = M_edge + M_center;
+
         // Get resultant force on robot with no friction force
         ignition::math::Vector3d F_res = dummy_link->RelativeForce();
         ignition::math::Vector3d M_res = dummy_link->RelativeTorque();
@@ -100,12 +105,12 @@ public:
         if (std::abs(M_res.Z()) == 0.0) {
             dummy_link->SetTorque(ignition::math::Vector3d(0, 0, 0));
         }
-        else if (std::abs(M_res.Z()) < F*m_a) {
+        else if (std::abs(M_res.Z()) < M_F) {
             dummy_link->SetTorque(ignition::math::Vector3d(0, 0, -M_res.Z()));
         } 
         else {
             sign_M_res = (M_res.Z() > 0) - (M_res.Z() < 0);
-            dummy_link->SetTorque(ignition::math::Vector3d(0, 0, -sign_M_res*F*m_a));
+            dummy_link->SetTorque(ignition::math::Vector3d(0, 0, -sign_M_res*M_F));
         }
 
     }
@@ -193,7 +198,11 @@ private:
     // Compression of vacuum sheet
     double d_v;
     // Sheet moment arm
-    double m_a = 0.175;
+    double a_edge = 0.269385;
+    double a_center = 0.188530;
+    double M_edge;
+    double M_center;
+    double M_F;
     // Sign of M_res
     int sign_M_res;
     // Links
