@@ -79,14 +79,13 @@ public:
         
         // Get resultant force on robot with no friction force
         ignition::math::Vector3d F_res = dummy_link->RelativeForce();
+        ignition::math::Vector3d M_res = dummy_link->RelativeTorque();
         
         // Check if all vacuum is off -> set forces to zero
         // Check if resultant force in plane is below the friction force -> Stand still
         F_res_plane = std::sqrt(std::pow(F_res.X(), 2) + std::pow(F_res.Y(), 2));
 
-        //if ((not center_vac) && (not edge_vac)) {
-        //    model->GetLink("dummy")->SetForce(ignition::math::Vector3d(0, 0, 0));
-        //}
+        // Set force
         if (F_res_plane == 0.0) {
             dummy_link->SetForce(ignition::math::Vector3d(0, 0, -N_s));
         }
@@ -95,6 +94,18 @@ public:
         } 
         else {
             dummy_link->SetForce(ignition::math::Vector3d(-F*F_res.X()/F_res_plane, -F*F_res.Y()/F_res_plane, -N_s));
+        }
+
+        // Set moment
+        if (std::abs(M_res.Z()) == 0.0) {
+            dummy_link->SetTorque(ignition::math::Vector3d(0, 0, 0));
+        }
+        else if (std::abs(M_res.Z()) < F*m_a) {
+            dummy_link->SetTorque(ignition::math::Vector3d(0, 0, -M_res.Z()));
+        } 
+        else {
+            sign_M_res = (M_res.Z() > 0) - (M_res.Z() < 0);
+            dummy_link->SetTorque(ignition::math::Vector3d(0, 0, -sign_M_res*F*m_a));
         }
 
     }
@@ -181,6 +192,10 @@ private:
     double k_v;
     // Compression of vacuum sheet
     double d_v;
+    // Sheet moment arm
+    double m_a = 0.175;
+    // Sign of M_res
+    int sign_M_res;
     // Links
     physics::LinkPtr vacuum_link;
     physics::LinkPtr dummy_link;
