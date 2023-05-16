@@ -138,7 +138,7 @@ def vacuumForce(N_s, F, F_le, F_te, F_yf, F_xf, F_yr, F_g, gamma_le, gamma_te, d
     import numpy as np
 
     # Forces
-    F_res_x = F_le*np.cos(gamma_le) + F_te*np.cos(gamma_te) + F_yf*np.sin(delta_f) + F_xf - F_g*np.cos(gamma)
+    F_res_x = F_le*np.cos(gamma_le) + F_te*np.cos(gamma_te) + F_xf - F_g*np.cos(gamma)
     F_res_y = F_le*np.sin(gamma_le) - F_te*np.sin(gamma_te) + F_yf + F_yr + F_g*np.sin(gamma)
     F_res_plane = np.sqrt(F_res_x**2 + F_res_y**2)
 
@@ -150,9 +150,9 @@ def vacuumForce(N_s, F, F_le, F_te, F_yf, F_xf, F_yr, F_g, gamma_le, gamma_te, d
         F_Vy = -F*F_res_y/F_res_plane
 
     # Moments
-    M_res = l_f*(F_yf + F_le*np.sin(gamma_le) - F_te*np.sin(gamma_te)) + l_r*F_yr + w/2*(-F_le*np.cos(gamma_le) + F_te*np.cos(gamma_te))
+    M_res = l_f*(F_yf + F_le*np.sin(gamma_le) - F_te*np.sin(gamma_te)) + l_r*F_yr + w/2*(F_te*np.cos(gamma_te) -F_le*np.cos(gamma_le))
 
-    M_friction = 0.18*F
+    M_friction = 0.305*F
 
     if M_res<M_friction:
         M_V = -M_res
@@ -182,8 +182,8 @@ def winchAngles(X, Y, gamma, w, l_f):
     le_attach = [30, 2]
     te_attach = [30, -2]
 
-    gamma_le = np.arctan2(le_vec[1],le_vec[0]) - np.arctan2(le_attach[1],le_attach[0])
-    gamma_te = np.arctan2(te_attach[1],te_attach[0]) - np.arctan2(te_vec[1],te_vec[0])
+    gamma_le = np.arctan2(le_attach[1]-le_vec[1],le_attach[0]-le_vec[0]) - gamma
+    gamma_te = -(np.arctan2(te_attach[1]-te_vec[1],te_attach[0]-te_vec[0])) + gamma
 
     return gamma_le, gamma_te, X_le, Y_le, X_te, Y_te, le_attach, te_attach
 
