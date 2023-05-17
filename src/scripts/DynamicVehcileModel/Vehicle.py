@@ -63,10 +63,9 @@ def VehicleData():
     N_rs = l_f*F_g/L
 
     # 1 wheel
-    #F_yf1 = np.array([0,400])
     F_yf1 = np.array([0,801])
     #F_yf1 = np.array([0,100])
-    alpha_f1 = np.array([0,-1])*np.pi/18
+    alpha_f1 = np.array([0,-1])*np.pi/180
 
     # Cornering stiffness for 1 wheel [N/rad]
     C_alpha_f = -(F_yf1[0]-F_yf1[1])/(alpha_f1[0]-alpha_f1[1])
@@ -80,8 +79,11 @@ def VehicleData():
     
     # Wheel radius
     r_w = 0.0508
+
+    # Relaxation length
+    b = r_w
     
-    return L, M, g, F_g, I_zz, CG_z, CG_x, CG_y, l_f, l_r, N_fs, N_rs, C_alpha_f, C_alpha_r, K, w, r_w
+    return L, M, g, F_g, I_zz, CG_z, CG_x, CG_y, l_f, l_r, N_fs, N_rs, C_alpha_f, C_alpha_r, K, w, r_w, b
 
 
 # Linear tire model
@@ -209,12 +211,12 @@ def pid(prev_error_vel, error_vel, integral_vel, prev_error_yaw, error_yaw, inte
     return F_le, F_te
 
 # Get data from a steer
-def steerFunc(delta_f, vel_d, yaw_d, N_s, F, t_interval, t_span, tire_model='nonlinear', winch=False, mu=1, Yzero=[0,0,0,0,0,0]):
+def steerFunc(delta_f, vel_d, yaw_d, N_s, F, t_interval, t_span, tire_model='nonlinear', winch=False, mu=1, Yzero=[0,0,0,0,0,0,0,0]):
     from scipy.integrate import solve_ivp
     from scipy.interpolate import interp2d
     import numpy as np
     
-    L, M, g, F_g, I_zz, CG_z, CG_x, CG_y, l_f, l_r, N_fs, N_rs, C_alpha_f, C_alpha_r, K, w, r_w = VehicleData()
+    L, M, g, F_g, I_zz, CG_z, CG_x, CG_y, l_f, l_r, N_fs, N_rs, C_alpha_f, C_alpha_r, K, w, r_w, b = VehicleData()
     
     # Rear stearing
     delta_r = 0
@@ -222,6 +224,7 @@ def steerFunc(delta_f, vel_d, yaw_d, N_s, F, t_interval, t_span, tire_model='non
     if not(winch):
         N_f = N_s/2
         N_r = N_s/2
+        del Yzero[5:7]
     else:
         N_f = N_s/2
         N_r = N_s/2
@@ -234,12 +237,19 @@ def steerFunc(delta_f, vel_d, yaw_d, N_s, F, t_interval, t_span, tire_model='non
 
     # Define function to take the ODE system and time interval
     def dYdt(t, Y):
-        y1,y2,y3,y4,y5,y6 = Y
+        if winch:
+            y1,y2,y3,y4,y5,y6,y7,y8 = Y
+        else:
+            y1,y2,y3,y4,y5,y6 = Y
 
         # Slip angles
-        alpha_f = (y2 + l_f*y3)/y1  - delta_f(t)
-        alpha_r = (y2 - l_r*y3)/y1
-        
+        if winch:
+            alpha_f = np.arctan(y7)
+            alpha_r = np.arctan(y8)
+        else:
+            alpha_f = (y2 + l_f*y3)/y1  - delta_f(t)
+            alpha_r = (y2 - l_r*y3)/y1
+
         # Tire forces
         if tire_model == 'linear':
             F_tyf, skid_f = LTire(alpha_f, mu, N_f, C_alpha_f)
@@ -287,7 +297,12 @@ def steerFunc(delta_f, vel_d, yaw_d, N_s, F, t_interval, t_span, tire_model='non
             dy5dt = y1*np.cos(y4) - y2*np.sin(y4)
             # dY
             dy6dt = y1*np.sin(y4) + y2*np.cos(y4)
-            return [dy1dt, dy2dt, dy3dt, dy4dt, dy5dt, dy6dt]
+            # dtan(alpha_f)
+            dy7dt = (y2 + l_f*y3)/b - np.abs(y1)/b*y7
+            # dtan(alpha_r)
+            dy8dt = (y2 - l_r*y3)/b - np.abs(y1)/b*y8
+
+            return [dy1dt,dy2dt,dy3dt,dy4dt,dy5dt,dy6dt,dy7dt,dy8dt]
         
         else:
             # dv_x
@@ -302,14 +317,16 @@ def steerFunc(delta_f, vel_d, yaw_d, N_s, F, t_interval, t_span, tire_model='non
             dy5dt = y1*np.cos(y4) - y2*np.sin(y4)
             # dY
             dy6dt = y1*np.sin(y4) + y2*np.cos(y4)
-            return [dy1dt, dy2dt, dy3dt, dy4dt, dy5dt, dy6dt]
+
+            return [dy1dt,dy2dt,dy3dt,dy4dt,dy5dt,dy6dt]
 
     # Termination condition
     def vehicle_stopped(t, Y): return Y[0] - 0.0
     vehicle_stopped.terminal = True
     
     # Solve system
-    solution = solve_ivp(dYdt, t_interval, Yzero, events=vehicle_stopped, t_eval=t_span)
+    #solution = solve_ivp(dYdt, t_interval, Yzero, events=vehicle_stopped, t_eval=t_span)
+    solution = solve_ivp(dYdt, t_interval, Yzero, t_eval=t_span)
 
     # Solution variables
     #if winch:

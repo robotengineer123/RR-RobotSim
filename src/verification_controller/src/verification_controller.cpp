@@ -88,9 +88,9 @@ void VerificationController::update(const ros::Time& time, const ros::Duration& 
         long idx_closest = search_closest(Time, yaw_time);
         yaw_desi_ = Yaw[idx_closest]*3.14/180;
 
-        long idx_closest_vac = search_closest(Time_vac, yaw_time);
-        edge_vac_desi_ = Edge_vac[idx_closest_vac];
-        center_vac_desi_ = Center_vac[idx_closest_vac];
+        //long idx_closest_vac = search_closest(Time_vac, yaw_time);
+        //edge_vac_desi_ = Edge_vac[idx_closest_vac];
+        //center_vac_desi_ = Center_vac[idx_closest_vac];
 
     }
 
@@ -110,8 +110,8 @@ void VerificationController::update(const ros::Time& time, const ros::Duration& 
     yaw_pub.publish(currentYawMsg);
     currentVelMsg.data = currentVel;
     velX_pub.publish(currentVelMsg);
-    vac_msg.data = "\n  edge_vacuum: VAC " + std::to_string(edge_vac_desi_) + "%\n  center_vacuum: VAC " + std::to_string(center_vac_desi_) + "%";
-    vac_pub.publish(vac_msg);
+    //vac_msg.data = "\n  edge_vacuum: VAC " + std::to_string(edge_vac_desi_) + "%\n  center_vacuum: VAC " + std::to_string(center_vac_desi_) + "%";
+    //vac_pub.publish(vac_msg);
 
     // Set commands
     r_drive_jh_.setCommand(pid_combined_r);
