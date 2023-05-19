@@ -189,6 +189,7 @@ def winchAngles(X, Y, gamma, w, l_f):
 
     return gamma_le, gamma_te, X_le, Y_le, X_te, Y_te, le_attach, te_attach
 
+
 def pid(prev_error_vel, error_vel, integral_vel, prev_error_yaw, error_yaw, integral_yaw):
 
     kp_vel = 10000
@@ -210,8 +211,19 @@ def pid(prev_error_vel, error_vel, integral_vel, prev_error_yaw, error_yaw, inte
 
     return F_le, F_te
 
+
+def find_nearest(array,value):
+    import math
+    import numpy as np
+    idx = np.searchsorted(array, value, side="left")
+    if idx > 0 and (idx == len(array) or math.fabs(value - array[idx-1]) < math.fabs(value - array[idx])):
+        return idx-1
+    else:
+        return idx
+
+
 # Get data from a steer
-def steerFunc(delta_f, vel_d, yaw_d, N_s, F, t_interval, t_span, tire_model='nonlinear', winch=False, mu=1, Yzero=[0,0,0,0,0,0,0,0]):
+def steerFunc(delta_f, vel_d, yaw_d, N_s, F, t_interval, t_span, yaw_file, time_vec, yaw_vec, tire_model='nonlinear', winch=False, mu=1, Yzero=[0,0,0,0,0,0,0,0]):
     from scipy.integrate import solve_ivp
     from scipy.interpolate import interp2d
     import numpy as np
@@ -233,6 +245,8 @@ def steerFunc(delta_f, vel_d, yaw_d, N_s, F, t_interval, t_span, tire_model='non
         vel = [Yzero[0]]
         integral_yaw = []
         yaw = [Yzero[3]]
+        if yaw_file:
+            yaw_desired_lst = [Yzero[3]]
     
 
     # Define function to take the ODE system and time interval
@@ -269,10 +283,21 @@ def steerFunc(delta_f, vel_d, yaw_d, N_s, F, t_interval, t_span, tire_model='non
             prev_error_vel = vel_d(t-dt) - vel[-1]
             error_vel = vel_d(t) - y1
             integral_vel.append(error_vel)
-            
-            prev_error_yaw = yaw_d(t-dt) - yaw[-1]
-            error_yaw = yaw_d(t) - y4
-            integral_yaw.append(error_yaw)
+
+            if yaw_file:
+                idx = find_nearest(time_vec, t)
+                yaw_desired = yaw_vec[idx]
+
+                prev_error_yaw = yaw_desired_lst[-1] - yaw[-1]
+                error_yaw = yaw_desired - y4
+                integral_yaw.append(error_yaw)
+
+                yaw_desired_lst.append(yaw_desired)
+
+            else:
+                prev_error_yaw = yaw_d(t-dt) - yaw[-1]
+                error_yaw = yaw_d(t) - y4
+                integral_yaw.append(error_yaw)
             
             F_le, F_te = pid(prev_error_vel, error_vel, integral_vel, prev_error_yaw, error_yaw, integral_yaw)
             
@@ -336,7 +361,7 @@ def steerFunc(delta_f, vel_d, yaw_d, N_s, F, t_interval, t_span, tire_model='non
     gamma = solution.y[3,:] # y4 = yaw
     X = solution.y[4,:] # y5 = X position
     Y = solution.y[5,:] # y6 = Y position
-    
+
     # Other variables
     t_span = solution.t # time span of solution
     beta = np.arctan(v_y/v_x) #side slip angle
@@ -388,9 +413,13 @@ def steerFunc(delta_f, vel_d, yaw_d, N_s, F, t_interval, t_span, tire_model='non
     # Find tire coordinates
     X_f, Y_f, X_r, Y_r = findTire(gamma, l_f, l_r, X, Y)
 
-
     gamma_le, gamma_te, X_le, Y_le, X_te, Y_te, le_attach, te_attach = winchAngles(X, Y, gamma, w, l_f)
     
+    # Map position to arm base
+    #cg_to_arm = l_r-0.15
+    #X = X - cg_to_arm*np.cos(gamma)
+    #Y = Y - cg_to_arm*np.sin(gamma)
+
     # Pack values
     F_ty = [F_tyf, F_tyr]
     F_y = [F_yf, F_yr]
