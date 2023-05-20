@@ -63,7 +63,8 @@ def VehicleData():
     N_rs = l_f*F_g/L
 
     # 1 wheel
-    F_yf1 = np.array([0,400])
+    F_yf1 = np.array([0,801])
+    #F_yf1 = np.array([0,100])
     alpha_f1 = np.array([0,-1])*np.pi/180
 
     # Cornering stiffness for 1 wheel [N/rad]
@@ -78,8 +79,11 @@ def VehicleData():
     
     # Wheel radius
     r_w = 0.0508
+
+    # Relaxation length
+    b = r_w
     
-    return L, M, g, F_g, I_zz, CG_z, CG_x, CG_y, l_f, l_r, N_fs, N_rs, C_alpha_f, C_alpha_r, K, w, r_w
+    return L, M, g, F_g, I_zz, CG_z, CG_x, CG_y, l_f, l_r, N_fs, N_rs, C_alpha_f, C_alpha_r, K, w, r_w, b
 
 
 # Linear tire model
@@ -136,7 +140,7 @@ def vacuumForce(N_s, F, F_le, F_te, F_yf, F_xf, F_yr, F_g, gamma_le, gamma_te, d
     import numpy as np
 
     # Forces
-    F_res_x = F_le*np.cos(gamma_le) + F_te*np.cos(gamma_te) + F_yf*np.sin(delta_f) + F_xf - F_g*np.cos(gamma)
+    F_res_x = F_le*np.cos(gamma_le) + F_te*np.cos(gamma_te) + F_xf - F_g*np.cos(gamma)
     F_res_y = F_le*np.sin(gamma_le) - F_te*np.sin(gamma_te) + F_yf + F_yr + F_g*np.sin(gamma)
     F_res_plane = np.sqrt(F_res_x**2 + F_res_y**2)
 
@@ -148,9 +152,9 @@ def vacuumForce(N_s, F, F_le, F_te, F_yf, F_xf, F_yr, F_g, gamma_le, gamma_te, d
         F_Vy = -F*F_res_y/F_res_plane
 
     # Moments
-    M_res = l_f*(F_yf + F_le*np.sin(gamma_le) - F_te*np.sin(gamma_te)) + l_r*F_yr + w/2*(-F_le*np.cos(gamma_le) + F_te*np.cos(gamma_te))
+    M_res = l_f*(F_yf + F_le*np.sin(gamma_le) - F_te*np.sin(gamma_te)) + l_r*F_yr + w/2*(F_te*np.cos(gamma_te) -F_le*np.cos(gamma_le))
 
-    M_friction = 0.18*F
+    M_friction = 0.305*F
 
     if M_res<M_friction:
         M_V = -M_res
@@ -177,20 +181,22 @@ def winchAngles(X, Y, gamma, w, l_f):
     Y_te = Y + xhat*np.sin(gamma) + yhat*np.cos(gamma)
     te_vec = [X_te, Y_te]
 
-    le_attach = [50, 2]
-    te_attach = [50, -2]
+    le_attach = [30, 2]
+    te_attach = [30, -2]
 
-    gamma_le = np.arctan2(le_vec[1],le_vec[0]) - np.arctan2(le_attach[1],le_attach[0])
-    gamma_te = np.arctan2(te_attach[1],te_attach[0]) - np.arctan2(te_vec[1],te_vec[0])
+    gamma_le = np.arctan2(le_attach[1]-le_vec[1],le_attach[0]-le_vec[0]) - gamma
+    gamma_te = -(np.arctan2(te_attach[1]-te_vec[1],te_attach[0]-te_vec[0])) + gamma
 
     return gamma_le, gamma_te, X_le, Y_le, X_te, Y_te, le_attach, te_attach
 
+
 def pid(prev_error_vel, error_vel, integral_vel, prev_error_yaw, error_yaw, integral_yaw):
-    kp_vel = 1000
+
+    kp_vel = 10000
     ki_vel = 10
     kd_vel = 10
     
-    kp_yaw = 10000
+    kp_yaw = 15000
     ki_yaw = 5
     kd_yaw = 1
 
@@ -205,22 +211,32 @@ def pid(prev_error_vel, error_vel, integral_vel, prev_error_yaw, error_yaw, inte
 
     return F_le, F_te
 
+
+def find_nearest(array,value):
+    import math
+    import numpy as np
+    idx = np.searchsorted(array, value, side="left")
+    if idx > 0 and (idx == len(array) or math.fabs(value - array[idx-1]) < math.fabs(value - array[idx])):
+        return idx-1
+    else:
+        return idx
+
+
 # Get data from a steer
-def steerFunc(delta_f, vel_d, yaw_d, N_s, F, t_interval, t_span, tire_model='nonlinear', winch=False, mu=1, Yzero=[0,0,0,0,0,0]):
+def steerFunc(delta_f, vel_d, yaw_d, N_s, F, t_interval, t_span, yaw_file, time_vec, yaw_vec, tire_model='nonlinear', winch=False, mu=1, Yzero=[0,0,0,0,0,0,0,0]):
     from scipy.integrate import solve_ivp
     from scipy.interpolate import interp2d
     import numpy as np
     
-    L, M, g, F_g, I_zz, CG_z, CG_x, CG_y, l_f, l_r, N_fs, N_rs, C_alpha_f, C_alpha_r, K, w, r_w = VehicleData()
+    L, M, g, F_g, I_zz, CG_z, CG_x, CG_y, l_f, l_r, N_fs, N_rs, C_alpha_f, C_alpha_r, K, w, r_w, b = VehicleData()
     
     # Rear stearing
     delta_r = 0
 
     if not(winch):
-        v_x = 0.5
-        Yzero[0] = v_x
-        N_f = N_fs
-        N_r = N_rs
+        N_f = N_s/2
+        N_r = N_s/2
+        del Yzero[5:7]
     else:
         N_f = N_s/2
         N_r = N_s/2
@@ -229,16 +245,25 @@ def steerFunc(delta_f, vel_d, yaw_d, N_s, F, t_interval, t_span, tire_model='non
         vel = [Yzero[0]]
         integral_yaw = []
         yaw = [Yzero[3]]
+        if yaw_file:
+            yaw_desired_lst = [Yzero[3]]
     
 
     # Define function to take the ODE system and time interval
     def dYdt(t, Y):
-        y1,y2,y3,y4,y5,y6 = Y
+        if winch:
+            y1,y2,y3,y4,y5,y6,y7,y8 = Y
+        else:
+            y1,y2,y3,y4,y5,y6 = Y
 
         # Slip angles
-        alpha_f = (y2 + l_f*y3)/y1  - delta_f(t)
-        alpha_r = (y2 - l_r*y3)/y1
-        
+        if winch:
+            alpha_f = np.arctan(y7)
+            alpha_r = np.arctan(y8)
+        else:
+            alpha_f = (y2 + l_f*y3)/y1  - delta_f(t)
+            alpha_r = (y2 - l_r*y3)/y1
+
         # Tire forces
         if tire_model == 'linear':
             F_tyf, skid_f = LTire(alpha_f, mu, N_f, C_alpha_f)
@@ -258,10 +283,21 @@ def steerFunc(delta_f, vel_d, yaw_d, N_s, F, t_interval, t_span, tire_model='non
             prev_error_vel = vel_d(t-dt) - vel[-1]
             error_vel = vel_d(t) - y1
             integral_vel.append(error_vel)
-            
-            prev_error_yaw = yaw_d(t-dt) - yaw[-1]
-            error_yaw = yaw_d(t) - y4
-            integral_yaw.append(error_yaw)
+
+            if yaw_file:
+                idx = find_nearest(time_vec, t)
+                yaw_desired = yaw_vec[idx]
+
+                prev_error_yaw = yaw_desired_lst[-1] - yaw[-1]
+                error_yaw = yaw_desired - y4
+                integral_yaw.append(error_yaw)
+
+                yaw_desired_lst.append(yaw_desired)
+
+            else:
+                prev_error_yaw = yaw_d(t-dt) - yaw[-1]
+                error_yaw = yaw_d(t) - y4
+                integral_yaw.append(error_yaw)
             
             F_le, F_te = pid(prev_error_vel, error_vel, integral_vel, prev_error_yaw, error_yaw, integral_yaw)
             
@@ -275,40 +311,47 @@ def steerFunc(delta_f, vel_d, yaw_d, N_s, F, t_interval, t_span, tire_model='non
             F_Vx, F_Vy, M_V = vacuumForce(N_s, F, F_le, F_te, F_yf, F_xf, F_yr, F_g, gamma_le, gamma_te, delta_f(t), y4, l_f, l_r, w)
 
             # dv_x
-            dy1dt = (F_le*np.cos(gamma_le) + F_te*np.cos(gamma_te) + F_yf*np.sin(delta_f(t)) - F_xf - F_g*np.cos(y4) + F_Vx)/M + y2*y3
+            dy1dt = (F_le*np.cos(gamma_le) + F_te*np.cos(gamma_te) - F_xf - F_g*np.cos(y4) + F_Vx)/M + y2*y3
             # dv_y
             dy2dt = (F_le*np.sin(gamma_le) - F_te*np.sin(gamma_te) + F_yf + F_yr + F_g*np.sin(y4) + F_Vy)/M - y1*y3
             # ddgamma
-            dy3dt = (l_f*(F_yf + F_le*np.sin(gamma_le) - F_te*np.sin(gamma_te)) - l_r*F_yr + w/2*(-F_le*np.cos(gamma_le) + F_te*np.cos(gamma_te)) + M_V)/I_zz
+            dy3dt = (l_f*(F_yf + F_le*np.sin(gamma_le) - F_te*np.sin(gamma_te)) - l_r*F_yr + w/2*(F_te*np.cos(gamma_te) - F_le*np.cos(gamma_le)) + M_V)/I_zz
             # dgamma
             dy4dt = y3
             # dX    
             dy5dt = y1*np.cos(y4) - y2*np.sin(y4)
             # dY
             dy6dt = y1*np.sin(y4) + y2*np.cos(y4)
-            return [dy1dt, dy2dt, dy3dt, dy4dt, dy5dt, dy6dt]
+            # dtan(alpha_f)
+            dy7dt = (y2 + l_f*y3)/b - np.abs(y1)/b*y7
+            # dtan(alpha_r)
+            dy8dt = (y2 - l_r*y3)/b - np.abs(y1)/b*y8
+
+            return [dy1dt,dy2dt,dy3dt,dy4dt,dy5dt,dy6dt,dy7dt,dy8dt]
         
         else:
             # dv_x
-            dy1dt = F_xf/M + y2*y3
+            dy1dt = -F_xf/M + y2*y3
             # dv_y
-            dy2dt = 1/M*(F_yf + F_yr) - v_x*y3
+            dy2dt = 1/M*(F_yf + F_yr) - y1*y3
             # ddgamma
             dy3dt = 1/I_zz*(l_f*F_yf - l_r*F_yr)
             # dgamma
-            dy4dt = y2
+            dy4dt = y3
             # dX    
             dy5dt = y1*np.cos(y4) - y2*np.sin(y4)
             # dY
             dy6dt = y1*np.sin(y4) + y2*np.cos(y4)
-            return [dy1dt, dy2dt, dy3dt, dy4dt, dy5dt, dy6dt]
+
+            return [dy1dt,dy2dt,dy3dt,dy4dt,dy5dt,dy6dt]
 
     # Termination condition
-    def vehicle_stopped(t, Y): return Y[0] - 0.1
+    def vehicle_stopped(t, Y): return Y[0] - 0.0
     vehicle_stopped.terminal = True
     
     # Solve system
-    solution = solve_ivp(dYdt, t_interval, Yzero, events=vehicle_stopped, t_eval=t_span)
+    #solution = solve_ivp(dYdt, t_interval, Yzero, events=vehicle_stopped, t_eval=t_span)
+    solution = solve_ivp(dYdt, t_interval, Yzero, t_eval=t_span)
 
     # Solution variables
     #if winch:
@@ -318,7 +361,7 @@ def steerFunc(delta_f, vel_d, yaw_d, N_s, F, t_interval, t_span, tire_model='non
     gamma = solution.y[3,:] # y4 = yaw
     X = solution.y[4,:] # y5 = X position
     Y = solution.y[5,:] # y6 = Y position
-    
+
     # Other variables
     t_span = solution.t # time span of solution
     beta = np.arctan(v_y/v_x) #side slip angle
@@ -370,9 +413,13 @@ def steerFunc(delta_f, vel_d, yaw_d, N_s, F, t_interval, t_span, tire_model='non
     # Find tire coordinates
     X_f, Y_f, X_r, Y_r = findTire(gamma, l_f, l_r, X, Y)
 
-
     gamma_le, gamma_te, X_le, Y_le, X_te, Y_te, le_attach, te_attach = winchAngles(X, Y, gamma, w, l_f)
     
+    # Map position to arm base
+    #cg_to_arm = l_r-0.15
+    #X = X - cg_to_arm*np.cos(gamma)
+    #Y = Y - cg_to_arm*np.sin(gamma)
+
     # Pack values
     F_ty = [F_tyf, F_tyr]
     F_y = [F_yf, F_yr]
@@ -386,16 +433,16 @@ def steerFunc(delta_f, vel_d, yaw_d, N_s, F, t_interval, t_span, tire_model='non
 
 
 def PlotParameters():
-    width_large = 9
-    height_large = 9
-    width = 9
-    height = 9
+    width_large = 8
+    height_large = 7
+    width = 8
+    height = 4
     legend_loc = 'right'
     return width_large, height_large, width, height, legend_loc
 
 
 # Plotting of a steer
-def steerPlot(t_span='NA', delta_f='NA', v_x='NA', v_y='NA', V='NA', gamma='NA', dgamma='NA', dgamma_ss='NA', a_y='NA', beta='NA', X='NA', Y='NA', X_t='NA', Y_t='NA', F_ty='NA', F_y='NA', N='NA', skid='NA', F_skid='NA', X_le='NA', Y_le='NA', X_te='NA', Y_te='NA', le_attach='NA', te_attach='NA'):
+def steerPlot(t_span='NA', delta_f='NA', v_x='NA', v_y='NA', V='NA', gamma='NA', dgamma='NA', dgamma_ss='NA', a_y='NA', beta='NA', X='NA', Y='NA', X_t='NA', Y_t='NA', F_ty='NA', F_y='NA', N='NA', skid='NA', F_skid='NA', X_le='NA', Y_le='NA', X_te='NA', Y_te='NA', le_attach='NA', te_attach='NA', plot_name='noname'):
     import matplotlib.pyplot as plt
     import matplotlib.ticker as ticker
     import numpy as np
@@ -404,6 +451,16 @@ def steerPlot(t_span='NA', delta_f='NA', v_x='NA', v_y='NA', V='NA', gamma='NA',
     
     n_plot1 = 0
     plt_number = 0
+    if type(v_x).__module__ == np.__name__:
+        n_plot1 += 1
+        plot1 = v_x
+        ylabel = '$v_x$ $[m/s]$'
+        title = 'Velocity in the x-direction'
+    if type(gamma).__module__ == np.__name__:
+        n_plot1 += 1
+        plot1 = gamma
+        ylabel = '$\gamma$ $[rad/s]$'
+        title = 'Yaw'
     if type(delta_f).__module__ == np.__name__:
         n_plot1 += 1
         plot1 = delta_f
@@ -412,18 +469,13 @@ def steerPlot(t_span='NA', delta_f='NA', v_x='NA', v_y='NA', V='NA', gamma='NA',
     if type(X).__module__ == np.__name__:
         n_plot1 += 1
         plot1 = X
-        ylabel = '$X$ $[m]$'
+        ylabel = '$x$ $[m]$'
         title = 'Position of CG in the x-direction'
     if type(Y).__module__ == np.__name__:
         n_plot1 += 1
         plot1 = X
-        ylabel = '$Y$ $[m]$'
+        ylabel = '$x$ $[m]$'
         title = 'Position of CG in the y-direction'
-    if type(v_x).__module__ == np.__name__:
-        n_plot1 += 1
-        plot1 = v_x
-        ylabel = '$v_x$ $[m/s]$'
-        title = 'Velocity in the x-direction'
     if type(v_y).__module__ == np.__name__:
         n_plot1 += 1
         plot1 = v_y
@@ -439,11 +491,6 @@ def steerPlot(t_span='NA', delta_f='NA', v_x='NA', v_y='NA', V='NA', gamma='NA',
         plot1 = dgamma
         ylabel = '$\dot{\gamma}$ $[rad/s]$'
         title = 'Yaw rate'
-    if type(gamma).__module__ == np.__name__:
-        n_plot1 += 1
-        plot1 = gamma
-        ylabel = '$\gamma$ $[rad/s]$'
-        title = 'Yaw'
     if type(beta).__module__ == np.__name__:
         n_plot1 += 1
         plot1 = beta
@@ -467,34 +514,40 @@ def steerPlot(t_span='NA', delta_f='NA', v_x='NA', v_y='NA', V='NA', gamma='NA',
         
     elif n_plot1 > 1:
         fig, ax = plt.subplots(n_plot1, figsize=(width_large, height_large))
+        
+        if type(v_x).__module__ == np.__name__:
+            ax[plt_number].plot(t_span, v_x, color='tab:blue')
+            ax[plt_number].grid(True)
+            ax[plt_number].set_ylabel('$v_x$ $[m/s]$')
+            ax[plt_number].set_title('Vehicle response')
+            ax[plt_number].set_xticklabels([])
+            plt_number += 1
+
+        if type(gamma).__module__ == np.__name__:
+            ax[plt_number].plot(t_span, gamma*180/3.14, color='tab:blue')
+            ax[plt_number].grid(True)
+            ax[plt_number].set_ylabel('$\\gamma$ $[^{\circ}]$')
+            ax[plt_number].set_xticklabels([])
+            plt_number += 1
 
         if type(delta_f).__module__ == np.__name__:
-            ax[plt_number].plot(t_span, delta_f, color='tab:blue')
+            ax[plt_number].plot(t_span, delta_f*180/3.14, color='tab:blue')
             ax[plt_number].grid(True)
-            ax[plt_number].set_ylabel('$\delta_f$ $[rad]$')
-            ax[plt_number].set_title('Vehicle response')
+            ax[plt_number].set_ylabel('$\delta_f$ $[^{\circ}]$')
             ax[plt_number].set_xticklabels([])
             plt_number += 1
 
         if type(X).__module__ == np.__name__:
             ax[plt_number].plot(t_span, X, color='tab:blue')
             ax[plt_number].grid(True)
-            ax[plt_number].set_ylabel('$X$ $[m]$')
+            ax[plt_number].set_ylabel('$x$ $[m]$')
             ax[plt_number].set_xticklabels([])
             plt_number += 1
         
         if type(Y).__module__ == np.__name__:
             ax[plt_number].plot(t_span, Y, color='tab:blue')
             ax[plt_number].grid(True)
-            ax[plt_number].set_ylabel('$Y$ $[m]$')
-            ax[plt_number].set_xticklabels([])
-            plt_number += 1
-
-        if type(v_x).__module__ == np.__name__:
-            ax[plt_number].plot(t_span, v_x, color='tab:blue')
-            ax[plt_number].grid(True)
-            ax[plt_number].set_ylabel('$v_x$ $[m/s]$')
-            ax[plt_number].set_xticklabels([])
+            ax[plt_number].set_ylabel('$y$ $[m]$')
             plt_number += 1
 
         if type(v_y).__module__ == np.__name__:
@@ -521,12 +574,6 @@ def steerPlot(t_span='NA', delta_f='NA', v_x='NA', v_y='NA', V='NA', gamma='NA',
             ax[plt_number].set_xticklabels([])
             plt_number += 1
 
-        if type(gamma).__module__ == np.__name__:
-            ax[plt_number].plot(t_span, gamma, color='tab:blue')
-            ax[plt_number].grid(True)
-            ax[plt_number].set_ylabel('$\\gamma$ $[rad]$')
-            plt_number += 1
-
         if type(beta).__module__ == np.__name__:
             ax[plt_number].plot(t_span, beta, color='tab:blue')
             ax[plt_number].grid(True)
@@ -539,6 +586,8 @@ def steerPlot(t_span='NA', delta_f='NA', v_x='NA', v_y='NA', V='NA', gamma='NA',
             ax[plt_number].set_ylabel('$a_y$ $[g\'s]$')
             plt_number += 1
         ax[plt_number-1].set_xlabel('$t$ $[s]$')
+
+        plt.savefig(f'plots/{plot_name}_1.png', bbox_inches='tight')
  
     # Plot normal loads
     if type(N[0]).__module__ == np.__name__:
@@ -590,42 +639,45 @@ def steerPlot(t_span='NA', delta_f='NA', v_x='NA', v_y='NA', V='NA', gamma='NA',
     if type(X_t[0]).__module__ == np.__name__ and type(Y_t[0]).__module__ == np.__name__:
         fig, ax = plt.subplots(1, figsize=(width, height))
     
-        ax.plot(X_t[0], Y_t[0], label='f')
-        ax.plot(X_t[1], Y_t[1], label='r')
-        ax.set_ylabel('$Y$ $[m]$')
-        ax.set_xlabel('$X$ $[m]$')
+        ax.plot(X_t[0], Y_t[0], label='Front')
+        ax.plot(X_t[1], Y_t[1], label='Rear')
+        ax.set_ylabel('$y$ $[m]$')
+        ax.set_xlabel('$x$ $[m]$')
         ax.axis('equal')
         ax.set_title('Trajectory of the tires')
         ax.legend()
         ax.grid(True)
+        plt.savefig(f'plots/{plot_name}_2.png', bbox_inches='tight')
     
     # Plot X and Y for rope attachment points        
     if type(X_le[0]).__module__ == np.__name__ and type(Y_le[0]).__module__ == np.__name__:
         fig, ax = plt.subplots(1, figsize=(width, height))
         
-        ax.plot(X_le, Y_le, label='le')
-        ax.plot(X_te, Y_te, label='te')
-        ax.scatter(le_attach[0], le_attach[1], label='le_attach')
-        ax.scatter(te_attach[0], te_attach[1], label='te_attach')
-        ax.set_ylabel('$Y$ $[m]$')
-        ax.set_xlabel('$X$ $[m]$')
+        ax.plot(X_le, Y_le, label='LE winch')
+        ax.plot(X_te, Y_te, label='TE winch')
+        ax.scatter(le_attach[0], le_attach[1], label='LE attachment')
+        ax.scatter(te_attach[0], te_attach[1], label='TE attachment')
+        ax.set_ylabel('$y$ $[m]$')
+        ax.set_xlabel('$x$ $[m]$')
         ax.axis('equal')
         ax.set_title('Trajectory of the rope attachments')
         ax.legend()
         ax.grid(True)
+        plt.savefig(f'plots/{plot_name}_3.png', bbox_inches='tight')
 
     # Plot skid
     if type(skid[0]).__module__ == np.__name__:
     
         fig, ax = plt.subplots(1, figsize=(width, height))
     
-        ax.plot(t_span, skid[0], label='skid_f')
-        ax.plot(t_span, skid[1], label='skid_r')
+        ax.plot(t_span, skid[0], label='Front')
+        ax.plot(t_span, skid[1], label='Rear')
         ax.set_ylabel('$skid$')
         ax.set_xlabel('$t$ $[s]$')
         ax.set_title('Tire skid')
         ax.legend()
         ax.grid(True)
+        plt.savefig(f'plots/{plot_name}_4.png', bbox_inches='tight')
         
     # Plot forces needed for lock up
     if type(F_skid[0]).__module__ == np.__name__:
