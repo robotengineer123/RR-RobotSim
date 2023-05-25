@@ -1,0 +1,2 @@
+GlobalPlanner:
+  orientation_mode: 2 #interpolate orientation

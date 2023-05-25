@@ -77,7 +77,7 @@ rr_robot:
     # max_steer:
     # min_steer:
 
-    #enable_odom_tf: 
+    enable_odom_tf: false
     pose_covariance_diagonal: [0.001, 0.001, 1000000.0, 1000000.0, 1000000.0, 1000.0]
     twist_covariance_diagonal: [0.001, 0.001, 1000000.0, 1000000.0, 1000000.0, 1000.0]
     base_frame_id: dummy
