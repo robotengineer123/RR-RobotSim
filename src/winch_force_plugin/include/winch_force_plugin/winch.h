@@ -20,6 +20,7 @@ namespace WinchPlugin
             bool rot_dir_switch=false);
         
         void SetStrainCurvePolyCoeffs(ignition::math::Vector3d poly_coeffs);
+        void SetDamping(double damping) {damp_factor_ = damping;}
         void UpdateRopeTension();
 
 
@@ -27,6 +28,7 @@ namespace WinchPlugin
         void EffRadiusCallback(std_msgs::Float64ConstPtr msg);
         void UpdateLenghts();
         double ElaticRopeForce(double strain);
+        double DampRopeForce();
         double UnwindStep();
 
         ros::NodeHandle* nh;
@@ -42,6 +44,7 @@ namespace WinchPlugin
 
         double rope_len_ = 0;
         double dist_to_fixed_ = 0;
+        double prev_strain = 0;
 
         gazebo::physics::LinkPtr winch_link_;
         gazebo::physics::JointPtr winch_joint_;
@@ -49,5 +52,6 @@ namespace WinchPlugin
         int winch_axis_ = 1;
         ignition::math::Vector3d fixed_pos_{10, 0.0, 0.0};
         ignition::math::Vector3d poly_coeffs_{848.64823567, 188.91463659,  13.92308499};
+        double damp_factor_ = 0;
     };
 }

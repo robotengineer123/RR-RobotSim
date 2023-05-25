@@ -45,6 +45,8 @@ namespace gazebo
                 LoadParam<bool>("right_rot_dir_switch")
                 );
             right_winch_ptr_->SetStrainCurvePolyCoeffs(poly_coeffs);
+            right_winch_ptr_->SetDamping(LoadParam<double>("damping"));
+
 
             left_winch_ptr_ = std::make_unique<WinchPlugin::Winch>(
                 nh_.get(),
@@ -55,6 +57,8 @@ namespace gazebo
                 LoadParam<bool>("left_rot_dir_switch")
                 );
             left_winch_ptr_->SetStrainCurvePolyCoeffs(poly_coeffs);
+            left_winch_ptr_->SetDamping(LoadParam<double>("damping"));
+
         }
 
         void StartNode()
