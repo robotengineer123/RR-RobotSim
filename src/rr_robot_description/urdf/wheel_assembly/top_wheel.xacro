@@ -85,7 +85,7 @@ spring
         <axis xyz="1 0 0" />
         <parent link="yaw_link_${postfix}" />
         <child link="top_wheel_${postfix}" />
-        <dynamics damping="1" friction="10"/>
+        <dynamics damping="0" friction="0.1"/>
       </joint>
     </xacro:macro>
 

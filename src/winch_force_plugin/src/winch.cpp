@@ -58,12 +58,15 @@ void Winch::UpdateRopeTension()
     UpdateLenghts();
 
     double elongation = dist_to_fixed_ - rope_len_;
-    double strain = elongation / dist_to_fixed_;
-    double force_mag = ElaticRopeForce(strain);
     
     if (elongation < 0)
         return;
 
+    double strain = elongation / dist_to_fixed_;
+    double diff_strain = strain - prev_strain; 
+    double damp_force = DampRopeForce();
+    double elastic_force = ElaticRopeForce(strain);
+    double force_mag =  damp_force+elastic_force;
     ignition::math::Vector3d force = rope_dir_ * force_mag;
 
 
@@ -89,6 +92,13 @@ double Winch::ElaticRopeForce(double strain)
     ignition::math::Vector3d x{std::pow(strain,2), strain, 1};
     double force = x.Dot(poly_coeffs_);
     return force;
+}
+
+double Winch::DampRopeForce()
+{
+    double body_vel = -rope_dir_.Dot(winch_link_->WorldLinearVel());  //Velocity along rope direction
+    double rope_vel = winch_joint_->GetVelocity(winch_axis_)*rot_dir_*eff_radius_;
+    return (body_vel-rope_vel)*damp_factor_;
 }
 
 double Winch::UnwindStep()

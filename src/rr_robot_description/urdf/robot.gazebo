@@ -36,6 +36,30 @@
         <mu2>0.2</mu2>
     </gazebo>
 
+    <!-- Contact sensor -->
+    <gazebo reference="bot_wheel_le">
+        <sensor name='my_contact' type='contact'>
+        <update_rate> 50 </update_rate>
+        <plugin name="contact_pub" filename="libcontact_pub.so"/>
+          <contact>
+            <collision>bot_wheel_le_collision_collision</collision>
+          </contact>
+        </sensor>
+    </gazebo>
+
+    <gazebo>
+
+    </gazebo> 
+
+    <gazebo>
+        <plugin name="ground_truth" filename="libgazebo_ros_p3d.so">
+            <frameName>world</frameName>
+            <bodyName>dummy</bodyName>
+            <topicName>rr_robot/odom</topicName>
+            <updateRate>50.0</updateRate>
+        </plugin>
+    </gazebo>
+
     <!-- Joint Friction coefficients -->
     
     <!-- camera plugins -->
@@ -233,19 +257,19 @@
     </gazebo>
 
     <!-- IMU -->
-<!--    <gazebo>-->
-<!--        <plugin name="gazebo_ros_imu_controller" filename="libgazebo_ros_imu.so">-->
-<!--            <robotNamespace>/gurdy</robotNamespace>-->
-<!--            <topicName>imu/data</topicName>-->
-<!--            <serviceName>imu/service</serviceName>-->
-<!--            <bodyName>base_link</bodyName>-->
-<!--            <gaussianNoise>0</gaussianNoise>-->
-<!--            <rpyOffsets>0 0 0</rpyOffsets>-->
-<!--            <updateRate>10.0</updateRate>-->
-<!--            <alwaysOn>true</alwaysOn>-->
-<!--            <gaussianNoise>0</gaussianNoise>-->
-<!--        </plugin>-->
-<!--    </gazebo>-->
+   <gazebo>
+       <plugin name="gazebo_ros_imu_controller" filename="libgazebo_ros_imu.so">
+           <robotNamespace>/rr_robot</robotNamespace>
+           <topicName>imu/data</topicName>
+           <serviceName>imu/service</serviceName>
+           <bodyName>dummy</bodyName>
+           <gaussianNoise>0</gaussianNoise>
+           <rpyOffsets>0 0 0</rpyOffsets>
+           <updateRate>50.0</updateRate>
+           <alwaysOn>true</alwaysOn>
+       </plugin>
+    </gazebo>
+
 
     <!-- Control plugin -->
     <gazebo>
@@ -267,6 +291,7 @@
             <right_rot_dir_switch>true</right_rot_dir_switch>
             <left_rot_dir_switch>true</left_rot_dir_switch>
             <rope_stiff_poly_coeffs>4158376.35 13224.0246 13.923085</rope_stiff_poly_coeffs>
+            <damping>500</damping>
         </plugin>
     </gazebo> 
 
@@ -286,7 +311,7 @@
     </gazebo>
 
     <!-- <gazebo reference="vacuum_sheet_joint">
-        <springStiffness>10</springStiffness>
+        <springStiffness>32721.47965474722</springStiffness>
         <springReference>0</springReference> 
     </gazebo> -->
 

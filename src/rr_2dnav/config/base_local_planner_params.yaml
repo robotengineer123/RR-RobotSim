@@ -21,7 +21,7 @@ TebLocalPlannerROS:
  teb_autosize: True
  dt_ref: 0.3
  dt_hysteresis: 0.1
- global_plan_overwrite_orientation: True
+ global_plan_overwrite_orientation: False
  allow_init_with_backwards_motion: True
  max_global_plan_lookahead_dist: 3.0
  feasibility_check_no_poses: 5
@@ -29,7 +29,7 @@ TebLocalPlannerROS:
  # Robot
          
  max_vel_x: 0.4
- max_vel_x_backwards: 0.2
+ max_vel_x_backwards: 0.4
  max_vel_theta: 0.3
  acc_lim_x: 0.5
  acc_lim_theta: 0.5
