@@ -12,23 +12,23 @@
     </gazebo>
     <gazebo reference="bot_wheel_le">
         <material>Gazebo/Grey</material>
-        <mu1>0.66</mu1>
-        <mu2>0.66</mu2>
+        <mu1>0.25</mu1>
+        <mu2>0.25</mu2>
     </gazebo>
     <gazebo reference="bot_wheel_te">
         <material>Gazebo/Grey</material>
-        <mu1>0.66</mu1>
-        <mu2>0.66</mu2>
+        <mu1>0.25</mu1>
+        <mu2>0.25</mu2>
     </gazebo>
     <gazebo reference="top_wheel_le">
         <material>Gazebo/Grey</material>
-        <mu1>0.66</mu1>
-        <mu2>0.66</mu2>
+        <mu1>0.25</mu1>
+        <mu2>0.25</mu2>
     </gazebo>
     <gazebo reference="top_wheel_te">
         <material>Gazebo/Grey</material>
-        <mu1>0.66</mu1>
-        <mu2>0.66</mu2>
+        <mu1>0.25</mu1>
+        <mu2>0.25</mu2>
     </gazebo>
     <gazebo reference="vacuum_sheet">
         <material>Gazebo/DarkGrey</material>
