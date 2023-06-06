@@ -22,12 +22,12 @@ gamma0 = 0
 Yzero=[v_x0,0,0,gamma0,x0,y0,0,0]
 
 # Time interval
-end_time = 34
+end_time = 30
 t_span = np.arange(0, end_time, 0.01)
 t_interval = (0, end_time)
 
 # Friction constant
-mu = 0.58
+mu = 0.25
 
 # velocity
 def vel_d(t):
