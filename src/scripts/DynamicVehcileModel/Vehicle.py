@@ -416,9 +416,9 @@ def steerFunc(delta_f, vel_d, yaw_d, N_s, F, t_interval, t_span, yaw_file, time_
     gamma_le, gamma_te, X_le, Y_le, X_te, Y_te, le_attach, te_attach = winchAngles(X, Y, gamma, w, l_f)
     
     # Map position to arm base
-    #cg_to_arm = l_r-0.15
-    #X = X - cg_to_arm*np.cos(gamma)
-    #Y = Y - cg_to_arm*np.sin(gamma)
+    cg_to_arm = l_r-0.15
+    X = X - cg_to_arm*np.cos(gamma)
+    Y = Y - cg_to_arm*np.sin(gamma)
 
     # Pack values
     F_ty = [F_tyf, F_tyr]
@@ -670,8 +670,8 @@ def steerPlot(t_span='NA', delta_f='NA', v_x='NA', v_y='NA', V='NA', gamma='NA',
     
         fig, ax = plt.subplots(1, figsize=(width, height))
     
-        ax.plot(t_span, skid[0], label='Front')
-        ax.plot(t_span, skid[1], label='Rear')
+        ax.scatter(t_span, skid[0], label='Front', marker='o')
+        ax.scatter(t_span, skid[1], label='Rear', marker='.')
         ax.set_ylabel('$skid$')
         ax.set_xlabel('$t$ $[s]$')
         ax.set_title('Tire skid')
